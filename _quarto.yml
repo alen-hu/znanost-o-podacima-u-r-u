@@ -14,6 +14,7 @@ book:
     - part: "Uvoz i uređivanje podataka"
       chapters:
         - 02_uvoz_podataka.qmd
+        - 03_uredivanje_podataka.qmd
     - references.qmd
 
 bibliography: references.bib

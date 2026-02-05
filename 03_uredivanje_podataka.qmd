@@ -1,0 +1,633 @@
+---
+title: "Uređivanje podataka"
+description: ""
+number-sections: true
+title-block-banner: "#753a97ff"
+title-block-banner-color: "white"
+---
+
+```{r}
+#| include: false
+# Aktiviranje paketa
+library(tidyverse)
+library(DT)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podatkovnih okvira
+imdb_top_10_tidy_dataset <- tribble(
+  ~rank, ~movie, ~release_year, ~countries_of_origin, ~director, ~writers, ~stars, ~genres, ~language, ~runtime, ~colour, ~budget,
+  1, "The Shawshank Redemption", 1994, "United States", "Frank Darabont", "Stephen King, Frank Darabont", "Tim Robbins, Morgan Freeman, Bob Gunton", "Drama", "English", 142, "Color", 25000000,
+  2, "The Godfather", 1972, "United States", "Francis Ford Coppola", "Mario Puzo, Francis Ford Coppola", "Marlon Brando, Al Pacino, James Caan", "Crime, Drama", "English, Italian, Latin", 175, "Color", 6000000,
+  3, "The Dark Knight", 2008, "United States, United Kingdom", "Christopher Nolan", "Jonathan Nolan, Christopher Nolan, David S. Goyer", "Christian Bale, Heath Ledger, Aaron Eckhart", "Action, Crime, Drama, Thriller", "English", 152, "Color", 185000000,
+  4, "The Godfather Part II", 1974, "United States", "Francis Ford Coppola", "Francis Ford Coppola, Mario Puzo", "Al Pacino, Robert De Niro, Robert Duvall", "Crime, Drama", "English, Italian, Spanish, Latin, Sicilian", 202, "Color", 13000000,
+  5, "12 Angry Men", 1957, "United States", "Sidney Lumet", "Reginald Rose", "Henry Fonda, Lee J. Cobb, Martin Balsam", "Crime, Drama", "English", 96, "Black & White", 350000,
+  6, "The Lord of the Rings: Return of the King", 2003, "New Zeland, United States", "Peter Jackson", "J.R.R. Tolkien, Fran Walsh, Philippa Boyens", "Elijah Wood, Viggo Mortensen, Ian McKellen", "Adventure, Drama, Fantasy", "English, Quenya, Old English, Sindarin", 201, "Color", 94000000,
+  7, "Schindler's List", 1993, "United States", "Steven Spielberg", "Thomas Keneally, Steven Zaillian", "Liam Neeson, Ralph Fiennes, Ben Kingsley", "Biography, Drama, History", "English, Hebrew, German, Polish, Latin", 195, "Black & White", 22000000,
+  8, "Pulp Fiction", 1994, "United States", "Quentin Tarantino", "Quentin Tarantino, Roger Avary", "John Travolta, Uma Thurman, Samuel L. Jackson", "Crime, Drama", "English, Spanish French", 154, "Color", 8000000,
+  9, "Lord of the Rings: The Fellowship of the Ring", 2001, "New Zeland, United States, United Kingdom", "Peter Jackson", "J.R.R. Tolkien, Fran Walsh, Philippa Boyens", "Elijah Wood, Ian McKellen, Orlando Bloom", "Adventure, Drama, Fantasy", "English, Sindarin", 178, "Color", 93000000,
+  10, "The Good, the Bad and the Ugly", 1966, "Italy, Spain, West Germany, United States", "Sergio Leone", "Luciano Vincenzoni, Sergio Leone, Agenore Incrocci", "Clint Eastwood, Eli Wallach, Lee Van Cleef", "Adventure, Drama, Western", "Italian, English", 178, "Color", 1200000
+)
+
+imdb_decades <- tribble(
+  ~movie, ~`1950s`, ~`1960s`, ~`1970s`, ~`1980s`, ~`1990s`, ~`2000s`,
+  "The Shawshank Redemption", NA, NA, NA, NA, 1994, NA,
+  "The Godfather", NA, NA, 1972, NA, NA, NA,
+  "The Dark Knight", NA, NA, NA, NA, NA, 2008,
+  "The Godfather Part II", NA, NA, 1974, NA, NA, NA,
+  "12 Angry Men", 1957, NA, NA, NA, NA, NA,
+  "Lord of the Rings: Return of the King", NA, NA, NA, NA, NA, 2003,
+  "Schindler's List", NA, NA, NA, NA, 1993, NA,
+  "Pulp Fiction", NA, NA, NA, NA, 1994, NA,
+  "Lord of the Rings: Fellowship", NA, NA, NA, NA, NA, 2001,
+  "The Good, the Bad and the Ugly", NA, 1966, NA, NA, NA, NA
+)
+
+imdb_top_10_long <- tribble(
+  ~rank, ~movie, ~attribute, ~value,
+  1, "The Shawshank Redemption", "release_year", "1994",
+  1, "The Shawshank Redemption", "countries_of_origin", "United States",
+  1, "The Shawshank Redemption", "director", "Frank Darabont",
+  1, "The Shawshank Redemption", "writers", "Stephen King, Frank Darabont",
+  1, "The Shawshank Redemption", "stars", "Tim Robbins, Morgan Freeman, Bob Gunton",
+  1, "The Shawshank Redemption", "genres", "Drama",
+  1, "The Shawshank Redemption", "language", "English",
+  1, "The Shawshank Redemption", "runtime", "142",
+  1, "The Shawshank Redemption", "colour", "Color",
+  1, "The Shawshank Redemption", "budget", "25000000",
+
+  2, "The Godfather", "release_year", "1972",
+  2, "The Godfather", "countries_of_origin", "United States",
+  2, "The Godfather", "director", "Francis Ford Coppola",
+  2, "The Godfather", "writers", "Mario Puzo, Francis Ford Coppola",
+  2, "The Godfather", "stars", "Marlon Brando, Al Pacino, James Caan",
+  2, "The Godfather", "genres", "Crime, Drama",
+  2, "The Godfather", "language", "English, Italian, Latin",
+  2, "The Godfather", "runtime", "175",
+  2, "The Godfather", "colour", "Color",
+  2, "The Godfather", "budget", "6000000",
+
+  3, "The Dark Knight", "release_year", "2008",
+  3, "The Dark Knight", "countries_of_origin", "United States, United Kingdom",
+  3, "The Dark Knight", "director", "Christopher Nolan",
+  3, "The Dark Knight", "writers", "Jonathan Nolan, Christopher Nolan, David S. Goyer",
+  3, "The Dark Knight", "stars", "Christian Bale, Heath Ledger, AAron Eckhart",
+  3, "The Dark Knight", "genres", "Action, Crime, Drama, Thriller",
+  3, "The Dark Knight", "language", "English",
+  3, "The Dark Knight", "runtime", "152",
+  3, "The Dark Knight", "colour", "Color",
+  3, "The Dark Knight", "budget", "185000000",
+
+  4, "The Godfather Part II", "release_year", "1974",
+  4, "The Godfather Part II", "countries_of_origin", "United States",
+  4, "The Godfather Part II", "director", "Francis Ford Coppola",
+  4, "The Godfather Part II", "writers", "Francis Ford Coppola, Mario Puzo",
+  4, "The Godfather Part II", "stars", "Al Pacino, Robert De Niro, Robert Duvall",
+  4, "The Godfather Part II", "genres", "Crime, Drama",
+  4, "The Godfather Part II", "language", "English, Italian, Spanish, Latin, Sicilian",
+  4, "The Godfather Part II", "runtime", "202",
+  4, "The Godfather Part II", "colour", "Color",
+  4, "The Godfather Part II", "budget", "13000000",
+
+  5, "12 Angry Men", "release_year", "1957",
+  5, "12 Angry Men", "countries_of_origin", "United States",
+  5, "12 Angry Men", "director", "Sidney Lumet",
+  5, "12 Angry Men", "writers", "Reginald Rose",
+  5, "12 Angry Men", "stars", "Henry Fonda, Lee J. Cobb, Martin Balsam",
+  5, "12 Angry Men", "genres", "Crime, Drama",
+  5, "12 Angry Men", "language", "English",
+  5, "12 Angry Men", "runtime", "96",
+  5, "12 Angry Men", "colour", "Black & White",
+  5, "12 Angry Men", "budget", "350000",
+
+  6, "The Lord of the Rings: Return of the King", "release_year", "2003",
+  6, "The Lord of the Rings: Return of the King", "countries_of_origin", "New Zeland, United States",
+  6, "The Lord of the Rings: Return of the King", "director", "Peter Jackson",
+  6, "The Lord of the Rings: Return of the King", "writers", "J.R.R. Tolkien, Fran Walsh, Philippa Boyens",
+  6, "The Lord of the Rings: Return of the King", "stars", "Elijah Wood, Viggo Mortensen, Ian McKellen",
+  6, "The Lord of the Rings: Return of the King", "genres", "Adventure, Drama, Fantasy",
+  6, "The Lord of the Rings: Return of the King", "language", "English, Quenya, Old English, Sindarin",
+  6, "The Lord of the Rings: Return of the King", "runtime", "201",
+  6, "The Lord of the Rings: Return of the King", "colour", "Color",
+  6, "The Lord of the Rings: Return of the King", "budget", "94000000",
+
+  7, "Schindler's List", "release_year", "1993",
+  7, "Schindler's List", "countries_of_origin", "United States",
+  7, "Schindler's List", "director", "Steven Spielberg",
+  7, "Schindler's List", "writers", "Thomas Keneally, Steven Zaillian",
+  7, "Schindler's List", "stars", "Liam Neeson, Ralph Fiennes, Ben Kingsley",
+  7, "Schindler's List", "genres", "Biography, Drama, History",
+  7, "Schindler's List", "language", "English, Hebrew, German, Polish, Latin",
+  7, "Schindler's List", "runtime", "195",
+  7, "Schindler's List", "colour", "Black & White",
+  7, "Schindler's List", "budget", "22000000",
+
+  8, "Pulp Fiction", "release_year", "1994",
+  8, "Pulp Fiction", "countries_of_origin", "United States",
+  8, "Pulp Fiction", "director", "Quentin Tarantino",
+  8, "Pulp Fiction", "writers", "Quentin Tarantino, Roger Avary",
+  8, "Pulp Fiction", "stars", "John Travolta, Uma Thurman, Samuel L. Jackson",
+  8, "Pulp Fiction", "genres", "Crime, Drama",
+  8, "Pulp Fiction", "language", "English, Spanish French",
+  8, "Pulp Fiction", "runtime", "154",
+  8, "Pulp Fiction", "colour", "Color",
+  8, "Pulp Fiction", "budget", "8000000",
+
+  9, "Lord of the Rings: The Fellowship of the Ring", "release_year", "2001",
+  9, "Lord of the Rings: The Fellowship of the Ring", "countries_of_origin", "New Zeland, United States, United Kingdom",
+  9, "Lord of the Rings: The Fellowship of the Ring", "director", "Peter Jackson",
+  9, "Lord of the Rings: The Fellowship of the Ring", "writers", "J.R.R. Tolkien, Fran Walsh, Philippa Boyens",
+  9, "Lord of the Rings: The Fellowship of the Ring", "stars", "Elijah Wood, Ian McKellen, Orlando Bloom",
+  9, "Lord of the Rings: The Fellowship of the Ring", "genres", "Adventure, Drama, Fantasy",
+  9, "Lord of the Rings: The Fellowship of the Ring", "language", "English, Sindarin",
+  9, "Lord of the Rings: The Fellowship of the Ring", "runtime", "178",
+  9, "Lord of the Rings: The Fellowship of the Ring", "colour", "Color",
+  9, "Lord of the Rings: The Fellowship of the Ring", "budget", "93000000",
+
+  10, "The Good, the Bad and the Ugly", "release_year", "1966",
+  10, "The Good, the Bad and the Ugly", "countries_of_origin", "Italy, Spain, West Germany, United States",
+  10, "The Good, the Bad and the Ugly", "director", "Sergio Leone",
+  10, "The Good, the Bad and the Ugly", "writers", "Luciano Vincenzoni, Sergio Leone, Agenore Incrocci",
+  10, "The Good, the Bad and the Ugly", "stars", "Clint Eastwood, Eli Wallach, Lee Van Cleef",
+  10, "The Good, the Bad and the Ugly", "genres", "Adventure, Drama, Western",
+  10, "The Good, the Bad and the Ugly", "language", "Italian, English",
+  10, "The Good, the Bad and the Ugly", "runtime", "178",
+  10, "The Good, the Bad and the Ugly", "colour", "Color",
+  10, "The Good, the Bad and the Ugly", "budget", "1200000"
+)
+
+realise_year_runtime_dataset <- tribble(
+  ~rank, ~movie, ~`1994_142`, ~`1972_175`, ~`2008_152`, ~`1974_202`, ~`1957_96`, ~`2003_201`, ~`1993_195`, ~`1994_154`, ~`2001_154`, ~`1966_178`,
+  1,  "The Shawshank Redemption",                        "Color", NA, NA, NA, NA, NA, NA, NA, NA, NA,
+  2,  "The Godfather",                                   NA, "Color", NA, NA, NA, NA, NA, NA, NA, NA,
+  3,  "The Dark Knight",                                 NA, NA, "Color", NA, NA, NA, NA, NA, NA, NA,
+  4,  "The Godfather Part II",                           NA, NA, NA, "Color", NA, NA, NA, NA, NA, NA,
+  5,  "12 Angry Men",                                    NA, NA, NA, NA, "Black & White", NA, NA, NA, NA, NA,
+  6,  "The Lord of the Rings: Return of the King",       NA, NA, NA, NA, NA, "Color", NA, NA, NA, NA,
+  7,  "Schindler's List",                                NA, NA, NA, NA, NA, NA, "Black & White", NA, NA, NA,
+  8,  "Pulp Fiction",                                    NA, NA, NA, NA, NA, NA, NA, "Color", NA, NA,
+  9,  "Lord of the Rings: The Fellowship of the Ring",   NA, NA, NA, NA, NA, NA, NA, NA, "Color", NA,
+  10, "The Good, Bas and the Ugly",                      NA, NA, NA, NA, NA, NA, NA, NA, NA, "Color"
+)
+
+writers_dataset <- tribble(
+  ~rank, ~movie, ~writer_1, ~writer_2, ~writer_3,
+  1, "The Shawshank Redemption", "Stephen King", "Frank Darabont", NA,
+  2, "The Godfather", "Mario Puzo", "Francis Ford Coppola", NA,
+  3, "The Dark Knight", "Jonathan Nolan", "Christopher Nolan", "David S. Goyer",
+  4, "The Godfather Part II", "Francis Ford Coppola", "Mario Puzo", NA,
+  5, "12 Angry Men", "Reginald Rose", NA, NA,
+  6, "The Lord of the Rings: Return of the King", "J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens",
+  7, "Schindler's List", "Thomas Keneally", "Steven Zaillian", NA,
+  8, "Pulp Fiction", "Quentin Tarantino", "Roger Avary", NA,
+  9, "Lord of the Rings: The Fellowship of the Ring", "J.R.R. Tolkien", "Fran Walsh", "Philippa Boyens",
+  10, "The Good, the Bad and the Ugly", "Luciano Vincenzoni", "Sergio Leone", "Agenore Incrocci"
+)
+
+imdb_combined_variables <- tribble(
+  ~rank, ~movie, ~director_budget,
+  1, "The Shawshank Redemption", "Frank Darabont_25000000",
+  2, "The Godfather", "Francis Ford Coppola_6000000", 
+  3, "The Dark Knight", "Christopher Nolan_185000000",
+  4, "The Godfather Part II", "Francis Ford Coppola_13000000",
+  5, "12 Angry Men", "Sidney Lumet_350000",
+  6, "The Lord of the Rings: Return of the King", "Peter Jackson_94000000",
+  7, "Schindler's List", "Steven Spielberg_22000000",
+  8, "Pulp Fiction", "Quentin Tarantino_8000000",
+  9, "Lord of the Rings: The Fellowship of the Ring", "Peter Jackson_93000000",
+  10, "The Good, the Bad and the Ugly", "Sergio Leone_1200000"
+)
+
+director_names_dataset <- tribble(
+  ~rank, ~movie, ~director_first_name, ~director_last_name,
+  1, "The Shawshank Redemption", "Frank", "Darabont",
+  2, "The Godfather", "Francis Ford", "Coppola",
+  3, "The Dark Knight", "Christopher", "Nolan",
+  4, "The Godfather Part II", "Francis Ford", "Coppola",
+  5, "12 Angry Men", "Sidney", "Lumet",
+  6, "The Lord of the Rings: Return of the King", "Peter", "Jackson",
+  7, "Schindler's List", "Steven", "Spielberg",
+  8, "Pulp Fiction", "Quentin", "Tarantino",
+  9, "Lord of the Rings: The Fellowship of the Ring", "Peter", "Jackson",
+  10, "The Good, the Bad and the Ugly", "Sergio", "Leone",
+)
+```
+
+::: {.callout-important icon=false collapse="true" title="Podaci korišteni u poglavlju"}
+U ovom će poglavlju biti demonstrirani se principi uređivanja podataka koristeći podatke o [IMDb ljestvici 250 najboljih filmova svih vremena](https://www.imdb.com/chart/top/) prikupljenih 07.09.2025. godine. IMDb (*Internet Movie Database*) globalna je internetska baza podataka filmova, televizijskih serija i drugih audiovizualnih sadržaja koju pokreće Amazon. Ova platforma sadrži opsežne informacije o filmovima, uključujući osnovne podatke poput naziva, godine proizvodnje, žanra i trajanja kao i detaljnije informacije o glumcima, redateljima, ocjenama korisnika te različitim ljestvicama popularnosti. IMDb ljestvica 250 najboljih filmova temelji se na ocjenama milijuna korisnika diljem svijeta i predstavlja jedan od najpoznatijih popisa kvalitetnih filmova u kinematografiji. 
+
+Za potrebe objašnjavanja različitih segmenata uređivanja podataka koristit će se samo podatci o prvih deset filmova s navedenog popisa, a što omogućuje jasniji prikaz transformacijskih procesa bez nepotrebne složenosti velikih podatkovnih skupova. Navedeni podaci oblikovani su u različite formate podatkovnih okvira kako bi se na njima mogli demonstrirati različiti aspekti uređivanja podataka pomoću `tidyr` paketa. Kroz ove primjere bit će prikazano kako se neuredno organizirani podaci mogu transformirati u uredni format koji slijedi temeljna načela uređenih podataka.
+
+U poglavlju je korišteno osam podatkovnih okvira koji prikazuju iste podatke, ali su podaci u podatkovnim okvirima formirani na različite načine:
+
+- `imdb_top_10_tidy_dataset` - uredni format podatkovnog okvira,
+
+- `imdb_decades` - podatkovni okvir s podacima u nazivima varijabli i ćelijama,
+
+- `imdb_top_10_long` - dugački podatkovni okvir s više redaka za isto opažanje,
+
+- `realise_year_runtime_dataset` - podatkovni okvir s podacima u nazivima varijabli,
+
+- `writers_dataset` - podatkovni okvir sa stupcima za pojedinog scenarista filma,
+
+- `imdb_combined_variables` - podatkovni okvir s više vrijednosti u jednoj ćeliji,
+
+- `director_names_dataset` - imena redatelja filmova odvojena u dva stupca.
+
+Podatkovni okviri sadrže do 12 mogućih varijabli koje opisuju ključne karakteristike svakog filma:
+
+- "rank" - rang filma na IMDb top ljestvici (numerička vrijednost od 1 do 10),
+
+- "movie" - naslov filma (tekstualna varijabla),
+
+- "release_year" - godina premijere filma (numerička vrijednost),
+
+- "countries_of_origin" - zemlja ili zemlje podrijetla filma (tekstualna varijabla, može sadržavati više zemalja odvojenih zarezom),
+
+- "director" - ime i prezime redatelja filma (tekstualna varijabla),
+
+- "writers" - imena i prezimena scenarista (tekstualna varijabla, može sadržavati više imena odvojena zarezom),
+
+- "stars" - imena i prezimena glavnih glumaca (tekstualna varijabla s više imena odvojenih zarezom),
+
+- "genres" - žanr ili žanrovi filma (tekstualna varijabla, može sadržavati više žanrova odvojenih zarezom),
+
+- "language" - jezik ili jezici na kojima se govori u filmu (tekstualna varijabla, može sadržavati više jezika odvojena zarezom),
+
+- "runtime" - trajanje filma u minutama (numerička vrijednost),
+
+- "colour" - vrsta snimanja filma (tekstualna varijabla: "Color" za filmove u boji ili "Black & White" za crno-bijele filmove),
+
+- "budget" - proračun filma u američkim dolarima (numerička vrijednost).
+:::
+
+**Uređivanje podataka** (*data tidying*) predstavlja proces transformacije podataka iz oblika u kojem su inicijalno organizirani u konzistentan, standardiziran format koji olakšava analizu i vizualizaciju. Uređivanje podataka zapravo obuhvaća pohranjivanje podataka u konzistentnom obliku koji odgovara semantici skupa podataka s načinom na koji su pohranjeni. Ovaj je proces temeljni korak u cjelokupnom procesu analize podataka jer omogućuje lakši i efikasniji rad s podacima pomoću različitih analitičkih alata.
+
+Uređivanje i transformacija podataka zajedno se kolokvijalno nazivaju **hrvanje s podacima** (*data wrangling*) jer se odnose na dovođenje podataka u oblik koji je prirodan za rad, a koji često nalikuje borbi s podacima. Ova metafora dobro opisuje izazove s kojima se analitičari susreću kada trebaju pripremiti sirove podatke za analizu. Većina stvarnih podataka nije uredna što znači da će većina analiza zahtijevati barem malo uređivanja.
+
+Uređivanje podataka razlikuje se od općeg oblikovanja podataka (*data reshaping*) jer se fokusira specifično na postizanje određenih standarda organizacije podataka. Glavni cilj uređivanja podataka pritom nije stvaranje vizualno privlačnih prikaza podataka, nego uspostavljanje strukture koja omogućuje efikasno korištenje analitičkih alata i funkcija programskog jezika R.
+
+U procesu bavljenja s podacima, uređivanje predstavlja ključnu kariku između uvoza podataka u R i njihove analize. Drugim riječima, nakon što se podaci uvezu, nužno je njihovo uređivanje jer uređeni podaci omogućuju fokusiranje napora na odgovaranje pitanja o podacima, a ne borbu s dovođenjem podataka u odgovarajući oblik za različite funkcije. Ovaj pristup značajno smanjuje mogućnost grešaka tijekom analize, ali i povećava produktivnost analitičara u bavljenju s podacima.
+
+**Uredni podaci** (*tidy data*) predstavljaju konzistentan način organiziranja podataka koji se koristi kroz cijeli `tidyverse` ekosustav, ali i općenito u R-u. Konkretnije, iste podatke moguće je predstaviti na više načina, ali nisu svi načini jednako jednostavni i praktični za korištenje.
+
+Postoje tri međusobno povezana pravila koja čine skup podataka urednim:
+
+1. **svaka varijabla je stupac, a svaki stupac je varijabla**;
+
+2. **svako opažanje je red, a svaki red je opažanje**;
+
+3. **svaka vrijednost je ćelija, a svaka ćelija je jedna vrijednost**.
+
+Segmenti podataka, konkretnije podatkovnog okvira u kojem su podaci spremljeni, raspoređeni su kroz varijable, opažanja i pojedine vrijednosti. **Varijabla** predstavlja svojstvo ili karakteristiku koja se mjeri i koja može poprimiti različite vrijednosti. U kontekstu filmskih podataka, varijable mogu biti naziv filma, godina premijere, žanr ili trajanje filma. U urednim podatkovnim okvirima one su raspoređene u stupcima podatkovnih okvira. To znači da svaki stupac u podatkovnom okviru predstavlja jednu vrstu informacije koju želimo pratiti. Primjerice, ako nas zanimaju informacije o nekim filmovima, varijable mogu biti "movie" u kojoj se nalaze nazivi filmova, "realise_year" u kojoj se nalaze godine kada je film premijerno prikazan, "runtime" u kojoj se nalazi trajanje filma, "director" u kojoj se nalazi ime redatelja itd. Svaki od ovih stupaca pritom mora sadržavati samo jedan tip podataka - varijabla "movie" samo nazive filmova, a varijabla "runtime" samo godine. **Opažanje** predstavlja jedan slučaj ili jedinicu analize za koju prikupljamo podatke o različitim varijablama. U urednim podatkovnim okvirima opažanja su pojedini redci u tablici koji pripadaju jednoj jedinici analize (npr. jednom ispitaniku, kućanstvu, državi itd.) i sadrži vrijednosti niza varijabli koje opisuju tu jedinicu. Dok varijable predstavljaju svojstva, opažanja su konkretne realizacije tih svojstava za svaku jedinicu. U primjeru filmova svaki red predstavlja po jedan film koji je po jedno opažanje. **Vrijednost** je najniža jedinica podatka u podatkovnom okviru, odnosno sadržaj jedne ćelije na sjecištu određene varijable (stupca) i opažanja (retka). Ona predstavlja jednu mjeru jedne varijable za jednu jedinicu i ne bi smjela sadržavati više informacija spojenih u istu ćeliju. U tehničkom smislu pojedinačna vrijednost je vrijednost određenog tipa podataka (npr. broj, logička vrijednost, znakovni niz, datum i vrijeme, faktor ili nedostajuća vrijednost - `NA`). Na primjer, vrijednost koja prikazuje varijablu "realise_year" za opažanje "The Shawshak Redemption" je "1994", a vrijednost koja prikazuje varijablu "director" za opažanje "The Lord of the Rings: The Return of the King" je "Peter Jackson".
+
+Primjer jednog urednog podatkovnog okvira je `imdb_top_10_tidy_dataset` koji prikazuje top 10 filmova prema IMDb ljestvici u kojem je svaki redak jedno je opažanje, odnosno jedan film, a svaki stupac pojedino obilježje filma, odnosno varijablu koje prikazuju naziv, godinu izdanja, glumce, redatelje i ostale informacije o filmovima. Ovaj je podatkovni okvir primjer uredne strukture podataka jer ispunjava gore spomenuta tri uvjeta urednih podataka.
+
+```{r}
+#| echo: false
+imdb_top_10_tidy_dataset
+```
+
+Uredna struktura podataka je važna jer čini podatke kompatibilnima s R-ovim vektoriziranim pristupom i omogućuje direktnu upotrebu funkcija kao što su `filter()`, `group_by()`, `summarise()` i `ggplot()` bez dodatnih transformacija podataka. Kada su podatci uredni, moguće je direktno filtrirati podatke po bilo kojoj varijabli, grupirati podatke po kategorijama i kreirati vizualizacije bez složenih priprema. Ako su podaci neuredni, onda je provođenje svih ovih postupaka uvelike otežano.
+
+## Format podataka u R-u
+
+Isti temeljni podaci mogu se organizirati u različite formate, a dva najčešća su dugački (*long*) i široki (*wide*) format. Primjena ova dva formata ključno je za efikasno uređivanje podataka jer različite analize i vizualizacije zahtijevaju različite formate podataka.
+
+**Dugački format** karakteriziran je time što se sve vrijednosti jedne varijable nalaze u jednom stupcu. Ovaj format rezultira podatkovnim okvirom s više redaka, ali manjim brojem stupaca. Svaki red predstavlja jedno opažanje, a svaki stupac predstavlja jednu varijablu. Dugački format prirodniji je za analizu podataka jer slijedi temeljna načela urednih podataka. U ovom formatu lakše je provoditi grupne operacije, stvarati vizualizacije i primjenjivati statističke funkcije.Koristeći isti primjer filmskih ocjena, dugački format imao bi stupce "film", "godina" i "ocjena", gdje bi svaki red predstavljao jednu kombinaciju filma i godine s odgovarajućom ocjenom.
+
+Primjer jednog takvog podatkovnog okvira je `imdb_top_10_long`. Taj je podatkovni okvir dugačak s po jednim zapisom za svaku kombinaciju filma i obilježja: obuhvaća top 10 filmova i za svaki bilježi godinu premijere, zemlje podrijetla, redatelja, scenariste, glavne glumce, žanrove, jezik, trajanje, boju i budžet. Primjerice, za film The Shawshank Redemption navodi 1994. kao godinu premijere, SAD kao zemlju podrijetla, redatelja Franka Darabonta, scenariste Stephena Kinga i Franka Darabonta, glumce Tima Robbinsa i Morgana Freemana, žanr dramu, jezik engleski, trajanje 142 minute, boju i budžet od 25 milijuna USD-a i tako za svih 10 filmova. Podaci su organizirani u dugom obliku s četiri stupca: "rank", "movie", "attribute" i "value". Stupci "rank" i "movie" čine identifikator svakog filma, a za svaki film postoji po više redaka, odnosno po jedan redak za svako obilježje koje je zapisano u varijabli "attribute". Naziv obilježja pritom stoji u varijabli "attribute", dok se sama vrijednost obilježja nalazi u varijabli "value". Time jedan film zauzima otprilike deset redaka (jedan po atributu), umjesto jednog širokog retka s mnogo stupaca.
+
+```{r}
+#| echo: false
+imdb_top_10_long
+```
+
+```{r}
+#| echo: false
+imdb_top_10_long
+```
+
+Ovakav dugački format preferira se za:
+
+- vizualizacije pomoću `ggplot2` paketa,
+
+- grupne analize i sažimanja podataka,
+
+- primjenu većine `dplyr` funkcija i
+
+- modeliranje podataka.
+
+S druge strane, široki format karakteriziran je time što se vrijednosti jedne varijable protežu kroz više stupaca. U ovom formatu, podatkovni okvir ima manji broj redaka, ali veći broj stupaca. Imena stupaca često sadrže vrijednosti varijabli umjesto naziva varijabli. Široki format često je prirodniji za unos podataka i čovjeku je lakši za čitanje jer se podaci prezentiraju u kompaktnom obliku. Međutim, ovaj format može otežati analizu jer jedna varijabla nije sadržana u jednom stupcu, što krši temeljna načela urednih podataka.
+
+Primjer takvog podatkovnog okvira bio bi `imdb_decades`. U tom podatkovnom okviru svaki redak predstavlja po jedan film, svaki stupac pojedino desetljeće, a u ćelijama nalazi godina premijere filma u pojedinom desetljeću u kojem je film nastao, odnosno `NA` ako film nije nastao u tom desetljeću.
+
+```{r}
+#| echo: false
+imdb_decades
+```
+
+Ovaj podatkovni okvir je nezgodan jer krši načela urednih podataka, odnosno desetljeća koje su vrijednosti postavljene su kao nazivi stupaca umjesto da budu u ćelijama pojedinih varijabli. To rezultira s puno nepotrebnih `NA` vrijednosti i otežava analizu jer nije moguće jednostavno filtrirati filmove po godini ili desetljeću. Umjesto šest stupaca za desetljeća, bolji format podataka bio bi onaj u kojem su dva stupca, jedan za desetljeće i jedan za godinu.
+
+Široki format može biti korisniji za:
+
+- prikazivanje podataka u tablicama za čovjeka,
+
+- određene statističke analize koje zahtijevaju matricijski oblik,
+
+- kreiranje pivot tablica i
+
+- izvoz podataka za druge aplikacije.
+
+::: {layout-ncol="2"}
+| ID  | A   | B   | C   |
+|-----|-----|-----|-----|
+| 1   | 10  | 20  | 30  |
+| 2   | 40  | 50  | 60  |
+
+: Široki format {#tbl-siroki}
+
+| ID  | name | value |
+|-----|------|-------|
+| 1   | A    | 10    |
+| 1   | B    | 20    |
+| 1   | C    | 30    |
+| 2   | A    | 40    |
+| 2   | B    | 50    |
+| 2   | C    | 60    |
+
+: Dugački format {#tbl-dugacki}
+:::
+
+Pritom je važno naglasiti da nijedan od ova dva formata nije inherentno uredan ili neuredan, nego to ovisi o tome što stupci, retci i ćelije predstavljaju u kontekstu podataka. Dugački format je općenito bolji za analizu podataka jer funkcije poput `dplyr` paketa prirodno rade s jednim stupcem vrijednosti, a `ggplot2` paket je dizajniran za dugački format jer mapira estetike na stupce. Također, u dugačkom je formatu lakše dodavati nova vremenska razdoblja ili kategorije jer se jednostavno dodaju novi redovi umjesto novih stupaca. Široki format je bolji za prezentaciju i izvještaje jer je ljudima prirodnije čitati podatke kada su povezane vrijednosti prikazane horizontalno kao stupci, kao i za matrične operacije poput korelacijske analize ili unos podataka jer odražava način kako ljudi razmišljaju o podacima. Općenito pravilo je koristiti dugački format za analize i vizualizacije, a široki za prikaz rezultata.
+
+## Uređivanje neurednih podataka
+
+Kada podaci u podatkovnom okviru ne ispunjavaju tri navedena uvjeta o urednim podacima, onda te podatke nazivamo **neurednim podacima** te je bilo kakav rad na podacima otežan. Postoje različiti mogući oblici neurednih podataka, odnosno različiti načini na koji podaci u podatkovnom okviru mogu biti posloženi, a koji otežavaju daljnji rad na podacima. Pritom uređivanje uključuje produljenje i proširenje podataka. Produljenje podataka uključuje pretvaranje širokih podatkovnih okvira u oblik koji ima više redaka, a manje stupaca. Suprotno, proširenje podataka uključuje pretvaranje dugih tablica u širok oblik koji ima manje redaka i više stupaca.
+
+Za uređivanje podataka u R-u najčešće se koriste dvije funkcije iz `tidyr` paketa, `pivot_longer()` za produljivanje i `pivot_wider()` za proširivanje. `pivot_longer()` pretvara široku tablicu u dugu, odnosno više stupaca prenosi u dva stupca — jedan s imenom varijable i jedan s vrijednošću. Rezultat je više redaka i manje stupaca. `pivot_wider()` radi suprotno, iz duge tablice (u kojoj postoji stupac s imenima varijabli i stupac s vrijednostima) stvara široku tako da različite vrijednosti iz stupca s imenima postanu novi stupci. Rezultat je manje redaka, a više stupaca. Osim ove dvije funkcije, `tidyr` paket sadrži još neke funkcije koje pomažu uređivanje podataka, a od kojih će neke biti navedene i u nastavku.
+
+### Rješavanje problema neurednih podataka
+
+Može se pojaviti više oblika konstrukcije podataka, odnosno neurednih podatkovnih okvira koje je potrebno urediti, odnosno proširiti ili produžiti.
+
+**1. Nazivi varijabli kao vrijednosti**
+
+Čest problem koji se susreće kod neuredno organiziranih podataka nastaje kada nazivi stupaca ne predstavljaju nazive varijabli, već vrijednosti neke varijable. Ovaj tip neuredno organiziranih podataka krši temeljna načela urednih podataka jer se vrijednosti jedne varijable nalaze u nazivima stupaca umjesto u jednom stupcu. Takav oblik podataka čini ih teškima za analizu jer funkcije u R-u očekuju da se vrijednosti varijabli nalaze u stupcima, a ne u njihovim nazivima.
+
+Primjer takvih neurednih podataka je podatkovni okvir `imdb_decades` u kojem su nazivi stupaca "1950s", "1960s", "1970s", "1980s", "1990s" i "2000s", a koji predstavljaju vrijednosti varijable "decade", a ne nazive varijabli. Stupac "movie" sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno `NA` ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini proizvodnje filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti (`NA`).
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+imdb_decades
+```
+
+Problem se rješava pomoću funkcije `pivot_longer()` koja pretvara široke podatke u dugačke. Funkcija omogućuje specificiranje stupaca koji se trebaju pivotirati pomoću argumenta `cols`, naziv nove varijable koja će sadržavati nazive stupaca pomoću argumenta `names_to` te naziv varijable koja će sadržavati vrijednosti iz ćelija pomoću argumenta `values_to`. Dodatno, argument `values_drop_na = TRUE` može se koristiti za uklanjanje redova s nedostajućim vrijednostima koji ne predstavljaju stvarna opažanja.
+
+::: {.callout-tip icon=false collapse="true" title="Funkcija: pivot_longer()"}
+Funkcija `pivot_longer()` dio je `tidyr` paketa koja produžuje podatke povećavajući broj njihovih redaka i smanjujući broj stupaca.
+
+Funkcija može imati slijedeće argumente:
+
+| Argument | Objašnjenje |
+|---|---|
+| `data` | Podatkovni okvir u širokom format. |
+| `cols` | Određuje koji se stupci pretvaraju u dugi oblik. |
+| `cols_vary` | Određuje redoslijed “slaganja” vrijednosti kada ih R raspoređuje u duži oblik. Može biti `fastest` (zadano) čime se najbrže mijenja stupac (vrijednosti se slažu “po stupcima”) i `slowest` čime se najsporije mijenja stupac (vrijednosti se slažu “po redovima”). |
+| `names_to` | Naziv ili nazivi novih stupaca koji će sadržavati nazive starih stupaca. |
+| `names_prefix` | Niz koji će se ukloniti iz naziva stupaca prije nego što se oni stave u `names_to`. |
+| `names_sep` | Koristi se kada u `names_to` kako bi se njime definirlo koji se razdjelnik koristiti za razbijanje naziva. |
+| `names_pattern` | Alternativa `names_sep`, ali koristi regularne izraze za razbijanje naziva. |
+| `names_ptypes` | Dopušta da zadamo tip podataka za stupac ili stupce kreirane u `names_to`. |
+| `names_transform` | Funkcija ili lista funkcija koje se primjenjuju na stupce iz `names_to`. |
+| `names_repair` | Što učiniti ako se u novim imenima stupaca pojave duplikati (zadano je `check_unique` koji javlja grešku ako nisu jedinstveni. |
+| `values_to` | Ime novog stupca u koji idu vrijednosti skupljenih stupaca. |
+| `values_drop_na` | Ako je `TRUE`, brišu se redci u kojima su vrijednosti `NA` u stupcu `values_to`. |
+| `values_ptypes` | Kao i `names_ptypes`, ali za stupac `values_to`. |
+| `values_transform` | Funkcija ili lista funkcija za transformaciju vrijednosti. |
+:::
+
+```{r}
+# Uređivanje podatkovnog okvira
+imdb_decades_tidy <- imdb_decades |>
+  pivot_longer(
+    cols = starts_with(c("19", "20")),
+    names_to = "decade",
+    values_to = "year",
+    values_drop_na = TRUE
+  )
+```
+
+Nakon primjene `pivot_longer()` funkcije, dobivamo uređeni podatkovni okvir koji sadrži tri stupca: "movie" (naziv filma), "decade" (desetljeće) i "year" (godina premijere). Svaki red predstavlja jedno opažanje - kombinaciju filma i desetljeća s odgovarajućom godinom premijere. Uređeni format omogućuje lakše grupiranje podataka po desetljećima, izračunavanje sažetaka te stvaranje vizualizacija što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+imdb_decades_tidy
+```
+
+
+**2. Više varijabli u nazivima stupaca**
+
+Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Ovaj tip neuredno organiziranih podataka predstavlja naprednu verziju prethodnog problema jer ne sadrži samo jednu varijablu u nazivima stupaca, nego kombinaciju nekoliko varijabli. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.
+
+Primjer takvih podataka je `realise_year_runtime_dataset`. Kod tih podataka nazivi stupaca poput "1994_142", "1972_175", "2008_152" i drugi sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ("Color") ili crno-bijeli ("Black & White"), s `NA` vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i tip fotografije) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+realise_year_runtime_dataset
+```
+
+Problem se rješava pomoću funkcije `pivot_longer()` s dodatnim argumentima za razdvajanje složenih naziva stupaca. Ključni argument `names_to` prima vektor naziva novih varijabli koje će nastati razdvajanjem naziva stupaca, dok argument `names_sep` specificira separator koji razdvaja različite dijelove naziva stupaca. U ovom slučaju, `names_to = c("year", "runtime")` stvara dvije nove varijable, a `names_sep = "_"` specificira da se nazivi stupaca dijele po podvlaci. Argument `values_drop_na = TRUE` uklanja redove s nedostajućim vrijednostima koji predstavljaju umjetno stvorene kombinacije.
+
+```{r}
+# Uređivanje podatkovnog okvira
+realise_year_runtime_dataset_tidy <- realise_year_runtime_dataset |>
+  pivot_longer(
+    cols = -c(rank, movie),
+    names_to = c("year", "runtime"),
+    names_sep = "_",
+    values_to = "value",
+    values_drop_na = TRUE
+  )
+```
+
+Nakon primjene `pivot_longer()` funkcije s odgovarajućim argumentima, dobivamo uređeni podatkovni okvir koji sadrži pet stupaca: "rank" (rang filma), "movie" (naziv filma), "year" (godina proizvodnje), "runtime" (trajanje u minutama) i "value" (tip fotografije). Svaki red predstavlja jedno opažanje - jedan film s njegovim karakteristikama. Uređeni format omogućuje direktno grupiranje po godini ili trajanju filma, izračunavanje statističkih pokazatelja te stvaranje složenih vizualizacija koje analiziraju povezanost između godine proizvodnje, trajanja i tipa fotografije, što bi bilo praktički nemoguće u neuredno organiziranom formatu.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+realise_year_runtime_dataset_tidy
+```
+
+**3. Varijable pohranjene u redovima**
+
+Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva neuredno organiziranih podataka. U ovom obliku neurednih podataka, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.
+
+U primjeru podatkovnog okvira `imdb_top_10_long`, svaki film (opažanje) predstavljen je kroz više redova, pri čemu stupac "attribute" sadrži nazive varijabli poput "release_year", "director", "genres", "runtime" i ostale, dok stupac "value" sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film "The Shawshank Redemption" prikazan je kroz deset redova, po jedan za svaku karakteristiku filma. Ovakav format rezultira podatkovnim okvirom s 100 redova (10 filmova × 10 atributa) umjesto očekivanih 10 redova za 10 filmova.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+imdb_top_10_long
+```
+
+Problem se rješava pomoću funkcije `pivot_wider()` iz `tidyr` paketa koja pretvara dugačke podatke u široke. Funkcija koristi argument `names_from` za specificiranje stupca koji sadrži nazive budućih varijabli (u ovom slučaju stupac "attribute") te argument `values_from` za specificiranje stupca koji sadrži vrijednosti tih varijabli (stupac "value"). Funkcija `pivot_wider()` automatski grupira podatke prema svim stupcima koji nisu specificirani u `names_from` i `values_from` argumentima što znači da će se podaci grupirati po "rank" i "movie" stupcima.
+
+::: {.callout-tip icon=false collapse="true" title="Funkcija: pivot_wider()"}
+Funkcija `pivot_wider()` dio je `tidyr` paketa koja produžuje podatke smanjujući njihov broj redaka i povećavajući broj stupaca. Funkcija može imati slijedeće argumente:
+
+| Argument | Objašnjenje |
+|---|---|
+| `data` | Podatkovni okvir u dugom formatu. |
+| `id_cols` | Stupci koji se koriste kao identifikatori opservacija, a koji ostaju kao redovi. |
+| `id_expand` | Ako je TRUE, onda se stvara puni “cross-join” identifikatora i vrijednosti u `names_from`. Koristi se kada želimo dobiti sve moguće kombinacije, a ne samo postojeće. |
+| `names_from` | Stupac ili stupci čije se vrijednosti koriste za nazive novih stupaca. |
+| `names_prefix` | Dodaje prefiks na nazive stupaca. |
+| `names_sep` | Razdjelnik koji se koristi ako imamo više varijabli u `names_from` (zadano je "_"). |
+| `names_glue` | Omogućuje korištenje glue sintakse za definiranje imena stupaca. |
+| `names_sort` | Ako je TRUE, onda će novi stupci biti sortirani po abecedi. Inače redoslijed ostaje kao u podacima. |
+| `names_vary` | Kontrolira redoslijed kombiniranja imena stupaca kad `names_from` ima više varijabli ( može biti `fastest` ili `slowest` isto kao kod `pivot_longer()`). |
+| `names_expand` | Ako je TRUE, onda se kreiraju svi mogući stupci za sve vrijednosti u `names_from` čak i ako neke kombinacije ne postoje. |
+| `names_repair` | Kako se ponašati ako nastanu duplikati u imenima stupaca ( zadano je `check_unique` koji javlja grešku. |
+| `values_from` | Stupac čije vrijednosti želimo staviti u ćelije novih stupaca. |
+| `values_fill` | Vrijednost kojom se popunjavaju ćelije ako nema podataka (`NA`). |
+| `values_fn` | Funkcija koja se koristi ako postoji više vrijednosti za istu kombinaciju identifikatora i naziva stupca (npr. `values_fn = mean` računa prosjek ako ima više vrijednosti). |
+| `unused_fn` | Funkcija koja određuje što raditi s varijablama koje nisu u `id_cols`, `names_from` ili `values_from`. |
+:::
+
+```{r}
+# Uređivanje podatkovnog okvira
+imdb_top_10_wide <- imdb_top_10_long |>
+  pivot_wider(
+    names_from  = attribute,
+    values_from = value
+  )
+```
+
+Nakon primjene `pivot_wider()` funkcije, dobivamo uređeni podatkovni okvir koji sadrži 12 stupaca: identifikacijske varijable "rank" i "movie" te deset novih stupaca koji predstavljaju filmske karakteristike ("release_year", "countries_of_origin", "director", "writers", "stars", "genres", "language", "runtime", "colour" i "budget"). Svaki od 10 redova predstavlja jedan film s njegovim kompletnim karakteristikama. Uređeni format omogućuje direktno usporedbu filmova prema bilo kojoj karakteristici, izračunavanje statističkih pokazatelja te stvaranje vizualizacija koje analiziraju povezanost između različitih varijabli poput godine proizvodnje i budžeta, što bi zahtijevalo složene operacije grupiranja u neuredno organiziranom dugačkom formatu.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+head(imdb_top_10_wide, 3)
+```
+
+**4. Isti tip vrijednosti raspoređen u više stupaca**
+
+Četvrti tipičan oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna logička varijabla (na primjer, spisak scenarista) biva podijeljena u više fizičkih stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima, što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.
+
+`writers_dataset` je jedan takav podatkovni okvir. U tom su podatkovnom okviru informacije o scenaristima filmova podijeljene su u tri odvojena stupca: "writer_1", "writer_2" i "writer_3". Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju `NA` vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+writers_dataset
+```
+
+Problem se rješava pomoću funkcije `pivot_longer()` uz dodatne argumente koji olakšavaju rad s nazivima stupaca koji imaju zajednički prefiks. Argument `cols = starts_with("writer_")` specificira da se pivotiraju svi stupci koji počinju s "writer_", dok argument `names_prefix = "writer_"` uklanja prefiks iz naziva stupaca prije pohranjivanja u novu varijablu. Argument `names_to = "writer_id"` stvara novu varijablu koja označava redni broj scenarista, a `values_to = "writer"` stvara varijablu koja sadrži imena scenarista. Argument `values_drop_na = TRUE` uklanja redove s nedostajućim vrijednostima koji nastaju zbog nejednakog broja scenarista po filmovima.
+
+```{r}
+# Uređivanje podatkovnog okvira
+writers_dataset_tidy <- writers_dataset |>
+  pivot_longer(
+    cols = starts_with("writer_"),
+    names_to   = "writer_id",
+    names_prefix = "writer_",
+    values_to  = "writer",
+    values_drop_na = TRUE
+  )
+```
+
+Nakon primjene `pivot_longer()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank" (rang filma), "movie" (naziv filma), "writer_id" (redni broj scenarista) i "writer" (ime scenarista). Svaki red predstavlja kombinaciju film-scenarist što omogućuje jednostavno brojanje filmova po scenaristu, identifikaciju najproduktivnijih scenarista ili analizu suradnji između različitih scenarista. Uređeni format također olakšava spajanje s drugim podacima o scenaristima te stvaranje vizualizacija mreža suradnji, što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu s odvojenim stupcima za svakog scenarista.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+writers_dataset_tidy
+```
+
+**5. Više vrijednosti u jednoj ćeliji**
+
+Ovaj oblik neurednih podataka predstavlja pojednostavljenu verziju prethodnog problema gdje se u jednoj ćeliji nalaze vrijednosti koje pripadaju različitim varijablama, odvojene određenim separatorom. Problem nastaje kada se dvije logički različite varijable kombiniraju u jednu kolonu radi uštede prostora ili zbog ograničenja u sustavima za pohranu podataka. Ovakva organizacija krši temeljna načela urednih podataka jer svaka ćelija treba sadržavati vrijednost samo jedne varijable. Kombiniranje različitih tipova informacija u istoj ćeliji otežava sve oblike analize jer je potrebno najprije izdvojiti pojedinačne komponente prije bilo kakve obrade podataka.
+
+U primjeru `imdb_combined_variables`, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji. Ovakav format onemogućuje direktno sortiranje filmova prema budžetu ili grupiranje prema redatelju jer su te informacije zakodane u kombiniranoj ćeliji koja zahtijeva dodatnu obradu.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+imdb_combined_variables
+```
+
+Problem se rješava pomoću funkcije `separate()` iz `tidyr` paketa koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument `col = director_budget` za specificiranje stupca koji se želi podijeliti, `into = c("director", "budget")` za definiranje naziva novih stupaca koji će nastati dijeljenjem i `sep = "_"` za navođenje separatora koji razdvaja različite vrijednosti. Funkcija `separate()` automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.
+
+::: {.callout-tip icon=false collapse="true" title="Funkcija: separate()"}
+`separate()` je ključna funkcija `tidyr` paketa koja se koristi kada imamo više varijabli spremljenih u jednoj ćeliji, a želimo ih razdvojiti u više stupaca. Funkcija može imati slijedeće argumente:
+
+| Argument | Objašnjenje |
+|---|---|
+| `data` | Podatkovni okvir kojem mijenjamo format. |
+| `col` | Naziv stupca koji želimo razdvojiti. |
+| `into` | Imena novih stupaca u koje želimo rasporediti rezultate. |
+| `sep` | Kako razdvajamo vrijednosti u stupcu (npr. "_", "-"). |
+| `remove` | Ako je `TRUE` (zadano), onda se originalni stupac briše nakon razdvajanja, a ako je `FALSE`, onda originalni stupac ostaje u tablici zajedno s novim stupcima. |
+| `convert` | Ako je `TRUE`, onda pokušava automatski pretvoriti nove stupce u odgovarajući tip podataka (npr. "1994" u integer), a ako je `FALSE`, koji je i zadani, onda će svi novi stupci biti character. |
+| `extra` | Što napraviti ako se vrijednost razdvoji na više dijelova nego što smo naveli u `into`. Može biti: `warn` (zadano) koje izdaje upozorenje i spaja višak u zadnji stupac, `drop` koje odbacuje višak i `merge` koje spaja višak u zadnji stupac bez upozorenja. |
+| `fill` | Što napraviti ako se vrijednost razdvoji na manje dijelova nego što smo naveli u `into`. Može biti: `warn` (zadano) koje izdaje upozorenje, a prazna mjesta popunjava s `NA`, `right` kojim se praznine dodaju na kraj i `left` kojim se praznine dodaju na početak. |
+:::
+
+```{r}
+# Uređivanje podatkovnog okvira
+imdb_combined_variables_tidy <- imdb_combined_variables |>
+  separate(
+    col = director_budget,
+    into = c("director", "budget"),
+    sep = "_"
+  )
+```
+
+Nakon primjene `separate()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank" (rang filma), "movie" (naziv filma), "director" (ime redatelja) i "budget" (budžet filma). Svaki red predstavlja jedan film s jasno odvojenima karakteristikama, pri čemu svaki stupac sadrži samo jedan tip informacije. Uređeni format omogućuje direktne analize poput usporedbe budžeta različitih filmova, identifikacije najskupljih produkcija, grupiranja filmova prema redatelju ili analize povezanosti između budžeta i ranga filma na ljestvici.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+imdb_combined_variables_tidy
+```
+
+**6. Ista varijabla raspodijeljena u sva stupca**
+
+Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable. Ovakav pristup posebno je problematičan za analize koje tretiraju varijablu kao cjelinu.
+
+U priloženom primjeru `director_names_dataset` informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu. Iako oba dijela logički pripadaju istoj varijabli "director_name", oni su tretirani kao zasebne varijable. Ovakav format otežava pretraživanje filmova prema redatelju, sortiranje prema abecednom redu ili usporedbu s drugim izvorima podataka gdje su imena redatelja predstavljena kao jedna cjelina.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+director_names_dataset
+```
+
+Problem se rješava pomoću funkcije `unite()` iz `tidyr` paketa koja omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument `col = "director_name"` za specificiranje naziva novog stupca koji će nastati spajanjem, zatim navodi nazive stupaca koji se žele spojiti (director_first_name, director_last_name), te argument sep = " " koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija unite() automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.
+
+::: {.callout-tip icon=false collapse="true" title="Funkcija: unite()"}
+Funkcija `unite()` koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od `separate()` funkcije. Funkcija može imati slijedeće argumente:
+
+| Argument | Objašnjenje |
+|---|---|
+| `data` | Podatkovni okvir na kojem se izvršava operacija spajanja stupaca. |
+| `col` | Naziv novog stupca koji će nastati spajanjem postojećih stupaca. Može se navesti kao string (u navodnicima) ili kao simbol (bez navodnika). |
+| `...` | Stupci koji se žele spojiti. |
+| `sep` | Separator koji se umeće između vrijednosti prilikom spajanja. |
+| `remove` | Logička vrijednost koja određuje treba li ukloniti originalne stupce iz rezultata. Zadana vrijednost je `TRUE` što znači da se originalni stupci brišu nakon spajanja. Ako postavite `FALSE`, zadržat ćete i originalne i novi spojeni stupac. |
+| `na.rm` | Logička vrijednost koja određuje treba li ukloniti nedostajuće vrijednosti (`NA`) prije spajanja. Ako je `TRUE`, `NA` vrijednosti se ignoriraju prilikom spajanja. Zadana vrijednost je `FALSE`. |
+:::
+
+```{r}
+# Uređivanje podatkovnog okvira
+director_names_dataset_tidy <- director_names_dataset |>
+  unite(
+    col = "director_name",
+    director_first_name,
+    director_last_name,
+    sep = " "
+  )
+```
+
+Nakon primjene `unite()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank" (rang filma), "movie" (naziv filma) i novi "director_name" (puno ime redatelja). Svaki red predstavlja jedan film s kompletnim imenom redatelja u jednom stupcu što omogućuje jednostavno sortiranje filmova prema imenima redatelja, filtriranje prema specifičnim redateljima te spajanje s drugim izvorima podataka koji koriste puna imena. Uređeni format također olakšava analize poput identifikacije najproduktivnijih redatelja, usporedbe opusa različitih redatelja ili stvaranja vizualizacija koje prikazuju distribuciju filmova prema redateljima, što bi zahtijevalo složene operacije spajanja stringova u neuredno organiziranom formatu s podijeljenim imenima.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+director_names_dataset_tidy
+```
