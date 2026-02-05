@@ -7,5 +7,11 @@
   },
   "references.qmd": {
     "references.html": "2ae7a9f3"
+  },
+  "01_uvod_u_znanost_o_podacima.qmd": {
+    "01_uvod_u_znanost_o_podacima.html": "e9ba7432"
+  },
+  "02_uvoz_podataka.qmd": {
+    "02_uvoz_podataka.html": "d8f031fe"
   }
 }
