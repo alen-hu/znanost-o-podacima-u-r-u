@@ -1,13 +1,14 @@
 ---
 title: "Uređivanje podataka"
-description: ""
+description: "U ovom poglavlju objašnjava se pojam urednih podataka i njihova uloga u analitičkom procesu. Uredni podaci definirani su kao podaci kod kojih svaka varijabla čini jedan stupac, svako opažanje jedan redak, a svaka pojedina opservacija zasebnu ćeliju. Poglavlje prikazuje kako se sirovi i neuređeni podaci mogu sustavno preoblikovati u analitički prikladan format, čime se omogućuje učinkovitija analiza, modeliranje i interpretacija rezultata."
 number-sections: true
-title-block-banner: "#753a97ff"
+title-block-banner: "#8B3A62"
 title-block-banner-color: "white"
 ---
 
 ```{r}
 #| include: false
+
 # Aktiviranje paketa
 library(tidyverse)
 library(DT)
@@ -216,7 +217,7 @@ director_names_dataset <- tribble(
 ```
 
 ::: {.callout-important icon=false collapse="true" title="Podaci korišteni u poglavlju"}
-U ovom će poglavlju biti demonstrirani se principi uređivanja podataka koristeći podatke o [IMDb ljestvici 250 najboljih filmova svih vremena](https://www.imdb.com/chart/top/) prikupljenih 07.09.2025. godine. IMDb (*Internet Movie Database*) globalna je internetska baza podataka filmova, televizijskih serija i drugih audiovizualnih sadržaja koju pokreće Amazon. Ova platforma sadrži opsežne informacije o filmovima, uključujući osnovne podatke poput naziva, godine proizvodnje, žanra i trajanja kao i detaljnije informacije o glumcima, redateljima, ocjenama korisnika te različitim ljestvicama popularnosti. IMDb ljestvica 250 najboljih filmova temelji se na ocjenama milijuna korisnika diljem svijeta i predstavlja jedan od najpoznatijih popisa kvalitetnih filmova u kinematografiji. 
+U ovom će poglavlju biti demonstrirani principi uređivanja podataka koristeći [IMDb ljestvice 250 najboljih filmova svih vremena](https://www.imdb.com/chart/top/) prikupljenih 07.09.2025. IMDb (*Internet Movie Database*) globalna je internetska baza podataka filmova, televizijskih serija i drugih audiovizualnih sadržaja koju pokreće Amazon. Ova platforma sadrži opsežne informacije o filmovima, uključujući osnovne podatke poput naziva, godine proizvodnje, žanra i trajanja kao i detaljnije informacije o glumcima, redateljima, ocjenama korisnika te različitim ljestvicama popularnosti. IMDb ljestvica 250 najboljih filmova temelji se na ocjenama milijuna korisnika diljem svijeta i predstavlja jedan od najpoznatijih popisa kvalitetnih filmova u kinematografiji. 
 
 Za potrebe objašnjavanja različitih segmenata uređivanja podataka koristit će se samo podatci o prvih deset filmova s navedenog popisa, a što omogućuje jasniji prikaz transformacijskih procesa bez nepotrebne složenosti velikih podatkovnih skupova. Navedeni podaci oblikovani su u različite formate podatkovnih okvira kako bi se na njima mogli demonstrirati različiti aspekti uređivanja podataka pomoću `tidyr` paketa. Kroz ove primjere bit će prikazano kako se neuredno organizirani podaci mogu transformirati u uredni format koji slijedi temeljna načela uređenih podataka.
 
@@ -263,11 +264,11 @@ Podatkovni okviri sadrže do 12 mogućih varijabli koje opisuju ključne karakte
 - "budget" - proračun filma u američkim dolarima (numerička vrijednost).
 :::
 
-**Uređivanje podataka** (*data tidying*) predstavlja proces transformacije podataka iz oblika u kojem su inicijalno organizirani u konzistentan, standardiziran format koji olakšava analizu i vizualizaciju. Uređivanje podataka zapravo obuhvaća pohranjivanje podataka u konzistentnom obliku koji odgovara semantici skupa podataka s načinom na koji su pohranjeni. Ovaj je proces temeljni korak u cjelokupnom procesu analize podataka jer omogućuje lakši i efikasniji rad s podacima pomoću različitih analitičkih alata.
+**Uređivanje podataka** (*data tidying*) predstavlja proces transformacije podataka iz oblika u kojem su inicijalno organizirani u konzistentan i standardiziran format koji olakšava analizu i vizualizaciju. Uređivanje podataka zapravo obuhvaća pohranjivanje podataka u konzistentnom obliku koji odgovara semantici skupa podataka s načinom na koji su pohranjeni. Ovaj je proces temeljni korak u cjelokupnom procesu analize podataka jer omogućuje lakši i efikasniji rad s podacima pomoću različitih analitičkih alata.
 
 Uređivanje i transformacija podataka zajedno se kolokvijalno nazivaju **hrvanje s podacima** (*data wrangling*) jer se odnose na dovođenje podataka u oblik koji je prirodan za rad, a koji često nalikuje borbi s podacima. Ova metafora dobro opisuje izazove s kojima se analitičari susreću kada trebaju pripremiti sirove podatke za analizu. Većina stvarnih podataka nije uredna što znači da će većina analiza zahtijevati barem malo uređivanja.
 
-Uređivanje podataka razlikuje se od općeg oblikovanja podataka (*data reshaping*) jer se fokusira specifično na postizanje određenih standarda organizacije podataka. Glavni cilj uređivanja podataka pritom nije stvaranje vizualno privlačnih prikaza podataka, nego uspostavljanje strukture koja omogućuje efikasno korištenje analitičkih alata i funkcija programskog jezika R.
+Uređivanje podataka razlikuje se od općeg oblikovanja podataka (*data reshaping*) jer se fokusira na postizanje određenih standarda organizacije podataka. Glavni cilj uređivanja podataka pritom nije stvaranje vizualno privlačnih prikaza podataka, nego uspostavljanje strukture koja omogućuje efikasno korištenje analitičkih alata i funkcija.
 
 U procesu bavljenja s podacima, uređivanje predstavlja ključnu kariku između uvoza podataka u R i njihove analize. Drugim riječima, nakon što se podaci uvezu, nužno je njihovo uređivanje jer uređeni podaci omogućuju fokusiranje napora na odgovaranje pitanja o podacima, a ne borbu s dovođenjem podataka u odgovarajući oblik za različite funkcije. Ovaj pristup značajno smanjuje mogućnost grešaka tijekom analize, ali i povećava produktivnost analitičara u bavljenju s podacima.
 
@@ -277,17 +278,17 @@ Postoje tri međusobno povezana pravila koja čine skup podataka urednim:
 
 1. **svaka varijabla je stupac, a svaki stupac je varijabla**;
 
-2. **svako opažanje je red, a svaki red je opažanje**;
+2. **svako opažanje je redak, a svaki redak je opažanje**;
 
 3. **svaka vrijednost je ćelija, a svaka ćelija je jedna vrijednost**.
 
-Segmenti podataka, konkretnije podatkovnog okvira u kojem su podaci spremljeni, raspoređeni su kroz varijable, opažanja i pojedine vrijednosti. **Varijabla** predstavlja svojstvo ili karakteristiku koja se mjeri i koja može poprimiti različite vrijednosti. U kontekstu filmskih podataka, varijable mogu biti naziv filma, godina premijere, žanr ili trajanje filma. U urednim podatkovnim okvirima one su raspoređene u stupcima podatkovnih okvira. To znači da svaki stupac u podatkovnom okviru predstavlja jednu vrstu informacije koju želimo pratiti. Primjerice, ako nas zanimaju informacije o nekim filmovima, varijable mogu biti "movie" u kojoj se nalaze nazivi filmova, "realise_year" u kojoj se nalaze godine kada je film premijerno prikazan, "runtime" u kojoj se nalazi trajanje filma, "director" u kojoj se nalazi ime redatelja itd. Svaki od ovih stupaca pritom mora sadržavati samo jedan tip podataka - varijabla "movie" samo nazive filmova, a varijabla "runtime" samo godine. **Opažanje** predstavlja jedan slučaj ili jedinicu analize za koju prikupljamo podatke o različitim varijablama. U urednim podatkovnim okvirima opažanja su pojedini redci u tablici koji pripadaju jednoj jedinici analize (npr. jednom ispitaniku, kućanstvu, državi itd.) i sadrži vrijednosti niza varijabli koje opisuju tu jedinicu. Dok varijable predstavljaju svojstva, opažanja su konkretne realizacije tih svojstava za svaku jedinicu. U primjeru filmova svaki red predstavlja po jedan film koji je po jedno opažanje. **Vrijednost** je najniža jedinica podatka u podatkovnom okviru, odnosno sadržaj jedne ćelije na sjecištu određene varijable (stupca) i opažanja (retka). Ona predstavlja jednu mjeru jedne varijable za jednu jedinicu i ne bi smjela sadržavati više informacija spojenih u istu ćeliju. U tehničkom smislu pojedinačna vrijednost je vrijednost određenog tipa podataka (npr. broj, logička vrijednost, znakovni niz, datum i vrijeme, faktor ili nedostajuća vrijednost - `NA`). Na primjer, vrijednost koja prikazuje varijablu "realise_year" za opažanje "The Shawshak Redemption" je "1994", a vrijednost koja prikazuje varijablu "director" za opažanje "The Lord of the Rings: The Return of the King" je "Peter Jackson".
+Segmenti podataka u podatkovnom okviru raspoređeni su kroz varijable, opažanja i pojedine vrijednosti. **Varijabla** predstavlja svojstvo ili karakteristiku koja se mjeri i koja može poprimiti različite vrijednosti. U kontekstu filmskih podataka, varijable mogu biti naziv filma, godina premijere, žanr ili trajanje filma. U urednim podatkovnim okvirima one su raspoređene u stupcima podatkovnih okvira. To znači da svaki stupac u podatkovnom okviru predstavlja jednu vrstu informacije koju želimo pratiti. Primjerice, ako nas zanimaju informacije o nekim filmovima, varijable mogu biti "movie" u kojoj se nalaze nazivi filmova, "realise_year" u kojoj se nalaze godine kada je film premijerno prikazan, "runtime" u kojoj se nalazi trajanje filma, "director" u kojoj se nalazi ime redatelja itd. Svaki od ovih stupaca pritom mora sadržavati samo jedan tip podataka - varijabla "movie" samo nazive filmova, a varijabla "runtime" samo godine. **Opažanje** predstavlja jedan slučaj ili jedinicu analize za koju prikupljamo podatke o različitim varijablama. U urednim podatkovnim okvirima opažanja su pojedini redci u tablici koji pripadaju jednoj jedinici analize (npr. jednom ispitaniku, kućanstvu, državi itd.) i sadrži vrijednosti niza varijabli koje opisuju tu jedinicu. Dok varijable predstavljaju svojstva, opažanja su konkretne realizacije tih svojstava za svaku jedinicu. U primjeru filmova svaki red predstavlja po jedan film koji je po jedno opažanje. **Vrijednost** je sadržaj jedne ćelije na sjecištu određene varijable i opažanja. Ona predstavlja jednu mjeru jedne varijable za jednu jedinicu i ne bi smjela sadržavati više informacija spojenih u istu ćeliju. U tehničkom smislu pojedinačna vrijednost je vrijednost određenog tipa podataka (npr. broj, logička vrijednost, znakovni niz, datum, vrijeme, faktor ili nedostajuća vrijednost). Na primjer, vrijednost koja prikazuje varijablu "realise_year" za opažanje "The Shawshak Redemption" je "1994", a vrijednost koja prikazuje varijablu "director" za opažanje "The Lord of the Rings: The Return of the King" je "Peter Jackson".
 
-Primjer jednog urednog podatkovnog okvira je `imdb_top_10_tidy_dataset` koji prikazuje top 10 filmova prema IMDb ljestvici u kojem je svaki redak jedno je opažanje, odnosno jedan film, a svaki stupac pojedino obilježje filma, odnosno varijablu koje prikazuju naziv, godinu izdanja, glumce, redatelje i ostale informacije o filmovima. Ovaj je podatkovni okvir primjer uredne strukture podataka jer ispunjava gore spomenuta tri uvjeta urednih podataka.
+Primjer jednog urednog podatkovnog okvira je `imdb_top_10_tidy_dataset` koji prikazuje top 10 filmova prema IMDb ljestvici u kojem je svaki redak jedno je opažanje, odnosno jedan film, a svaki stupac pojedino obilježje filma, odnosno varijabla koja prikazuju naziv, godinu izdanja, glumce, redatelje i ostale informacije o filmovima.
 
 ```{r}
 #| echo: false
-imdb_top_10_tidy_dataset
+datatable(imdb_top_10_tidy_dataset)
 ```
 
 Uredna struktura podataka je važna jer čini podatke kompatibilnima s R-ovim vektoriziranim pristupom i omogućuje direktnu upotrebu funkcija kao što su `filter()`, `group_by()`, `summarise()` i `ggplot()` bez dodatnih transformacija podataka. Kada su podatci uredni, moguće je direktno filtrirati podatke po bilo kojoj varijabli, grupirati podatke po kategorijama i kreirati vizualizacije bez složenih priprema. Ako su podaci neuredni, onda je provođenje svih ovih postupaka uvelike otežano.
@@ -296,40 +297,25 @@ Uredna struktura podataka je važna jer čini podatke kompatibilnima s R-ovim ve
 
 Isti temeljni podaci mogu se organizirati u različite formate, a dva najčešća su dugački (*long*) i široki (*wide*) format. Primjena ova dva formata ključno je za efikasno uređivanje podataka jer različite analize i vizualizacije zahtijevaju različite formate podataka.
 
-**Dugački format** karakteriziran je time što se sve vrijednosti jedne varijable nalaze u jednom stupcu. Ovaj format rezultira podatkovnim okvirom s više redaka, ali manjim brojem stupaca. Svaki red predstavlja jedno opažanje, a svaki stupac predstavlja jednu varijablu. Dugački format prirodniji je za analizu podataka jer slijedi temeljna načela urednih podataka. U ovom formatu lakše je provoditi grupne operacije, stvarati vizualizacije i primjenjivati statističke funkcije.Koristeći isti primjer filmskih ocjena, dugački format imao bi stupce "film", "godina" i "ocjena", gdje bi svaki red predstavljao jednu kombinaciju filma i godine s odgovarajućom ocjenom.
+**Dugački format** karakteriziran je time što se sve vrijednosti jedne varijable nalaze u jednom stupcu. Ovaj format rezultira podatkovnim okvirom s više redaka, ali manjim brojem stupaca. Svaki red predstavlja jedno opažanje, a svaki stupac predstavlja jednu varijablu. Dugački format prirodniji je za analizu podataka jer slijedi temeljna načela urednih podataka. U ovom formatu lakše je provoditi grupne operacije, stvarati vizualizacije i primjenjivati statističke funkcije. Koristeći isti primjer filmskih ocjena, dugački format imao bi stupce "movie", "year" i "runtime" gdje bi svaki red predstavljao jednu kombinaciju filma i godine s odgovarajućim vremenom trajanja.
 
-Primjer jednog takvog podatkovnog okvira je `imdb_top_10_long`. Taj je podatkovni okvir dugačak s po jednim zapisom za svaku kombinaciju filma i obilježja: obuhvaća top 10 filmova i za svaki bilježi godinu premijere, zemlje podrijetla, redatelja, scenariste, glavne glumce, žanrove, jezik, trajanje, boju i budžet. Primjerice, za film The Shawshank Redemption navodi 1994. kao godinu premijere, SAD kao zemlju podrijetla, redatelja Franka Darabonta, scenariste Stephena Kinga i Franka Darabonta, glumce Tima Robbinsa i Morgana Freemana, žanr dramu, jezik engleski, trajanje 142 minute, boju i budžet od 25 milijuna USD-a i tako za svih 10 filmova. Podaci su organizirani u dugom obliku s četiri stupca: "rank", "movie", "attribute" i "value". Stupci "rank" i "movie" čine identifikator svakog filma, a za svaki film postoji po više redaka, odnosno po jedan redak za svako obilježje koje je zapisano u varijabli "attribute". Naziv obilježja pritom stoji u varijabli "attribute", dok se sama vrijednost obilježja nalazi u varijabli "value". Time jedan film zauzima otprilike deset redaka (jedan po atributu), umjesto jednog širokog retka s mnogo stupaca.
-
-```{r}
-#| echo: false
-imdb_top_10_long
-```
+Primjer jednog takvog podatkovnog okvira je `imdb_top_10_long`. Podaci su organizirani u dugom obliku s četiri stupca: "rank", "movie", "attribute" i "value". Stupci "rank" i "movie" čine identifikator svakog filma, a za svaki film postoji po više redaka, odnosno po jedan redak za svako obilježje koje je zapisano u varijabli "attribute". Naziv obilježja pritom stoji u varijabli "attribute", dok se sama vrijednost obilježja nalazi u varijabli "value". Time jedan film zauzima otprilike deset redaka (jedan po atributu), umjesto jednog širokog retka s mnogo stupaca.
 
 ```{r}
 #| echo: false
-imdb_top_10_long
+datatable(imdb_top_10_long)
 ```
 
-Ovakav dugački format preferira se za:
-
-- vizualizacije pomoću `ggplot2` paketa,
-
-- grupne analize i sažimanja podataka,
-
-- primjenu većine `dplyr` funkcija i
-
-- modeliranje podataka.
-
-S druge strane, široki format karakteriziran je time što se vrijednosti jedne varijable protežu kroz više stupaca. U ovom formatu, podatkovni okvir ima manji broj redaka, ali veći broj stupaca. Imena stupaca često sadrže vrijednosti varijabli umjesto naziva varijabli. Široki format često je prirodniji za unos podataka i čovjeku je lakši za čitanje jer se podaci prezentiraju u kompaktnom obliku. Međutim, ovaj format može otežati analizu jer jedna varijabla nije sadržana u jednom stupcu, što krši temeljna načela urednih podataka.
+Ovakav dugački format preferira se za vizualizacije pomoću `ggplot2` paketa, grupne analize i sažimanja podataka, primjenu većine `dplyr` funkcija i modeliranje podataka. Ipak, široki format karakteriziran je time što se vrijednosti jedne varijable protežu kroz više stupaca. U ovom formatu, podatkovni okvir ima manji broj redaka, ali veći broj stupaca. Imena stupaca često sadrže vrijednosti varijabli umjesto naziva varijabli. Široki format često je prirodniji za unos podataka i čovjeku je lakši za čitanje jer se podaci prezentiraju u kompaktnom obliku. Međutim, ovaj format može otežati analizu jer jedna varijabla nije sadržana u jednom stupcu što krši temeljna načela urednih podataka.
 
 Primjer takvog podatkovnog okvira bio bi `imdb_decades`. U tom podatkovnom okviru svaki redak predstavlja po jedan film, svaki stupac pojedino desetljeće, a u ćelijama nalazi godina premijere filma u pojedinom desetljeću u kojem je film nastao, odnosno `NA` ako film nije nastao u tom desetljeću.
 
 ```{r}
 #| echo: false
-imdb_decades
+datatable(imdb_decades)
 ```
 
-Ovaj podatkovni okvir je nezgodan jer krši načela urednih podataka, odnosno desetljeća koje su vrijednosti postavljene su kao nazivi stupaca umjesto da budu u ćelijama pojedinih varijabli. To rezultira s puno nepotrebnih `NA` vrijednosti i otežava analizu jer nije moguće jednostavno filtrirati filmove po godini ili desetljeću. Umjesto šest stupaca za desetljeća, bolji format podataka bio bi onaj u kojem su dva stupca, jedan za desetljeće i jedan za godinu.
+Ovaj podatkovni okvir je problematičan jer krši načela urednih podataka, odnosno desetljeća koje su vrijednosti postavljene su kao nazivi stupaca umjesto da budu u ćelijama pojedinih varijabli. To rezultira s puno nepotrebnih `NA` vrijednosti i otežava analizu jer nije moguće jednostavno filtrirati filmove po godini ili desetljeću. Umjesto šest stupaca za desetljeća, bolji format podataka bio bi onaj u kojem su dva stupca, jedan za desetljeće i jedan za godinu.
 
 Široki format može biti korisniji za:
 
