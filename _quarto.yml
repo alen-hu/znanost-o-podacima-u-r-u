@@ -8,7 +8,12 @@ book:
   date: "2/5/2026"
   chapters:
     - index.qmd
-    - intro.qmd
+    - part: "Uvod u znanost o podacima"
+      chapters:
+        - 01_uvod_u_znanost_o_podacima.qmd
+    - part: "Uvoz i uređivanje podataka"
+      chapters:
+        - 02_uvoz_podataka.qmd
     - references.qmd
 
 bibliography: references.bib
