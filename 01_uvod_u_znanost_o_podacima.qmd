@@ -1,4 +1,10 @@
-# Introduction
+---
+title: "Uvod u znanost o podacima u R-u"
+description: ""
+number-sections: true
+title-block-banner: "#753a97ff"
+title-block-banner-color: "white"
+---
 
 This is a book created from markdown and executable code.
 

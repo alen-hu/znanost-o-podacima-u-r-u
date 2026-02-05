@@ -1,0 +1,8 @@
+main p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+strong, b {
+  color: #753a97ff;
+}
