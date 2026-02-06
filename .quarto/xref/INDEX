@@ -19,5 +19,44 @@
   },
   "04_manipulacija_podacima.qmd": {
     "04_manipulacija_podacima.html": "858a528b"
+  },
+  "01_01_uvod_u_znanost_o_podacima.qmd": {
+    "01_01_uvod_u_znanost_o_podacima.html": "5b0fac3f"
+  },
+  "02_01_uvoz_podataka.qmd": {
+    "02_01_uvoz_podataka.html": "503c9e13"
+  },
+  "02_02_uredivanje_podataka.qmd": {
+    "02_02_uredivanje_podataka.html": "a529a538"
+  },
+  "03_00_transformacija_podataka.qmd": {
+    "03_00_transformacija_podataka.html": "a69be0d6"
+  },
+  "03_01_manipulacija_podacima.qmd": {
+    "03_01_manipulacija_podacima.html": "6876df93"
+  },
+  "03_02_nedostajajuce_vrijednosti.qmd": {
+    "03_02_nedostajajuce_vrijednosti.html": "556ac372"
+  },
+  "03_03_pridruzivanje_podataka.qmd": {
+    "03_03_pridruzivanje_podataka.html": "236c85b6"
+  },
+  "03_04_brojevi.qmd": {
+    "03_04_brojevi.html": "e8733d4b"
+  },
+  "03_05_logicke_vrijednosti.qmd": {
+    "03_05_logicke_vrijednosti.html": "467c4b34"
+  },
+  "03_06_faktori.qmd": {
+    "03_06_faktori.html": "864e55a6"
+  },
+  "03_07_nizovi.qmd": {
+    "03_07_nizovi.html": "40b60da1"
+  },
+  "03_08_regularni_izrazi.qmd": {
+    "03_08_regularni_izrazi.html": "63fdbd60"
+  },
+  "03_09_datum_i_vrijeme.qmd": {
+    "03_09_datum_i_vrijeme.html": "9df18522"
   }
 }

@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="hr" xml:lang="hr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Nedostajajuće vrijednosti – Znanost o podacima u R-u</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03_03_pridruzivanje_podataka.html" rel="next">
+<link href="./03_01_manipulacija_podacima.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-86b712c1a9842e5c5be4cb0afbdd663e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner h1,
+      .quarto-title-block .quarto-title-banner h2,
+      .quarto-title-block .quarto-title-banner h3,
+      .quarto-title-block .quarto-title-banner h4,
+      .quarto-title-block .quarto-title-banner h5,
+      .quarto-title-block .quarto-title-banner h6
+      {
+        color: white;
+      }
+
+      .quarto-title-block .quarto-title-banner {
+        color: white;
+background: #8B3A62;
+      }
+</style>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./03_02_nedostajajuce_vrijednosti.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./03_02_nedostajajuce_vrijednosti.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></a></li></ol></nav>
+      <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Znanost o podacima u R-u</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Uvod</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Uvod u znanost o podacima</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_01_uvod_u_znanost_o_podacima.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Uvod u znanost o podacima</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Uvoz i uređivanje podataka</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_01_uvoz_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Uvoz podataka u R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_02_uredivanje_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Uređivanje podataka</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_00_transformacija_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformacija podataka</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_01_manipulacija_podacima.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Manipulacija podacima</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_02_nedostajajuce_vrijednosti.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_03_pridruzivanje_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Pridruživanje podataka</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_04_brojevi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Brojevi</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_05_logicke_vrijednosti.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Logičke vrijednosti</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_06_faktori.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Faktori</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_07_nizovi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Nizovi</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_08_regularni_izrazi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Regularni izrazi</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_09_datum_i_vrijeme.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Datum i vrijeme</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepoznavanje-nedostajajućih-vrijednosti" id="toc-prepoznavanje-nedostajajućih-vrijednosti" class="nav-link active" data-scroll-target="#prepoznavanje-nedostajajućih-vrijednosti"><span class="header-section-number">0.1</span> Prepoznavanje nedostajajućih vrijednosti</a></li>
+  <li><a href="#rad-s-nedostajajućim-vrijednostima" id="toc-rad-s-nedostajajućim-vrijednostima" class="nav-link" data-scroll-target="#rad-s-nedostajajućim-vrijednostima"><span class="header-section-number">0.2</span> Rad s nedostajajućim vrijednostima</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p><strong>Nedostajuće vrijednosti</strong> (<em>missing values</em>) predstavljaju jedan od najčešćih izazova u radu sa stvarnim podacima. Prilikom rada s velikim i složenim skupovima podataka, nedostajuće vrijednosti se gotovo neizbježno pojavljuju tijekom procesa prikupljanja, čišćenja i obrade podataka.</p>
+<p>U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s <code>NA</code> oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti, s druge strane, nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.</p>
+<p>Nedostajuće vrijednosti mogu nastati iz različitih razloga. Najčešće se pojavljuju zbog praktičnih razloga tijekom unosa podataka kada osoba koja unosi podatke preskoči određena polja ili koristiti konvencije za označavanje nepoznatih vrijednosti. Također mogu nastati zbog tehničkih problema s instrumentima za mjerenje, nedostupnosti ispitanika u određenim trenucima istraživanja ili zbog prethodne obrade podataka gdje su problematični zapisi uklonjeni. Jedan od najčešćih razloga je praktičnost unosa podataka kada se nedostajuće vrijednosti koriste kao oznaka da se vrijednost iz prethodnog reda prenosi dalje. To je posebno uobičajeno kod ručnog unosa podataka gdje se želi izbjeći ponavljanje istih vrijednosti. Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu. U drugim slučajevima, neki konkretni broj poput 99 ili -999 može predstavljati nedostajuću vrijednost što je naslijeđe iz starijih sustava koji nisu imali prikladan način za reprezentaciju nedostajućih vrijednosti.</p>
+<p>Postoji i poseban tip nedostajuće vrijednosti poznat kao <code>NaN</code> (<em>Not a Number</em>) koji nastaje kada se izvodi matematička operacija s neodređenim rezultatom, poput dijeljenja nule s nulom ili računanja korijena negativnog broja. Iako se <code>NaN</code> općenito ponaša slično kao <code>NA</code>, važno je razumjeti da predstavlja specifičan matematički koncept.</p>
+<p>Nedostajuće vrijednosti mogu značajno utjecati na analize podataka jer mogu interferirati s izračunavanjem statistika i stvarati neočekivane rezultate u grafičkim prikazima. One mijenjaju distribucije varijabli i mogu uvesti pristranost u rezultate. Njihova prisutnost može smanjiti statističku snagu analiza i otežati interpretaciju rezultata. Stoga je ključno razviti strategije za prepoznavanje, evaluaciju i rukovanje nedostajućim vrijednostima koje će omogućiti točne i pouzdane analize, ali i razumjeti kako ih prepoznati, raditi s njima i prilagoditi analitičke pristupe njihovoj prisutnosti u podacima. Ipak, važno je razumjeti da nedostajuće vrijednosti nisu uvijek greška ili problem koji treba riješiti. Ponekad one nose informacije o prirodi podataka ili procesu njihova prikupljanja. Na primjer, ako u anketi o prihodima velik broj ispitanika ne odgovara na pitanje o visini svoje plaće, onda to može ukazivati na osjetljivost teme ili socioekonomske karakteristike uzorka.</p>
+<section id="prepoznavanje-nedostajajućih-vrijednosti" class="level3" data-number="0.1">
+<h3 data-number="0.1" class="anchored" data-anchor-id="prepoznavanje-nedostajajućih-vrijednosti"><span class="header-section-number">0.1</span> Prepoznavanje nedostajajućih vrijednosti</h3>
+<p>U R-u postoji nekoliko osnovnih funkcija koje se koriste za prepoznavanje i rad s nedostajućim vrijednostima. Funkcija <code>is.na()</code> je najosnovnija funkcija za prepoznavanje nedostajajućih vrijednosti koja vraća logički vektor koji označava koje su vrijednosti u podatkovnom okviru nedostajuće. Pritom se može primijeniti na pojedinačne stupce ili na cijeli podatkovni okvir.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija is.na()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija is.na()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Funkcija <code>is.na()</code> koristi se za identifikaciju nedostajućih vrijednosti u R-u. Funkcija vraća logički vektor iste duljine kao ulazni objekt, pri čemu je svaki element <code>TRUE</code> ako je odgovarajuća vrijednost u ulaznom objektu nedostajuća, a <code>FALSE</code> ako nije.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Objašnjenje</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>R objekt koji se testira na prisutnost nedostajućih vrijednosti</td>
+</tr>
+<tr class="even">
+<td><code>recursive</code></td>
+<td>treba li funkcija <code>anyNA()</code> biti primijenjena rekurzivno na liste i pairliste</td>
+</tr>
+<tr class="odd">
+<td><code>value</code></td>
+<td>koristi se u kontekstu zamjene vrijednosti kroz funkciju <code>is.na&lt;-()</code> čime se specificiraju vrijednosti koje će zamijeniti nedostajuće pozicije u originalnom objektu</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>U <code>pokemon_dataset</code> pojavljuje se više nedostajućih vrijednosti, a koje se jednostavno mogu testirati funkcijom <code>is.na()</code>. Pritom je najjednostavniji način prvo provjeriti nedostajuće vrijednosti cijelog podatkovnog okvira, a tek kasnije pojedinih varijabli.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">is.na</span>(pokemon_dataset), <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         id  name type_1 type_2 total    HP attack defense special_attack
+ [1,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+ [2,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+ [3,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+ [4,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+ [5,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+ [6,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+ [7,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+ [8,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+ [9,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+[10,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+[11,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+[12,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+[13,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+[14,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+[15,] FALSE FALSE  FALSE   TRUE FALSE FALSE  FALSE   FALSE          FALSE
+[16,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+[17,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+[18,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+[19,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+[20,] FALSE FALSE  FALSE  FALSE FALSE FALSE  FALSE   FALSE          FALSE
+      special_defense speed generation legendary
+ [1,]           FALSE FALSE      FALSE     FALSE
+ [2,]           FALSE FALSE      FALSE     FALSE
+ [3,]           FALSE FALSE      FALSE     FALSE
+ [4,]           FALSE FALSE      FALSE     FALSE
+ [5,]           FALSE FALSE      FALSE     FALSE
+ [6,]           FALSE FALSE      FALSE     FALSE
+ [7,]           FALSE FALSE      FALSE     FALSE
+ [8,]           FALSE FALSE      FALSE     FALSE
+ [9,]           FALSE FALSE      FALSE     FALSE
+[10,]           FALSE FALSE      FALSE     FALSE
+[11,]           FALSE FALSE      FALSE     FALSE
+[12,]           FALSE FALSE      FALSE     FALSE
+[13,]           FALSE FALSE      FALSE     FALSE
+[14,]           FALSE FALSE      FALSE     FALSE
+[15,]           FALSE FALSE      FALSE     FALSE
+[16,]           FALSE FALSE      FALSE     FALSE
+[17,]           FALSE FALSE      FALSE     FALSE
+[18,]           FALSE FALSE      FALSE     FALSE
+[19,]           FALSE FALSE      FALSE     FALSE
+[20,]           FALSE FALSE      FALSE     FALSE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">is.na</span>(pokemon_dataset<span class="sc">$</span>type_2), <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+[13]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Za poseban slučaj <code>NaN</code> vrijednosti, koje nastaju kod neodređenih matematičkih operacija kao što su <code>0/0</code> ili <code>sqrt(-1)</code>, koristi se funkcija <code>is.nan()</code> koja se ponaša slično kao <code>NA</code>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija is.na()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija is.na()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Funkcija <code>is.nan()</code> koristi se za identifikaciju <code>NaN</code> vrijednosti koje označavaju matematički nedefinirane rezultate. Ključna razlika u ponašanju između funkcije <code>is.na()</code> i <code>is.nan()</code> je to da <code>is.na()</code> vraća <code>TRUE</code> i za <code>NA</code> i za <code>NaN</code> vrijednosti, dok <code>is.nan()</code> vraća <code>TRUE</code> samo za <code>NaN</code> vrijednosti.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 86%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Objašnjenje</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>R objekt koji se testira na prisutnost nedostajućih vrijednosti</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>————————————- NASTAVAK ————————————-</p>
+<p>Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija elementarnog R-a i <code>tidyverse</code> kolekcije paketa. Pritom se ističu funkcije <code>sum()</code> i <code>colSums()</code> za brojanje nedostajajućih vrijednosti u pojedinom stupcu te <code>rowSums()</code> za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom <code>is.na()</code> kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(pokemon_dataset<span class="sc">$</span>type_2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 386</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             id            name          type_1          type_2           total 
+              0               0               0             386               0 
+             HP          attack         defense  special_attack special_defense 
+              0               0               0               0               0 
+          speed      generation       legendary 
+              0               0               0 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] 0 0 0 0 1 1 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 1 1 0 0 1 1 1 1 1 1 1 1 0
+ [38] 1 1 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1
+ [75] 1 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 0 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
+[112] 0 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1 0 0 0 0 1 1 1 0 1 1 0 0 0 1 1 1 1 1
+[149] 1 0 0 0 0 0 0 1 0 0 0 1 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0
+[186] 0 1 1 0 1 0 0 0 1 1 1 0 1 0 0 1 1 0 0 0 1 1 1 0 0 0 1 1 0 0 1 1 1 0 1 0 1
+[223] 0 0 0 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 1 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 1
+[260] 1 1 1 1 1 1 0 0 0 0 0 0 0 1 1 1 0 1 0 0 0 1 0 0 0 1 1 1 1 1 1 0 1 0 0 0 0
+[297] 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 1 1 0 0 0 1 1 1 1 1 0 1 1 1 0 0 0 0 0 0 0
+[334] 1 0 0 0 1 1 1 1 1 1 1 0 1 1 0 0 0 1 1 0 0 0 1 1 1 1 1 0 0 1 0 0 0 0 1 1 0
+[371] 0 0 0 1 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 0 0 0 1 1 1 0 1 1
+[408] 1 0 0 0 0 0 0 1 1 1 0 0 0 0 1 1 1 0 0 0 0 1 1 1 1 1 1 0 1 0 0 1 1 0 0 0 0
+[445] 1 0 1 1 1 1 1 0 0 1 1 0 0 1 0 0 0 0 0 0 1 1 1 1 1 1 0 1 0 0 1 1 0 1 0 1 1
+[482] 1 0 0 0 0 1 0 1 0 0 0 0 0 0 1 1 0 0 1 1 0 0 0 0 1 1 1 0 0 0 0 0 0 1 0 1 1
+[519] 1 0 0 1 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 1 1 1 0 0 0 1 0 0 1 1 1 1 1 0 1 0 1
+[556] 1 1 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 1 1 1 1 1 0 0 1 0 1 0
+[593] 1 1 1 1 0 0 1 1 0 0 0 0 0 0 0 0 1 1 1 0 0 0 1 1 0 1 0 0 0 0 0 1 1 0 0 0 0
+[630] 1 1 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 0 0 0 1 0 0 0 0 0 1 0 0 0 0 1 1 1 1 1 1
+[667] 1 1 0 0 0 1 1 1 1 1 1 1 1 0 1 1 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1
+[704] 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 1 1 0 1 1 0 1 0 0 0 0 1 1 0 0 0 1 1 1
+[741] 1 1 1 0 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0 0 1 1 1
+[778] 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 0 0 0 0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Unutar <code>tidyverse</code>-a je posebno korisna funkcija <code>summarise()</code> za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara novi podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje NA vrijednosti za specifične stupce</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">na_count_type_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(type_2)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  na_count_type_2
+            &lt;int&gt;
+1             386</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ukupnog broja NA vrijednosti u cijelom podatkovnom okviru</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_NA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="fu">across</span>(<span class="fu">everything</span>()))))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  total_NA
+     &lt;int&gt;
+1      386</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ne-NA vrijednosti po grupama</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(generation) <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">not_NA_count =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(generation)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  generation not_NA_count
+  &lt;fct&gt;             &lt;int&gt;
+1 1                   166
+2 5                   165
+3 3                   160
+4 4                   121
+5 2                   106
+6 6                    82</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Funkcija <code>complete.cases()</code> je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redci u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">complete.cases</span>(pokemon_dataset)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1]  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE
+ [13] FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+ [25] FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [37]  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+ [49]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE
+ [61] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE
+ [73] FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE
+ [85] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE
+ [97] FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+[109] FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+[121]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE
+[133]  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE  TRUE FALSE
+[145] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE
+[157]  TRUE  TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE
+[169] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+[181]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE  TRUE
+[193]  TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE
+[205]  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE
+[217] FALSE FALSE  TRUE FALSE  TRUE FALSE  TRUE  TRUE  TRUE FALSE FALSE  TRUE
+[229]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+[241]  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE
+[253] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+[265] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE
+[277] FALSE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+[289] FALSE FALSE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE
+[301]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE
+[313] FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE
+[325] FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE
+[337]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE
+[349]  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE
+[361]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE
+[373]  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE
+[385] FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
+[397] FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
+[409]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+[421]  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+[433] FALSE FALSE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+[445] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE
+[457]  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+[469] FALSE FALSE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE FALSE
+[481] FALSE FALSE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE  TRUE  TRUE  TRUE
+[493]  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE
+[505]  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE
+[517] FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE
+[529]  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE
+[541]  TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE  TRUE
+[553] FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE FALSE
+[565] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[577] FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE
+[589] FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE
+[601]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE
+[613]  TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE
+[625] FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[637] FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE  TRUE
+[649]  TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE
+[661] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE FALSE
+[673] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE
+[685]  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE
+[697]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+[709]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE
+[721]  TRUE FALSE FALSE  TRUE FALSE FALSE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE
+[733] FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+[745] FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE
+[757]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+[769]  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE
+[781]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE  TRUE
+[793] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Zadržavanje samo kompletnih redaka</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset <span class="ot">&lt;-</span> pokemon_dataset[<span class="fu">complete.cases</span>(pokemon_dataset), ]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 414 × 13
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       grass  poison   318    45     49      49             65
+ 2     2 ivysaur         grass  poison   405    60     62      63             80
+ 3     3 venusaur        grass  poison   525    80     82      83            100
+ 4     3 venusaurmega v… grass  poison   625    80    100     123            122
+ 5     6 charizard       fire   flying   534    78     84      78            109
+ 6     6 charizardmega … fire   dragon   634    78    130     111            130
+ 7     6 charizardmega … fire   flying   634    78    104      78            159
+ 8    12 butterfree      bug    flying   395    60     45      50             90
+ 9    13 weedle          bug    poison   195    40     35      30             20
+10    14 kakuna          bug    poison   205    45     25      50             25
+# ℹ 404 more rows
+# ℹ 4 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Osim toga funkcija <code>drop_na()</code> iz <code>tidyr</code> paketa uklanja redove koji sadrže nedostajuće vrijednosti u bilo kojem od specificiranih stupaca. Ova funkcija je vrlo jednostavna za korištenje i omogućava preciznu kontrolu nad time koji stupci se razmatraju pri uklanjanju redova.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima u bilo kojem stupcu</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 414 × 13
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       grass  poison   318    45     49      49             65
+ 2     2 ivysaur         grass  poison   405    60     62      63             80
+ 3     3 venusaur        grass  poison   525    80     82      83            100
+ 4     3 venusaurmega v… grass  poison   625    80    100     123            122
+ 5     6 charizard       fire   flying   534    78     84      78            109
+ 6     6 charizardmega … fire   dragon   634    78    130     111            130
+ 7     6 charizardmega … fire   flying   634    78    104      78            159
+ 8    12 butterfree      bug    flying   395    60     45      50             90
+ 9    13 weedle          bug    poison   195    40     35      30             20
+10    14 kakuna          bug    poison   205    45     25      50             25
+# ℹ 404 more rows
+# ℹ 4 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima samo u specifičnim stupcima</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(type_2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 414 × 13
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       grass  poison   318    45     49      49             65
+ 2     2 ivysaur         grass  poison   405    60     62      63             80
+ 3     3 venusaur        grass  poison   525    80     82      83            100
+ 4     3 venusaurmega v… grass  poison   625    80    100     123            122
+ 5     6 charizard       fire   flying   534    78     84      78            109
+ 6     6 charizardmega … fire   dragon   634    78    130     111            130
+ 7     6 charizardmega … fire   flying   634    78    104      78            159
+ 8    12 butterfree      bug    flying   395    60     45      50             90
+ 9    13 weedle          bug    poison   195    40     35      30             20
+10    14 kakuna          bug    poison   205    45     25      50             25
+# ℹ 404 more rows
+# ℹ 4 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="rad-s-nedostajajućim-vrijednostima" class="level3" data-number="0.2">
+<h3 data-number="0.2" class="anchored" data-anchor-id="rad-s-nedostajajućim-vrijednostima"><span class="header-section-number">0.2</span> Rad s nedostajajućim vrijednostima</h3>
+<p>Postoji više načina rješavanja problema nedostajajućih vrijednosti, od jednostavnijih kao što je njihovo ignoriranje do raznoraznih imputiranja regresijom. U nastavku će biti prikazano nekoliko jednostavnijih načina rada s nedostajajućim vrijednostima.</p>
+<p><strong>Popunjavanje nedostajajućih vrijednosti fiksnim vrijednostima</strong></p>
+<p>Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu ili neku drugu kategorijalnu varijablu. U takvim slučajevima možete koristiti funkcija <code>coalesce()</code> <code>dplyr</code> paketa kako bi se u ćelije podatkovnog okvira stavila neka fiksna vrijednost. Jedna je često korištena mogućnost kod numeričkih imputiranje aritmetičke sredine vrijednosti koje imamo na mjesto nedostajajućih vrijednosti.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Zamjena NA vrijednosti s nulom</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">coalesce</span>(type_2, <span class="st">"unknown"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 800 × 13
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       grass  poison   318    45     49      49             65
+ 2     2 ivysaur         grass  poison   405    60     62      63             80
+ 3     3 venusaur        grass  poison   525    80     82      83            100
+ 4     3 venusaurmega v… grass  poison   625    80    100     123            122
+ 5     4 charmander      fire   unkno…   309    39     52      43             60
+ 6     5 charmeleon      fire   unkno…   405    58     64      58             80
+ 7     6 charizard       fire   flying   534    78     84      78            109
+ 8     6 charizardmega … fire   dragon   634    78    130     111            130
+ 9     6 charizardmega … fire   flying   634    78    104      78            159
+10     7 squirtle        water  unkno…   314    44     48      65             50
+# ℹ 790 more rows
+# ℹ 4 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Last Observation Carried Forward</strong></p>
+<p>Česta se nedostajajuće vrijednosti javljaju iz praktičnih razloga pri unosu podataka. U tim slučajevima nedostajuće vrijednosti označavaju da se vrijednost iz prethodnog reda prenosi dalje, odnosno da bi vrijednost u pojedinoj ćeliji trebala biti ona iz prve gornje popunjene ćelije. U R-u se na taj način mogu popuniti nedostajuće vrijednosti pomoću funkcije <code>fill()</code> iz <code>tidyr</code> paketa.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pokemon_dataset, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 13
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       grass  poison   318    45     49      49             65
+ 2     2 ivysaur         grass  poison   405    60     62      63             80
+ 3     3 venusaur        grass  poison   525    80     82      83            100
+ 4     3 venusaurmega v… grass  poison   625    80    100     123            122
+ 5     4 charmander      fire   &lt;NA&gt;     309    39     52      43             60
+ 6     5 charmeleon      fire   &lt;NA&gt;     405    58     64      58             80
+ 7     6 charizard       fire   flying   534    78     84      78            109
+ 8     6 charizardmega … fire   dragon   634    78    130     111            130
+ 9     6 charizardmega … fire   flying   634    78    104      78            159
+10     7 squirtle        water  &lt;NA&gt;     314    44     48      65             50
+# ℹ 4 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(type_2, <span class="at">.direction =</span> <span class="st">"down"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 800 × 3
+      id name                      type_2
+   &lt;dbl&gt; &lt;chr&gt;                     &lt;fct&gt; 
+ 1     1 bulbasaur                 poison
+ 2     2 ivysaur                   poison
+ 3     3 venusaur                  poison
+ 4     3 venusaurmega venusaur     poison
+ 5     4 charmander                poison
+ 6     5 charmeleon                poison
+ 7     6 charizard                 flying
+ 8     6 charizardmega charizard x dragon
+ 9     6 charizardmega charizard y flying
+10     7 squirtle                  flying
+# ℹ 790 more rows</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Pretvaranje konkretnih vrijednosti u nedostajuće</strong></p>
+<p>Ponekad je moguće naići na suprotan problem gdje neka konkretna vrijednost zapravo predstavlja nedostajuću vrijednost. To se obično događa s podacima generiranim od strane programa koji nemaju prikladan način za predstavljanje nedostajajućih vrijednosti, pa umjesto toga koriste neku specijalnu vrijednost poput “99” ili “-999” kao oznaku za nedostajajuće vrijednosti.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">na_if</span>(type_2, <span class="st">"flying"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 800 × 3
+      id name                      type_2
+   &lt;dbl&gt; &lt;chr&gt;                     &lt;fct&gt; 
+ 1     1 bulbasaur                 poison
+ 2     2 ivysaur                   poison
+ 3     3 venusaur                  poison
+ 4     3 venusaurmega venusaur     poison
+ 5     4 charmander                &lt;NA&gt;  
+ 6     5 charmeleon                &lt;NA&gt;  
+ 7     6 charizard                 &lt;NA&gt;  
+ 8     6 charizardmega charizard x dragon
+ 9     6 charizardmega charizard y &lt;NA&gt;  
+10     7 squirtle                  &lt;NA&gt;  
+# ℹ 790 more rows</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Isti se problem može riješiti odmah pri uvozu podataka u R argumentom <code>na</code> u funkciji <code>read_csv()</code>.</p>
+<p><strong>Parametar <code>na.rm</code></strong></p>
+<p>Parametar <code>na.rm</code> označava “<em>NA remove</em>” i ignorira nedostajajuće vrijednosti tijekom izračuna. Postavljanjem argumenta <code>na.rm = TRUE</code> funkcije poput <code>sum()</code>, <code>mean()</code>, <code>median()</code>, <code>min()</code>, <code>max()</code> i druge, računaju rezultate bez utjecaja nedostajajućih vrijednosti. Bez ovog parametra, funkcije bi vratile <code>NA</code> ako su nedostajajuće vrijednosti prisutne u podacima.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor s nedostajajućim vrijednostima</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>, <span class="dv">5</span>, <span class="cn">NA</span>, <span class="dv">7</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.6</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Na sličan se način argument može koristiti i ako se spomenute funkcije koriste unutar glagol <code>summarise()</code> iz <code>dplyr</code> paketa.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./03_01_manipulacija_podacima.html" class="pagination-link" aria-label="Manipulacija podacima">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Manipulacija podacima</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03_03_pridruzivanje_podataka.html" class="pagination-link" aria-label="Pridruživanje podataka">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Pridruživanje podataka</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Nedostajajuće vrijednosti"</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> ""</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> "#8B3A62"</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner-color:</span><span class="co"> "white"</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> hr</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: "Tablica"</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: "Slika"</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Aktiviranje paketa</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RKaggle)</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hms)</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Učitavanje podataka</span></span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>poke_raw <span class="ot">&lt;-</span> <span class="fu">get_dataset</span>(<span class="st">"abcsds/pokemon"</span>)</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Prilagodba podatkovnog okvira</span></span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="ot">&lt;-</span> poke_raw <span class="sc">|&gt;</span></span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">`</span><span class="at">#</span><span class="st">`</span>,</span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">`</span><span class="at">Name</span><span class="st">`</span>,</span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="st">`</span><span class="at">Type 1</span><span class="st">`</span>,</span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_2 =</span> <span class="st">`</span><span class="at">Type 2</span><span class="st">`</span>,</span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack =</span> <span class="st">`</span><span class="at">Attack</span><span class="st">`</span>,</span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">defense =</span> <span class="st">`</span><span class="at">Defense</span><span class="st">`</span>,</span>
+<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_attack =</span> <span class="st">`</span><span class="at">Sp. Atk</span><span class="st">`</span>,</span>
+<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_defense =</span> <span class="st">`</span><span class="at">Sp. Def</span><span class="st">`</span>,</span>
+<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">speed =</span> <span class="st">`</span><span class="at">Speed</span><span class="st">`</span>,</span>
+<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="st">`</span><span class="at">Generation</span><span class="st">`</span>,</span>
+<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">legendary =</span> <span class="st">`</span><span class="at">Legendary</span><span class="st">`</span></span>
+<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>, <span class="st">`</span><span class="at">type_2</span><span class="st">`</span>, generation), as.character),</span>
+<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(legendary, as.logical),</span>
+<span id="cb37-55"><a href="#cb37-55" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb37-56"><a href="#cb37-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">str_to_lower</span>(.x))) <span class="sc">|&gt;</span></span>
+<span id="cb37-57"><a href="#cb37-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-58"><a href="#cb37-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_1</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>),</span>
+<span id="cb37-59"><a href="#cb37-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_2</span><span class="st">`</span>),</span>
+<span id="cb37-60"><a href="#cb37-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">generation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">generation</span><span class="st">`</span>)</span>
+<span id="cb37-61"><a href="#cb37-61" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb37-62"><a href="#cb37-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-63"><a href="#cb37-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-64"><a href="#cb37-64" aria-hidden="true" tabindex="-1"></a>**Nedostajuće vrijednosti** (*missing values*) predstavljaju jedan od najčešćih izazova u radu sa stvarnim podacima. Prilikom rada s velikim i složenim skupovima podataka, nedostajuće vrijednosti se gotovo neizbježno pojavljuju tijekom procesa prikupljanja, čišćenja i obrade podataka.</span>
+<span id="cb37-65"><a href="#cb37-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-66"><a href="#cb37-66" aria-hidden="true" tabindex="-1"></a>U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s <span class="in">`NA`</span> oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti, s druge strane, nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.</span>
+<span id="cb37-67"><a href="#cb37-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-68"><a href="#cb37-68" aria-hidden="true" tabindex="-1"></a>Nedostajuće vrijednosti mogu nastati iz različitih razloga. Najčešće se pojavljuju zbog praktičnih razloga tijekom unosa podataka kada osoba koja unosi podatke preskoči određena polja ili koristiti konvencije za označavanje nepoznatih vrijednosti. Također mogu nastati zbog tehničkih problema s instrumentima za mjerenje, nedostupnosti ispitanika u određenim trenucima istraživanja ili zbog prethodne obrade podataka gdje su problematični zapisi uklonjeni. Jedan od najčešćih razloga je praktičnost unosa podataka kada se nedostajuće vrijednosti koriste kao oznaka da se vrijednost iz prethodnog reda prenosi dalje. To je posebno uobičajeno kod ručnog unosa podataka gdje se želi izbjeći ponavljanje istih vrijednosti. Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu. U drugim slučajevima, neki konkretni broj poput 99 ili -999 može predstavljati nedostajuću vrijednost što je naslijeđe iz starijih sustava koji nisu imali prikladan način za reprezentaciju nedostajućih vrijednosti.</span>
+<span id="cb37-69"><a href="#cb37-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-70"><a href="#cb37-70" aria-hidden="true" tabindex="-1"></a>Postoji i poseban tip nedostajuće vrijednosti poznat kao <span class="in">`NaN`</span> (*Not a Number*) koji nastaje kada se izvodi matematička operacija s neodređenim rezultatom, poput dijeljenja nule s nulom ili računanja korijena negativnog broja. Iako se <span class="in">`NaN`</span> općenito ponaša slično kao <span class="in">`NA`</span>, važno je razumjeti da predstavlja specifičan matematički koncept.</span>
+<span id="cb37-71"><a href="#cb37-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-72"><a href="#cb37-72" aria-hidden="true" tabindex="-1"></a>Nedostajuće vrijednosti mogu značajno utjecati na analize podataka jer mogu interferirati s izračunavanjem statistika i stvarati neočekivane rezultate u grafičkim prikazima. One mijenjaju distribucije varijabli i mogu uvesti pristranost u rezultate. Njihova prisutnost može smanjiti statističku snagu analiza i otežati interpretaciju rezultata. Stoga je ključno razviti strategije za prepoznavanje, evaluaciju i rukovanje nedostajućim vrijednostima koje će omogućiti točne i pouzdane analize, ali i razumjeti kako ih prepoznati, raditi s njima i prilagoditi analitičke pristupe njihovoj prisutnosti u podacima. Ipak, važno je razumjeti da nedostajuće vrijednosti nisu uvijek greška ili problem koji treba riješiti. Ponekad one nose informacije o prirodi podataka ili procesu njihova prikupljanja. Na primjer, ako u anketi o prihodima velik broj ispitanika ne odgovara na pitanje o visini svoje plaće, onda to može ukazivati na osjetljivost teme ili socioekonomske karakteristike uzorka.</span>
+<span id="cb37-73"><a href="#cb37-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-74"><a href="#cb37-74" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prepoznavanje nedostajajućih vrijednosti</span></span>
+<span id="cb37-75"><a href="#cb37-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-76"><a href="#cb37-76" aria-hidden="true" tabindex="-1"></a>U R-u postoji nekoliko osnovnih funkcija koje se koriste za prepoznavanje i rad s nedostajućim vrijednostima. Funkcija <span class="in">`is.na()`</span> je najosnovnija funkcija za prepoznavanje nedostajajućih vrijednosti koja vraća logički vektor koji označava koje su vrijednosti u podatkovnom okviru nedostajuće. Pritom se može primijeniti na pojedinačne stupce ili na cijeli podatkovni okvir.</span>
+<span id="cb37-77"><a href="#cb37-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-78"><a href="#cb37-78" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija is.na()"}</span>
+<span id="cb37-79"><a href="#cb37-79" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`is.na()`</span> koristi se za identifikaciju nedostajućih vrijednosti u R-u. Funkcija vraća logički vektor iste duljine kao ulazni objekt, pri čemu je svaki element <span class="in">`TRUE`</span> ako je odgovarajuća vrijednost u ulaznom objektu nedostajuća, a <span class="in">`FALSE`</span> ako nije.</span>
+<span id="cb37-80"><a href="#cb37-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-81"><a href="#cb37-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
+<span id="cb37-82"><a href="#cb37-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------------------------|------------------------------------|</span></span>
+<span id="cb37-83"><a href="#cb37-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`x`</span> <span class="pp">|</span> R objekt koji se testira na prisutnost nedostajućih vrijednosti <span class="pp">|</span></span>
+<span id="cb37-84"><a href="#cb37-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`recursive`</span> <span class="pp">|</span> treba li funkcija <span class="in">`anyNA()`</span> biti primijenjena rekurzivno na liste i pairliste <span class="pp">|</span></span>
+<span id="cb37-85"><a href="#cb37-85" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`value`</span> <span class="pp">|</span> koristi se u kontekstu zamjene vrijednosti kroz funkciju <span class="in">`is.na&lt;-()`</span> čime se specificiraju vrijednosti koje će zamijeniti nedostajuće pozicije u originalnom objektu <span class="pp">|</span></span>
+<span id="cb37-86"><a href="#cb37-86" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-87"><a href="#cb37-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-88"><a href="#cb37-88" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-89"><a href="#cb37-89" aria-hidden="true" tabindex="-1"></a>U <span class="in">`pokemon_dataset`</span> pojavljuje se više nedostajućih vrijednosti, a koje se jednostavno mogu testirati funkcijom <span class="in">`is.na()`</span>. Pritom je najjednostavniji način prvo provjeriti nedostajuće vrijednosti cijelog podatkovnog okvira, a tek kasnije pojedinih varijabli.</span>
+<span id="cb37-90"><a href="#cb37-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-93"><a href="#cb37-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-94"><a href="#cb37-94" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">is.na</span>(pokemon_dataset), <span class="dv">20</span>)</span>
+<span id="cb37-95"><a href="#cb37-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-96"><a href="#cb37-96" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">is.na</span>(pokemon_dataset<span class="sc">$</span>type_2), <span class="dv">20</span>)</span>
+<span id="cb37-97"><a href="#cb37-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-98"><a href="#cb37-98" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-99"><a href="#cb37-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-100"><a href="#cb37-100" aria-hidden="true" tabindex="-1"></a>Za poseban slučaj <span class="in">`NaN`</span> vrijednosti, koje nastaju kod neodređenih matematičkih operacija kao što su <span class="in">`0/0`</span> ili <span class="in">`sqrt(-1)`</span>, koristi se funkcija <span class="in">`is.nan()`</span> koja se ponaša slično kao <span class="in">`NA`</span>.</span>
+<span id="cb37-101"><a href="#cb37-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-102"><a href="#cb37-102" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija is.na()"}</span>
+<span id="cb37-103"><a href="#cb37-103" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`is.nan()`</span> koristi se za identifikaciju <span class="in">`NaN`</span> vrijednosti koje označavaju matematički nedefinirane rezultate. Ključna razlika u ponašanju između funkcije <span class="in">`is.na()`</span> i <span class="in">`is.nan()`</span> je to da <span class="in">`is.na()`</span> vraća <span class="in">`TRUE`</span> i za <span class="in">`NA`</span> i za <span class="in">`NaN`</span> vrijednosti, dok <span class="in">`is.nan()`</span> vraća <span class="in">`TRUE`</span> samo za <span class="in">`NaN`</span> vrijednosti.</span>
+<span id="cb37-104"><a href="#cb37-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-105"><a href="#cb37-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje                                                     <span class="pp">|</span></span>
+<span id="cb37-106"><a href="#cb37-106" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|-----------------------------------------------------------------|</span></span>
+<span id="cb37-107"><a href="#cb37-107" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`x`</span>      <span class="pp">|</span> R objekt koji se testira na prisutnost nedostajućih vrijednosti <span class="pp">|</span></span>
+<span id="cb37-108"><a href="#cb37-108" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-109"><a href="#cb37-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-110"><a href="#cb37-110" aria-hidden="true" tabindex="-1"></a>------------------------------------- NASTAVAK -------------------------------------</span>
+<span id="cb37-111"><a href="#cb37-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-112"><a href="#cb37-112" aria-hidden="true" tabindex="-1"></a>Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija elementarnog R-a i <span class="in">`tidyverse`</span> kolekcije paketa. Pritom se ističu funkcije <span class="in">`sum()`</span> i <span class="in">`colSums()`</span> za brojanje nedostajajućih vrijednosti u pojedinom stupcu te <span class="in">`rowSums()`</span> za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom <span class="in">`is.na()`</span> kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.</span>
+<span id="cb37-113"><a href="#cb37-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-114"><a href="#cb37-114" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-117"><a href="#cb37-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-118"><a href="#cb37-118" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(pokemon_dataset<span class="sc">$</span>type_2))</span>
+<span id="cb37-119"><a href="#cb37-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-120"><a href="#cb37-120" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span>
+<span id="cb37-121"><a href="#cb37-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-122"><a href="#cb37-122" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span>
+<span id="cb37-123"><a href="#cb37-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-124"><a href="#cb37-124" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-125"><a href="#cb37-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-126"><a href="#cb37-126" aria-hidden="true" tabindex="-1"></a>Unutar <span class="in">`tidyverse`</span>-a je posebno korisna funkcija <span class="in">`summarise()`</span> za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara novi podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.</span>
+<span id="cb37-127"><a href="#cb37-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-128"><a href="#cb37-128" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-131"><a href="#cb37-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-132"><a href="#cb37-132" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje NA vrijednosti za specifične stupce</span></span>
+<span id="cb37-133"><a href="#cb37-133" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">na_count_type_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(type_2)))</span>
+<span id="cb37-134"><a href="#cb37-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-135"><a href="#cb37-135" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ukupnog broja NA vrijednosti u cijelom podatkovnom okviru</span></span>
+<span id="cb37-136"><a href="#cb37-136" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> </span>
+<span id="cb37-137"><a href="#cb37-137" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_NA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="fu">across</span>(<span class="fu">everything</span>()))))</span>
+<span id="cb37-138"><a href="#cb37-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-139"><a href="#cb37-139" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ne-NA vrijednosti po grupama</span></span>
+<span id="cb37-140"><a href="#cb37-140" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-141"><a href="#cb37-141" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(generation) <span class="sc">%&gt;%</span></span>
+<span id="cb37-142"><a href="#cb37-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">not_NA_count =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(generation)))</span>
+<span id="cb37-143"><a href="#cb37-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-144"><a href="#cb37-144" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-145"><a href="#cb37-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-146"><a href="#cb37-146" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`complete.cases()`</span> je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redci u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.</span>
+<span id="cb37-147"><a href="#cb37-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-148"><a href="#cb37-148" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-151"><a href="#cb37-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-152"><a href="#cb37-152" aria-hidden="true" tabindex="-1"></a><span class="fu">complete.cases</span>(pokemon_dataset)</span>
+<span id="cb37-153"><a href="#cb37-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-154"><a href="#cb37-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-157"><a href="#cb37-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-158"><a href="#cb37-158" aria-hidden="true" tabindex="-1"></a><span class="co"># Zadržavanje samo kompletnih redaka</span></span>
+<span id="cb37-159"><a href="#cb37-159" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset <span class="ot">&lt;-</span> pokemon_dataset[<span class="fu">complete.cases</span>(pokemon_dataset), ]</span>
+<span id="cb37-160"><a href="#cb37-160" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset</span>
+<span id="cb37-161"><a href="#cb37-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-162"><a href="#cb37-162" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-163"><a href="#cb37-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-164"><a href="#cb37-164" aria-hidden="true" tabindex="-1"></a>Osim toga funkcija <span class="in">`drop_na()`</span> iz <span class="in">`tidyr`</span> paketa uklanja redove koji sadrže nedostajuće vrijednosti u bilo kojem od specificiranih stupaca. Ova funkcija je vrlo jednostavna za korištenje i omogućava preciznu kontrolu nad time koji stupci se razmatraju pri uklanjanju redova.</span>
+<span id="cb37-165"><a href="#cb37-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-166"><a href="#cb37-166" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-169"><a href="#cb37-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-170"><a href="#cb37-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima u bilo kojem stupcu</span></span>
+<span id="cb37-171"><a href="#cb37-171" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-172"><a href="#cb37-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb37-173"><a href="#cb37-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-174"><a href="#cb37-174" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima samo u specifičnim stupcima</span></span>
+<span id="cb37-175"><a href="#cb37-175" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb37-176"><a href="#cb37-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(type_2)</span>
+<span id="cb37-177"><a href="#cb37-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-178"><a href="#cb37-178" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-179"><a href="#cb37-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-180"><a href="#cb37-180" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rad s nedostajajućim vrijednostima</span></span>
+<span id="cb37-181"><a href="#cb37-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-182"><a href="#cb37-182" aria-hidden="true" tabindex="-1"></a>Postoji više načina rješavanja problema nedostajajućih vrijednosti, od jednostavnijih kao što je njihovo ignoriranje do raznoraznih imputiranja regresijom. U nastavku će biti prikazano nekoliko jednostavnijih načina rada s nedostajajućim vrijednostima.</span>
+<span id="cb37-183"><a href="#cb37-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-184"><a href="#cb37-184" aria-hidden="true" tabindex="-1"></a>**Popunjavanje nedostajajućih vrijednosti fiksnim vrijednostima**</span>
+<span id="cb37-185"><a href="#cb37-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-186"><a href="#cb37-186" aria-hidden="true" tabindex="-1"></a>Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu ili neku drugu kategorijalnu varijablu. U takvim slučajevima možete koristiti funkcija <span class="in">`coalesce()`</span> <span class="in">`dplyr`</span> paketa kako bi se u ćelije podatkovnog okvira stavila neka fiksna vrijednost. Jedna je često korištena mogućnost kod numeričkih imputiranje aritmetičke sredine vrijednosti koje imamo na mjesto nedostajajućih vrijednosti.</span>
+<span id="cb37-187"><a href="#cb37-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-188"><a href="#cb37-188" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-191"><a href="#cb37-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-192"><a href="#cb37-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Zamjena NA vrijednosti s nulom</span></span>
+<span id="cb37-193"><a href="#cb37-193" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-194"><a href="#cb37-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">coalesce</span>(type_2, <span class="st">"unknown"</span>))</span>
+<span id="cb37-195"><a href="#cb37-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-196"><a href="#cb37-196" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-197"><a href="#cb37-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-198"><a href="#cb37-198" aria-hidden="true" tabindex="-1"></a>**Last Observation Carried Forward**</span>
+<span id="cb37-199"><a href="#cb37-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-200"><a href="#cb37-200" aria-hidden="true" tabindex="-1"></a>Česta se nedostajajuće vrijednosti javljaju iz praktičnih razloga pri unosu podataka. U tim slučajevima nedostajuće vrijednosti označavaju da se vrijednost iz prethodnog reda prenosi dalje, odnosno da bi vrijednost u pojedinoj ćeliji trebala biti ona iz prve gornje popunjene ćelije. U R-u se na taj način mogu popuniti nedostajuće vrijednosti pomoću funkcije <span class="in">`fill()`</span> iz <span class="in">`tidyr`</span> paketa.</span>
+<span id="cb37-201"><a href="#cb37-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-202"><a href="#cb37-202" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-205"><a href="#cb37-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-206"><a href="#cb37-206" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pokemon_dataset, <span class="dv">10</span>)</span>
+<span id="cb37-207"><a href="#cb37-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-208"><a href="#cb37-208" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-209"><a href="#cb37-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb37-210"><a href="#cb37-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(type_2, <span class="at">.direction =</span> <span class="st">"down"</span>)</span>
+<span id="cb37-211"><a href="#cb37-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-212"><a href="#cb37-212" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-213"><a href="#cb37-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-214"><a href="#cb37-214" aria-hidden="true" tabindex="-1"></a>**Pretvaranje konkretnih vrijednosti u nedostajuće**</span>
+<span id="cb37-215"><a href="#cb37-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-216"><a href="#cb37-216" aria-hidden="true" tabindex="-1"></a>Ponekad je moguće naići na suprotan problem gdje neka konkretna vrijednost zapravo predstavlja nedostajuću vrijednost. To se obično događa s podacima generiranim od strane programa koji nemaju prikladan način za predstavljanje nedostajajućih vrijednosti, pa umjesto toga koriste neku specijalnu vrijednost poput "99" ili "-999" kao oznaku za nedostajajuće vrijednosti.</span>
+<span id="cb37-217"><a href="#cb37-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-218"><a href="#cb37-218" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-221"><a href="#cb37-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-222"><a href="#cb37-222" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-223"><a href="#cb37-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb37-224"><a href="#cb37-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">na_if</span>(type_2, <span class="st">"flying"</span>))</span>
+<span id="cb37-225"><a href="#cb37-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-226"><a href="#cb37-226" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-227"><a href="#cb37-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-228"><a href="#cb37-228" aria-hidden="true" tabindex="-1"></a>Isti se problem može riješiti odmah pri uvozu podataka u R argumentom <span class="in">`na`</span> u funkciji <span class="in">`read_csv()`</span>.</span>
+<span id="cb37-229"><a href="#cb37-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-230"><a href="#cb37-230" aria-hidden="true" tabindex="-1"></a>**Parametar `na.rm`**</span>
+<span id="cb37-231"><a href="#cb37-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-232"><a href="#cb37-232" aria-hidden="true" tabindex="-1"></a>Parametar <span class="in">`na.rm`</span> označava "*NA remove*" i ignorira nedostajajuće vrijednosti tijekom izračuna. Postavljanjem argumenta <span class="in">`na.rm = TRUE`</span> funkcije poput <span class="in">`sum()`</span>, <span class="in">`mean()`</span>, <span class="in">`median()`</span>, <span class="in">`min()`</span>, <span class="in">`max()`</span> i druge, računaju rezultate bez utjecaja nedostajajućih vrijednosti. Bez ovog parametra, funkcije bi vratile <span class="in">`NA`</span> ako su nedostajajuće vrijednosti prisutne u podacima.</span>
+<span id="cb37-233"><a href="#cb37-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-234"><a href="#cb37-234" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-237"><a href="#cb37-237" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-238"><a href="#cb37-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor s nedostajajućim vrijednostima</span></span>
+<span id="cb37-239"><a href="#cb37-239" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>, <span class="dv">5</span>, <span class="cn">NA</span>, <span class="dv">7</span>)</span>
+<span id="cb37-240"><a href="#cb37-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-241"><a href="#cb37-241" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x)</span>
+<span id="cb37-242"><a href="#cb37-242" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-243"><a href="#cb37-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-244"><a href="#cb37-244" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-245"><a href="#cb37-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-246"><a href="#cb37-246" aria-hidden="true" tabindex="-1"></a>Na sličan se način argument može koristiti i ako se spomenute funkcije koriste unutar glagol <span class="in">`summarise()`</span> iz <span class="in">`dplyr`</span> paketa.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

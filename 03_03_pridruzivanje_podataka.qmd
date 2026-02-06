@@ -1,0 +1,595 @@
+---
+title: "Pridruživanje podataka"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+```{r}
+#| include: false
+# Stvaranje prvog podatkovnog okvira s id-om, imenima i tipovima
+pokemon_names <- pokemon_dataset |>
+  filter(name %in% c("bulbasaur", "ivysaur", "pidgey", "rattata", "pikachu", "zubat", "venonat", "golem", "rhyhorn", "magmar", "mewtwo", "teddiursa", "blaziken", "gardevoir", "skitty")) |>
+  select(id, name, type_1)
+
+# Stvaranje drugog podatkovnog okvira sa snagama
+pokemon_strength <- pokemon_dataset |>
+  filter(name %in% c("bulbasaur", "manectric", "cacnea", "rattata", "castform", "pikachu", "banette", "venonat", "rhyhorn", "bagon", "mewtwo", "metang", "blaziken", "kyogre", "turtwig")) |>
+  select(id, name, special_attack, special_defense)
+```
+
+::: {.callout-important icon="false" collapse="true" title="Podaci korišteni u dijelu poglavlja"}
+Za potrebe demonstracije različitih tehnika pridruživanja podatkovnih okvira, izvorni podaci o Pokemonima iz `pokemon_dataset` podatkovnog okvira podjeljeni su na dva manja podatkovna okvira. Podatkovni okvir `pokemon_names` predstavlja osnovni identifikacijski podatkovni okvir koja sadrži temeljne informacije o Pokemonima. Ovaj okvir uključuje tri varijable: "id", "name" i "type_1". Podatkovni okvir `pokemon_strength` predstavlja tablicu borbenih statistika koja sadrži mjerenja specijalnih sposobnosti Pokemona. Ovaj okvir uključuje četiri varijable: "id", "name", "special_attack" i "special_defense".
+
+```{r}
+#| echo: false
+head(pokemon_names, 5)
+head(pokemon_strength, 5)
+```
+
+Ovako dizajnirani podatkovni okviri rezultiraju raspodjelom Pokemona u kojoj postoje Pokemoni prisutni u oba podatkovna okvira, Pokemoni koji se nalaze samo u `pokemon_names` i prisutni samo u `pokemon_strength` podatkovnom okviru. Ovakva struktura podataka omogućuje da na praktičan način bude demonstrirano kako različite vrste spajanja tretiraju situacije s potpunim i djelomičnim preklapanjem.
+:::
+
+Analiza podataka rijetko se oslanja samo na jedan podatkovni okvir. U praksi, podaci o istim istrazivanim podacima često dolaze iz različitih izvora ili su organizirani u više podatkovnih okvira kako bi se olakšalo njihovo upravljanje i ažuriranje. Proces objedinjavanja podataka iz više podatkovnih okvira naziva se **pridruživanje podataka** (engl. *data joining*). Spajanje omogućuje da iz fragmenata informacija raspoređenih u više tablica sastavimo cjelovitu sliku potrebnu za donošenje zaključaka.
+
+Najjednostavniji način pridruživanja podataka je `dplyr` paketom koji nudi šest različitih funkcija za spajanje podatkovnih okvira: `left_join()`, `right_join()`, `inner_join()`, `full_join()`, `semi_join()` i `anti_join()`. Sve ove funkcije dijele zajednički način rada - primaju dva podatkovna okvira (koji se u dokumentaciji označavaju kao x ili lijevi i y ili desni podatkovni okvir) te vraćaju novi podatkovni okvir kao rezultat spajanja. Razlike među ovim funkcijama očituju se u tome koji se redovi zadržavaju u konačnom rezultatu i kako se tretiraju zapisi koji nemaju odgovarajući par u drugom podatkovnom okviru.
+
+Postoji dvije vrste pridruživanja koje se mogu koristiti `dplyr` paketom:
+
+-   **Mutacijsko pridruživanje** (*mutating join*): Omogućuje kombiniranje varijabli iz dva podatkovna okvira na način da najprije pronalazi odgovarajuće parove zapisa pomoću ključeva, a zatim kopira varijable iz jednog podatkovnog okvira u drugi. Mutacijsko pridruživanje uključuje:
+
+    -   `full_join()`: Zadržava sve opservacije iz obja podatkovna okvira te, ako nema podudaranja u nekom od njih, onda se to mjesto popunjava s `NA`, a koristiti se kada želimo zadržati sve podatke iz oba podatkovna okvira bez obzira postoji li podudaranje ili ne.
+
+    -   `inner_join()`: Zadržava samo opservacije koje imaju odgovarajuće vrijednosti u obja podatkovna okvira, odnosno samo zajedničke za oba podatkovna okvira, a koristi se kada želimo zadržati samo podatke koji su zajednički.
+
+    -   `left_join()`: Zadržava sva opažanja iz lijevog (prvog) podatkovnog okvira i dodaje odgovarajuće vrijednosti iz desnog (drugog) podatkovnog okvira, a koristiti se kada želimo zadržati sve podatke iz lijevog podatkovnog okvira bez obzira postoji li podudaranje u desnom.
+
+    -   `right_join()`: Zadržava sva opažanja iz desnog (drugog) podatkovnog okvira i dodaje odgovarajuće vrijednosti iz lijevog (prvog) podatkovnog okvira, a koristiti se kada želimo zadržati sve podatke iz desnog podatkovnog okvira bez obzira postoji li podudaranje u lijevom.
+
+-   **Filtrirano pridruživanje** (*filtering join*) je pridruživanje podataka temeljeno na principu filtriranja. Postoje dvije vrste filtrirnih pridruživanja:
+
+    -   `semi_join()`: Vraća retke iz prvog podatkovnog okvira koji imaju odgovarajuće vrijednosti u drugom podatkovnom okviru, ali ne dodaje stupce iz drugog podatkovnog okvira, a koristi se kada želimo filtrirati prvi podatkovni okvir prema podacima koji postoje u drugom podatkovnom okviru, ali nas pritom ne zanimaju dodatni stupci iz druge tablice.
+
+    -   `anti_join()`: Vraća retke iz prvog podatkovnog okvira koji nemaju podudaranje u drugom podatkovnom okviru, a koristi se kada želimo pronaći retke u prvom podatkovnom okviru koji nemaju podudaranje u drugom podatkovnom okviru.
+
+::: {.callout-tip icon="false" collapse="true" title="Glagoli pridruživanja"}
+Glagoli iz `dplyr` paketa za pridruživanje podatkovnih okvira koriste slične argumente. Zajednički argumenti za `*_join()` glagole su:
+
+| Argument | Objašnjenje |
+|------------------------------------|------------------------------------|
+| `x` i `y` | podatkovni okviri za kombiniranje - `x` predstavlja lijevi podatkovni okvir, a `y` desni |
+| `by` | kontrolira koje se varijable koriste za podudaranje opažanja u dvije tablice: 1. `NULL` (zadana vrijednost) koji koristi zajedničke stupce s istim imenima u obje tablice, 2. vektor koji koristi samo neke od zajedničkih varijabli i 3. imenovani vektor, npr. `by = c("a" = "b")`, ako su imena stupaca različita |
+| `suffx` | sufiksi koji se dodaju imenima stupaca koji se pojavljuju u obje tablice (moguće je proslijediti vektor sufiksa, jedan za prvi i jedan za drugi podatkovni okvir) |
+| `copy` | što se događa kada podatkovni okviri nisu na istoj lokaciji (npr. jedna je u memoriji, druga u bazi podataka): ako je `TRUE`, onda će se drugi podatkovni okvir kopirati na istu lokaciju kao prvi, a ako nije, onda će ostati na različitim lokacijama (zadana vrijednost je `FALSE`) |
+| `keep` | kontrolira koje varijable se zadržavaju u rezultatu - kada je `NULL` (zadano), zadržavaju se ključevi samo iz x tabele |
+| `na_matches` | kontrolira kako se tretiraju `NA` vrijednosti prilikom spajanja: 1. `"na"` (zadano) - `NA` vrijednosti se podudaraju s drugim `NA` vrijednostima međusobno, 2. `"never"` - `NA` vrijednosti se ne podudaraju |
+| `multiple` | kontrolira što se događa kada jedan red iz prvog podatkovnog okvira odgovara više redova iz drugog podatkovnog okvira: 1. `"all"` (zadano) - zadržavaju se sva podudaranja (može rezultirati više redova nego u originalnoj tabeli), 2. `"any"` - zadržava se bilo koje od podudaranja (obično prvo), 3. `"first"` - zadržava se samo prvo podudaranje, 4. `"last"` - zadržava se samo zadnje podudaranje |
+| `unmatched` | određuje što se događa s redovima koji nemaju podudaranja: 1. `"drop"` (zadano) - redovi bez podudaranja se uklanjaju (standardno ponašanje inner_join-a), 2. `"error"` - funkcija će baciti grešku ako postoje redovi bez podudaranja |
+| `relationship` | omogućuje eksplicitno definiranje očekivane prirode veze između tabela: 1. `NULL` (zadano) - ne provjerava se tip veze, 2. `"one-to-one"` - svaki red iz prvog podatkovnog okvira odgovara točno jednom redu iz drugog, 3. `"one-to-many"` - svaki red iz prvog podatkovnog okvira može odgovarati više podatkovnih okvira iz drugog, 4. `"many-to-one"` - više redova iz prvog podatkovnog okvira može odgovarati jednom redu iz drugog, 5. `"many-to-many"` - više redova iz oba podatkovna okvira može se međusobno podudarati |
+
+Prilikom strukturiranja kodova, pravila su slična uobičajenima. U prvi se red navodi prvi, odnosno **lijevi podatkovni okvir** kojem se pridružuje drugi. U novi se red piše glagol povezivanja, a podatkovni okvir i glagol povezivanja, kao i eventualni budući glagoli, povezuju se poveznicima.
+:::
+
+### Pridruživanje podataka `dplyr` paketom
+
+#### Mutacijsko pridruživanje
+
+**Mutacijsko pridruživanje** prvi je oblik pridruživanje koje omogućuje kombiniranje varijabli iz dva podatkovna okvira tako da prvo pronalazi parove zapisa pomoću funkcijom određenih ključeva, a zatim kopira varijable iz jednog podatkovnog okvira u drugi. Slično kao glagol `mutate()`, koristi se za spajanje dodaju nove varijable s desne strane podatkovnog okvira.
+
+##### Unutarnje pridruživanje
+
+Prvi oblik pridruživanja podatkovnih okvira je je **Unutarnje pridruživanje** kojim se spajaju dvija podatkovna okvira, ali samo unutar zajedničkih opažanja u oba podatkovna okvira. Drugim riječima, u novi se podatkovni okvir uvrštavaju samo ona opažanja zajednička za oba podatkovna okvira. Ono se izvodi glagolom `inner_join()`.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Korištenje glagola `inner_join()` na primjeru podatkovnih okvira `pokemon_names` i `pokemon_strength` vraća samo one Pokemone koji se nalaze u oba podatkovna okvira. U ovom slučaju to je ukupno 7 Pokemona: Bulbasaur, Rattata, Pikachu, Venonat, Rhyhorn, Mewtwo i Blaziken. Svi Pokemoni koji se nalaze samo u `pokemon_names` ili samo u `pokemon_strength` biti će isključeni iz ispisa.
+
+```{r}
+# Unutarnje spajanje - zadržavaju se samo Pokemoni koji postoje u oba podatkovna okvira
+inner_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+```
+:::
+
+##### Vanjska pridruživanja
+
+Iste principe možemo primijeniti za **vanjska pridruživanja** koja zadržavaju opažanja koja se pojavljuju u barem jednom od podatkovnih okvira. Ova pridruživanja funkcioniraju dodavanjem dodatnog retka svakom podatkovnom okviru koji ima ključ koji odgovara svim slučajevima kada nijedan drugi ključ ne odgovara, a vrijednosti su popunjene s `NA`. Postoje tri vrste vanjskih spajanja, a razlikuju se po tome koji podatkovni okvir dobiva dodatni redak s `NA` vrijednostima: potpuno, lijevo i desno.
+
+**Lijevo pridruživanje** zadržava sve zapise iz lijevog ili prvog podatkovnog okvira, odnosno onog koji je među kodovima označen argumentom `x`. Pritom će svaki redak iz lijevog podatkovnog okvira biti prisutan u rezultatu jer može, u najgorem slučaju, biti sparen s retkom `NA` vrijednosti iz desnog podatkovnog okvira.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Glagol `left_join()` vraća točno 15 redaka - koliko ih i ima u početnim podatkovnim okvirima. U prvom slučaju u kojem se u lijevi podatkovni okvir `pokemon_names` dodaju vrijednosti iz `pokemon_strenght`, za Pokemone koji postoje i u `pokemon_strength`, vrijednosti "special_attack" i "special_defense" bit će popunjene stvarnim vrijednostima iz toga podatkovnog okvira. Za Pokemone koji postoje samo u `pokemon_names` te vrijednosti biti će `NA`. Suprotno vrijedi za drugi slučaj.
+
+```{r}
+# Lijevo spajanje - svi Pokemoni iz pokemon_names su zadržani
+left_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+
+# Lijevo spajanje - svi Pokemoni iz pokemon_strength su zadržani
+left_join(
+  x = pokemon_strength,
+  y = pokemon_names,
+  by = join_by(id, name)
+)
+```
+:::
+
+**Desno pridruživanje** zadržava sve zapise iz desnog podatkovnog okvira koji je u kodovima označen argumentima `y`. Svaki redak iz desnog podatkovnog okvira bit će prisutan u rezultatu jer može biti sparen s retkom `NA` vrijednosti iz lijevog podatkovnog okvira. Rezultat i dalje odgovara strukturi podatkovnog okvira lijevog podatkovnog okvira koliko je to moguće.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Glagol `right_join()` vraća 15 redaka kao i glagol `left_join()` - koliko i ima u početnim podatkovnim okvirima. U prvom primjeru, za Pokemone koji postoje samo u `pokemon_strength`, vrijednosti varijabli "id", "name" i "type_1" bit će `NA` jer ti Pokemoni nisu prisutni u `pokemon_names`, a isto, ali obrnuto, vrijedi u drugom primjeru.
+
+```{r}
+# Desno spajanje - svi Pokemoni iz pokemon_strength su zadržani
+right_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+
+# Desno spajanje - svi Pokemoni iz pokemon_names su zadržani
+right_join(
+  x = pokemon_strength,
+  y = pokemon_names,
+  by = join_by(id, name)
+)
+```
+:::
+
+Konačno, **potpuno pridruživanje** (*full join*) zadržava sve zapise koji se pojavljuju u oba podatkovna okvira. Svaki redak i iz podatkovnog okvira označenog argumentom `x` i iz onog označenog `y` bit će uključen u rezultat jer obje tablice imaju rezervni redak s `NA` vrijednostima.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Glagol `full_join()` vraća 23 redaka, odnosno zbroj svih jedinstvenih Pokemona iz oba izvora. Pritom 16 Pokemona ima `NA` ili za "special_attack" i "special_defense" ili pak za "name", "type_1" i "type_2". Samo sedam Pokemona imat će potpune podatke iz oba izvora jer su to oni pokemoni čije se vrijednosti nalaze u oba podatkovna okvira.
+
+```{r}
+# Potpuno spajanje - svi Pokemoni iz oba podatkovna okvira su zadržani
+full_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+```
+:::
+
+#### Filtrirano pridruživanje
+
+Broj podudarnosti također određuje ponašanje filtrirnih pridruživanja. Pritom se razlikuju dvije funkcije koje imaju namjenu filtriranja, polu i anti pridruživanje. U oba slučaja važno je samo postojanje podudarnosti, a ne koliko ih puta ima. To znači da filtrirna spajanja nikada ne dupliciraju retke kao što to čine mutacijska spajanja.
+
+##### Polu-pridruživanje
+
+Glagol `semi_join()` zadržava sve retke iz podatkovnog okvira koji su označeni argumentom `x`, a koji imaju barem jednu podudarnost u podatkovnom okviru `y`.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Rezultat glagola `semi_join()` je ispis od 7 Pokemona koji se nalaze i u `pokemon_names` i u `pokemon_strength`. Važno je primijetiti da rezultat sadrži samo stupce iz `pokemon_names` jer `semi_join()` ne dodaje nove stupce, nego samo filtrira retke na temelju postojanja podudarnosti.
+
+```{r}
+# Zadržavanje samo Pokemona koji imaju podatke o snazi
+semi_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+```
+:::
+
+##### Anti-pridruživanje
+
+Glagol `anti_join()` predstavlja suprotnost glagolu `semi_join()` jer vraća sve retke iz podatkovnog okvira `x` koji nemaju podudarnost u podatkovnom okviru `y`. Glagol je korista za pronalaženje nedostajućih vrijednosti koje su implicitno prisutne u podacima. Takve implicitno nedostajuće vrijednosti ne pojavljuju se kao `NA`, nego postoje samo kao odsutnost određenih kombinacija vrijednosti.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Na primjer, možemo koristiti funkciju `anti_join()` kako bismo pronašli Pokemone za koje nemamo podatke o specijalnim sposobnostima. Rezultat će sadržavati osam Pokemona koji se nalaze u `pokemon_names`, ali ne i u `pokemon_strength`. Ovi Pokemoni predstavljaju praznine u podacima o specijalnim sposobnostima. Funkcija `anti_join()` olakšava identifikaciju takvih praznina što je prvi korak prema njihovom popunjavanju prikupljanjem dodatnih podataka ili razumijevanju zašto ti podaci nedostaju.
+
+```{r}
+# Pronalaženje Pokemona bez podataka o snazi
+anti_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+```
+:::
+
+Primijetimo da zbroj redaka iz `semi_join()` (7 Pokemona) i `anti_join()` (8 Pokemona) daje točno ukupan broj redaka u `pokemon_names` (15 Pokemona). To je zato što filtrirana pridruživanja zajedno predstavljaju komplementarne operacije koje zajedno pokrivaju sve retke iz početnog podatkovnog okvira.
+
+### Dodatne funkcionalnosti `*_join()` glagola
+
+#### Organizacija kodova
+
+Prilikom spajanja podatkovnih okvira u R-u, postoje dva osnovna pristupa organizaciji koda koji vode istom rezultatu, ali se razlikuju u sintaksi i čitljivosti.
+
+Prvi je pristup organizacije funkcijski te temelji se na tradicionalnoj sintaksi pozivanja funkcija u R-u. U ovom pristupu, `*_join()` glagol poziva se eksplicitno, a svi argumenti navode se prema njihovim imenima. Prvi argument `x` predstavlja prvi ili lijevi podatkovni okvir, a drugi argument `y` predstavlja drugi ili desni podatkovni okvir, dok argument `by` specificira ključeve prema kojima se spajanje izvršava. Ovakav zapis omogućuje potpunu jasnoću o tome koji se podaci nalaze na kojoj poziciji i koja je uloga svakog argumenta.
+
+```{r}
+#| eval: false
+#| include: false
+inner_join(
+  x = pokemon_names,
+  y = pokemon_strength,
+  by = join_by(id, name)
+)
+```
+
+Međutim, ova organizacija kodova ima i određena ograničenja. Kada je potrebno izvršiti više uzastopnih transformacija podataka, ugniježđavanje funkcijskih poziva postaje nepraktično i teško čitljivo, primjerice ako nakon spajanja želimo filtrirati podatke i odabrati samo određene stupce:
+
+```{r}
+#| eval: false
+#| include: false
+select(
+  filter(
+    inner_join(
+      x = pokemon_names,
+      y = pokemon_strength,
+      by = join_by(id, name)
+    ),
+    special_attack > 50
+  ),
+  id, name, type_1, special_attack
+)
+```
+
+Drugi, pristupom koristi operator cjevovoda `|>`. Njime se podatkovni okvir `pokemon_names` "prosljeđuje" glagolu `inner_join()` kao njezin prvi argument, a operator `|>` uzima rezultat s lijeve strane i automatski ga postavlja kao prvi argument funkcije s desne strane. Budući da `inner_join()` očekuje podatkovni okvir `x`, ili prvi podatkovni okvir, kao prvi argument, `pokemon_names` zauzima tu poziciju, dok `pokemon_strength` postaje argument `y` ili drugi podatkovni okvir.
+
+```{r}
+#| eval: false
+#| include: false
+pokemon_names |>
+  inner_join(pokemon_strength, join_by(id, name))
+```
+
+Primjerice, isti niz operacija koji smo prethodno prikazali u funkcijskom stilu, u onom kod kojeg se koristi operator `|>` izgleda bi ovako:
+
+```{r}
+#| eval: false
+#| include: false
+pokemon_names |>
+  inner_join(pokemon_strength, join_by(id, name)) |>
+  filter(special_attack > 50) |>
+  select(id, name, type_1, special_attack)
+```
+
+Ovaj kod jasno pokazuje slijed operacija: započinjemo s `pokemon_names`, kombiniramo ga s `pokemon_strength`, filtriramo retke gdje je specijalni napad veći od 50 i konačno odabiremo samo željene stupce. Svaki korak logički slijedi iz prethodnog što čini kod intuitivnim za čitanje i razumijevanje.
+
+Iako su oba pristupa organizaciji kodova validna, u nastavku ćemo koristiti pristup s operatorom `|>` jer on bolje odgovara načinu na koji ljudi razmišljaju o obradi podataka kao o nizu logički povezanih koraka transformacije. Ovaj pristup također se usklađuje s filozofijom paketa `dplyr` i preporukama većeg dijela stručne literature.
+
+#### Korištenje dodatnih argumenata
+
+##### Specificiranje argumenta za ključeve
+
+Argument `by` u funkcijama za spajanje podatkovnih okvira služi za eksplicitno specificiranje ključeva - varijabli koje se koriste za povezivanje zapisa iz dva podatkovna okvira. Ovaj argument govori R-u koje stupce treba usporediti prilikom traženja odgovarajućih parova redaka između dva podatkovna okvira. `by` može specificirati jedan ili više ključeva, a može se koristiti i za spajanje stupaca koji imaju različita imena u dva podatkovna okvira.
+
+U modernoj sintaksi, preporučuje se korištenje funkcije `join_by()` kao nastavak na `by` argument umjesto starijeg pristupa s tekstualnim vektorima. Funkcija `join_by()` jasnija je, fleksibilnija i omogućuje specifikaciju složenijih uvjeta spajanja. U funkciju se zapravo umeću nazivi varijabli na temelju kojih se nastoji spojiti podatkovne okvire.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Često želimo spajanje izvršiti samo prema jednom ključu, čak i kada postoje drugi zajednički stupci. Na primjer, može biti korisno zadržati oba stupca name kako bismo provjerili jesu li potpuno identični.
+
+```{r}
+pokemon_names |>
+  inner_join(pokemon_strength, join_by(id, name))
+```
+
+U ovom slučaju, R će spojiti redove samo na temelju "id" i "name" vrijednosti.
+:::
+
+Pritom argument `by` nije obavezan. Ako se ne navedete, onda će R automatski primijeniti **prirodno spajanje** (*natural join*) koje znači da će R automatski prepoznati sve stupce koji imaju identična imena u oba podatkovna okvira i koristiti ih kao ključeve za spajanje. Ova automatska detekcija temelji se na heuristici koja u mnogim situacijama daje željene rezultate, ali nije uvijek pouzdana. Upravo zato je dobra praksa eksplicitno navoditi argument `by`, čak i kada očekujemo da će automatska detekcija raditi ispravno.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_names |>
+  inner_join(pokemon_strength)
+```
+
+Kada izvršimo ovu naredbu, R automatski prepoznaje da obje tablice imaju zajedničku varijablu "id" i "name" te ju koristi kao ključ za spajanje. U konzoli ćemo vidjeti poruku koja potvrđuje ovaj automatski odabir: `Joining with 'by = join_by(id)'`. Rezultat će biti podatkovni okvir koji sadrži sve Pokemone iz `pokemon_names` (svi redci su zadržani) obogaćen dodatnim stupcima "special_attack" i "special_defense" iz podatkovnog okvira `pokemon_strength`.
+:::
+
+Konačno, ponekad je potrebno pridružiti podatke gdje ključevi imaju različita imena u dva podatkovna okvira. Na primjer, možda imamo podatkovni okvir u kojem se Pokemon ID nalazi pod nazivom "pokemon_id", a u drugom samo "id". U ovom primjeru koristimo sintaksu `join_by(pokemon_id == id)` koja jasno specificira da stupac "pokemon_id" iz prvog okvira odgovara stupcu "id" iz drugog okvira.
+
+##### Sufiksi
+
+Argument `suffix` u glagolima za pridruživanje podatkovnih okvira služi za razlikovanje stupaca koji imaju identična imena u oba podatkovna okvira, ali nisu korišteni kao ključevi za spajanje. Kada R spaja dva podatkovna okvira, svi stupci iz oba izvora zadržavaju se u konačnom rezultatu. Međutim, ako oba podatkovna okvira sadrže stupac s istim nazivom, R mora dodati oznake tim stupcima kako bi ih razlikovao. Argument `suffix` prima vektor od dva tekstualna elementa gdje prvi element označava sufiks koji će se dodati stupcima iz prvog podatkovnog okvira (`x`), a drugi element označava sufiks za stupce iz drugog podatkovnog okvira (`y`). Na ovaj način, korisnik može kontrolirati kako će se duplicirani nazivi stupaca razlikovati u konačnom rezultatu čineći kod čitljivijim i smislenijim.
+
+Ako se argument ne navede, R će automatski primijeniti zadane sufikse koji su `.x` za stupce iz prvog podatkovnog okvira i `.y` za stupce iz drugog podatkovnog okvira. Ovi zadani sufiksi relativno su neutralni i univerzalni, ali nisu uvijek najdeskriptivniji za specifičan kontekst analize.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Ako kreiramo podatkovni okvir gdje oba podatkovna okvira sadrže stupac "name", ali se kombiniraju samo prema varijabli "id", bez argumenta `suffix`, rezultat će imati stupce "name.x" (iz `pokemon_names`) i "name.y" (iz `pokemon_strength`). U drugom slučaju, ako je argument `suffix` s vrijednostima `_elemental_df` i `_stat` naveden, sufiks jasno označava da stupac dolazi iz `pokemon_names` podatkovnog okvira ako naziv stupca sadrži sufiks "\_elemental_df" u nazivu ili `pokemon_strength` ako sadrži "\_stat" sufiks u nazivu. Ovakvi nazivi čine kod daleko čitljivijim.
+
+```{r}
+pokemon_names |>
+  inner_join(pokemon_strength, join_by(id))
+
+pokemon_names |>
+  inner_join(pokemon_strength, join_by(id), suffix = c("_elemental_df", "_stat"))
+```
+
+Konačno, ako u argumentu `by` definiramo dva ključa za pridruživanje, u ovom slučaju i "id" i "name", neće biti potrebno definiranje sufiksa jer se neće stvarati dupli stupci za podatke o imenima Pokemona.
+:::
+
+##### Nejednako pridruživanje
+
+Do su bila navedena samo jednaka pridruživanja, odnosno ona pridruživanja gdje se redci podudaraju ako je ključ iz `x` jednak ključu iz `y` argumenta. Ipak, postoje i drugi načini određivanja podudarnosti između parova redaka.
+
+U jednakim pridruživanjima ključevi iz `x` i `y` uvijek su jednaki pa je dovoljno prikazati samo jedan ključ u rezultatu. Međutim, kod nejednakih pridruživanja ključevi mogu imati različite vrijednosti što znači da je potrebno prikazati oba ključa što se kod `*_join()` glagola omogućuje postavljanjem argumenta `keep = TRUE`.
+
+`dplyr` identificira četiri posebno korisne vrste nejednakih pridruživanja:
+
+1.  križna pridruživanja koja podudaruju svaki par redaka;
+
+2.  nejednakosna pridruživanja s operatorima `<`, `<=`, `>` i `>=` umjesto `==`;
+
+3.  klizna pridruživanja koja pronalaze samo najbližu podudarnost te
+
+4.  preklopna pridruživanja koja se koriste za rad s rasponima vrijednosti.
+
+###### Nejednakosno pridruživanja
+
+Nejednakosna spajanja (engl. *inequality joins*) koriste operatore `<`, `<=`, `>=` ili `>` za ograničavanje skupa mogućih podudarnosti.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Jedan koristan primjer s Pokemon podacima bio bi rangiranje Pokemona prema njihovoj ukupnoj snazi. Pretpostavimo da želimo za svakog Pokemona pronaći sve one koji su jači od njega.
+
+```{r}
+# Priprema podataka - izračun ukupne snage
+pokemon_power <- pokemon_dataset |>
+  mutate(total_power = attack + defense + special_attack + special_defense) |>
+  select(name, total_power) |>
+  arrange(desc(total_power))
+
+# Nejednakosno spajanje - pronalaženje svih jačih protivnika
+stronger_pokemon <- pokemon_power |>
+  inner_join(pokemon_power, by = join_by(total_power < total_power), suffix = c("_base", "_opponent"))
+
+# Brojanje jačih Pokemona i izračun ranga
+pokemon_ranking <- stronger_pokemon |>
+  group_by(name_base, total_power_base) |>
+  summarise(
+    stronger_count = n(),
+    .groups = "drop"
+  ) |>
+  mutate(rank = stronger_count + 1) |>
+  arrange(rank)
+
+# Pregled podataka
+pokemon_ranking
+```
+:::
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Drugi praktični primjer je kategorizacija Pokemona po razinama snage. Pretpostavimo da želimo razvrstati Pokemone u kategorije "Slabiji", "Srednji" i "Jači" na temelju njihovog napada, a zatim pronaći sve Pokemone u tim kategorijama.
+
+```{r}
+# Definiranje granica kategorija
+power_tiers <- data.frame(
+  tier_name = c("Weak", "Middle", "Strong"),
+  min_attack = c(0, 50, 100),
+  max_attack = c(49, 99, 200)
+)
+
+# Kategorizacija Pokemona prema snazi napada
+pokemon_dataset |>
+  inner_join(power_tiers, join_by(attack >= min_attack, attack <= max_attack)) |>
+  select(name, attack, tier_name) |>
+  arrange(attack)
+```
+:::
+
+###### Klizna spajanja
+
+**Klizna spajanja** (engl. *rolling joins*) predstavljaju poseban tip nejednakosnih spajanja gdje umjesto dobivanja svakog retka koji zadovoljava nejednakost, dobivamo samo najbliži redak. Bilo koje nejednakosno spajanje možemo pretvoriti u klizno spajanje dodavanjem funkcije `closest()`.
+
+Klizna spajanja posebno su korisna kada imamo dva podatkovna okvira s datumima koji se ne poklapaju savršeno i želimo pronaći najbliži datum u jednom podatkovnom okviru koji dolazi prije ili nakon nekog datuma u drugom podatkovnom okviru.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Za demonstraciju kliznog spajanja s Pokemon podacima, zamislimo scenarij gdje imamo podatke o Pokemon generacijama i želimo svakom Pokemonu dodijeliti generaciju u kojoj je predstavljen. Stvorit ćemo tablicu generacija i koristit ćemo klizno spajanje za pronalaženje odgovarajuće generacije:
+
+```{r}
+# Tablica s godinama predstavljanja generacija
+pokemon_generations <- data.frame(
+  generation = c(1, 2, 3, 4, 5, 6),
+  year_introduced = c(1996, 1999, 2002, 2006, 2010, 2013),
+  generation_name = c("Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos")
+)
+
+# Simulirajmo podatke o godinama predstavljanja Pokemona
+pokemon_with_years <- pokemon_dataset |>
+  filter(id <= 20) |>
+  mutate(
+    introduced_year = case_when(
+      generation == 1 ~ 1996,
+      generation == 2 ~ 1999,
+      generation == 3 ~ 2002,
+      generation == 4 ~ 2006,
+      generation == 5 ~ 2010,
+      generation == 6 ~ 2013,
+      TRUE ~ NA_real_
+    )
+  ) |>
+  select(id, name, generation, introduced_year)
+
+# Klizno spajanje za pronalaženje odgovarajuće generacije
+pokemon_with_generation <- pokemon_with_years |>
+  left_join(pokemon_generations, join_by(closest(introduced_year >= year_introduced)))
+
+# Prikaz rezultata
+pokemon_with_generation
+```
+:::
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Drugi primjer kliznog spajanja mogao bi uključivati usporedbu statistika Pokemona. Pretpostavimo da želimo za svakog Pokemona pronaći onog s najbližom vrijednošću napada.
+
+```{r}
+# Pronalaženje Pokemona s najbližom vrijednošću napada
+closest_attack <- pokemon_dataset |>
+  left_join(
+    pokemon_dataset,
+    join_by(closest(attack >= attack)),
+    suffix = c("_original", "_closest")
+  )
+
+# Prikaz rezultata
+closest_attack |>
+  select(name_original, attack_original, name_closest, attack_closest)
+```
+:::
+
+###### Križna pridruživanja
+
+**Križno pridruživanja** (engl. *cross join*) podudara sve kombinacije redaka generirajući Kartezijev produkt redaka. To znači da će rezultat imati `nrow(x) * nrow(y)` redaka. Križna pridruživanja korisna su prilikom generiranja svih mogućih kombinacija podudaranja.
+
+Ona koriste drugačiju funkciju jer ne postoji razlika između unutarnjeg, lijevog, desnog i potpunog pridruživanja kada se podudara svaki redak, nego se koristi funkcija `cross_join()` koja direktno kreira Kartezijev produkt bez obzira na vrijednosti u stupcima.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Zamislimo scenarij u kojem organiziramo Pokemon turnir gdje se svaki Pokemon mora boriti protiv svakog drugog Pokemona iz podatkovnog okvira `pokemon_names`. Ograničit ćemo turnir na samo četiri Pokemona: Bulbasaur, Charmander, Squirtle i Pikachu. Ovo je klasičan primjer situacije gdje je križno spajanje idealno rješenje koje se ostvaruje funkcijom `cross_join()`.
+
+```{r}
+# Definiranje podatkovnog okvira s Pokemonima
+tournament_pokemon <- pokemon_dataset |>
+  filter(name %in% c("bulbasaur", "charmander", "squirtle", "pikachu")) |>
+  select(id, name)
+
+# Križno pridruživanje
+all_tournament_matches <- tournament_pokemon |>
+  cross_join(tournament_pokemon, suffix = c("_1", "_2"))
+
+# Pregled podataka
+all_tournament_matches
+```
+
+Funkcije `cross_join()` stvara 225 redaka koji predstavljaju sve moguće kombinacije borbi. Argument `suffix = c("_1", "_2")` dodaje sufikse stupcima kako bi razlikovali prvog borca ("\_1") od drugog borca ("\_2").
+
+Ipak, rezultati uključuju i borbe protiv samog sebe, primjerice Bulbasaur protiv Bulbasaura (redak 1), i duplikate prema različitom redoslijedu, primjerice Bulbasaur protiv Charmander (redak 2) i Charmander protiv Bulbasaura (redak 5).
+
+Borbe samih protiv sebe eliminiraju se glagolom `filter()` iz `dplyr` paketa i logičkim operatorom `!=` čime je moguće eliminirati retke u kojima su dvije vrijednosti u dvije varijable iste. Ovdje je zapravo riječ o obliku nejednakosnog pridruživanja.
+
+```{r}
+# Eliminiranje borbi samih protiv sebe
+valid_tournament_matches <- all_tournament_matches |>
+  filter(id_1 != id_2)
+
+# Pregled podataka
+valid_tournament_matches
+```
+
+Što se tiče duplikata, možemo koristiti nejednako pridruživanje s operatorom `<` kako bismo generirali samo jedinstvene kombinacije unutar funkcije `join_by()` u `by` argumentu.
+
+```{r}
+# Eliminiranje duplikata
+unique_matches <- tournament_pokemon |>
+  inner_join(tournament_pokemon, join_by(id < id), suffix = c("_1", "_2"))
+
+# Pregled podataka
+unique_matches
+```
+:::
+
+-----------------------------------NASTAVAK-----------------------------
+
+###### Preklopna spajanja
+
+**Preklopna spajanja** (engl. *overlap joins*) pružaju tri pomoćne funkcije koje koriste nejednakosna spajanja kako bi olakšale rad s intervalima vrijednosti:
+
+1.  `between(x, y_lower, y_upper)` je skraćenica za `x >= y_lower, x <= y_upper`,
+
+2.  `within(x_lower, x_upper, y_lower, y_upper)` je skraćenica za `x_lower >= y_lower, x_upper <= y_upper` i
+
+3.  `overlaps(x_lower, x_upper, y_lower, y_upper)` je skraćenica za `x_lower <= y_upper, x_upper >= y_lower`.
+
+Preklopna spajanja omogućuju elegantan način rada s intervalima i rasponima vrijednosti čineći kod čitljivijim i izražajnijim u usporedbi s eksplicitnim navođenjem svih nejednakosnih uvjeta. Ova tehnika posebno je korisna u situacijama gdje trebamo kategorizirati kontinuirane varijable ili pronalaziti preklapanja između vremenskih perioda, geografskih regija ili bilo kojih drugih raspon vrijednosti.
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Demonstrirajmo preklopna spajanja s Pokemon podacima kategorizirajući Pokemone prema njihovim statistikama.
+
+Stvorit ćemo raspone za različite razine snage i koristiti `between()` za razvrstavanje.
+
+```{r}
+# Definiranje raspon razina za HP (hit points)
+hp_tiers <- data.frame(
+  tier_name = c("Low HP", "Middle HP", "High HP", "Highest HP"),
+  hp_min = c(0, 50, 80, 120),
+  hp_max = c(49, 79, 119, 255)
+)
+
+# Preklopno spajanje koristeći between()
+pokemon_dataset |>
+  inner_join(hp_tiers, join_by(between(HP, hp_min, hp_max))) |>
+  select(name, HP, tier_name) |>
+  arrange(desc(HP))
+```
+
+Funkcija `overlaps()` posebno je korisna za pronalaženje preklapanja između raspona. Pretpostavimo da želimo identificirati Pokemone čiji se rasponi snage (definiran kao minimum i maksimum njihovih napada i obrane) preklapaju.
+
+```{r}
+# Stvaranje raspon snage za nekoliko Pokemona
+pokemon_power_ranges <- pokemon_dataset |>
+  mutate(
+    power_min = pmin(attack, defense),
+    power_max = pmax(attack, defense)
+  ) |>
+  select(id, name, power_min, power_max)
+
+# Pronalaženje Pokemona s preklapajućim rasponima snage
+pokemon_power_ranges |>
+  inner_join(
+    pokemon_power_ranges,
+    join_by(overlaps(power_min, power_max, power_min, power_max), id < id),
+    suffix = c("_1", "_2")
+  ) |>
+  select(name_1, power_min_1, power_max_1, name_2, power_min_2, power_max_2)
+```
+:::

@@ -1,0 +1,213 @@
+---
+title: "Faktori"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+**Faktori** (*Factors*) su ključna vrsta podataka u R-u koja se koristi za rad s kategorijskim varijablama koje imaju konačan i poznati skup mogućih vrijednosti. Njihovo je glavno obilježje da postoji ograničen broj mogućih kategorija koje faktori mogu poprimiti. Primjeri kategorijskih faktora varijable kao što je je spol (muški, ženski ili drugi spolovi), dani u tjednu (ponedjeljak, utorak, srijeda itd.), mjeseci (siječanj, veljača, ožujak itd.) bračni status (samac, oženjen, razveden, udovac i sl.) ocjene na Likertovoj skali (npr. od "u potpunosti se ne slažem" do "u potpunosti se slažem").
+
+Za kreiranje faktora u R-u koristi se funkcija `factor()`. Funkcija uzima listu karakternih vrijednosti od kojih se stvaraju faktori.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija factor()"}
+Funkcija `factor()` je temeljna funkcija u R-u koja pripada osnovnom skupu funkcija. Funkcija služi za pretvaranje vektora u faktor, odnosno omogućuje R-u da prepozna koje varijable predstavljaju kategorije umjesto kontinuiranih vrijednosti. Ovo je ključno jer R tretira faktore i obične vektore različito u statističkim modelima, vizualizacijama i drugim analizama.
+
+| Atgument | Objašnjenje |
+|-------------------------------|----------------------------------------|
+| `x` | Vektor podataka koji sadrži podatke koji se pretvaraju u faktor. |
+| `levels` | Neobavezni vektor jedinstvenih vrijednosti koje vektor može imati. Zadana vrijednost je jedinstven skup vrijednosti dobiven pomoću `as.character(x)`, sortiran u rastućem redoslijed od x. |
+| `labels` | Može biti neobavezni znakovni vektor za razine (u istom redoslijed kao `levels`) ili znakovni niz. |
+| `exclude` | Vektor vrijednosti koje treba isključiti pri formiranju skupa razina. Ovo može biti faktor s istim skupom razina kao x ili treba biti character. |
+| `ordered` | Logička vrijednost koja određuje trebaju li se razine poredati u danom redoslijedu. Kada je TRUE, stvara se uređeni faktor koji implicira hijerarhiju između razina. |
+| `nmax` | Gornja granica broja razina. |
+| `ifany` | Dodaje `NA` razinu ako se koristi. Ovo kontrolira hoće li se automatski dodati `NA` kao razina faktora. |
+:::
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_types <- c("water", "normal", "grass", "bug", "psychic", "fire", "electric", "rock", "dragon", "ghost")
+factor(
+  x = pokemon_types,
+  ordered = FALSE
+)
+
+generations <- c("1", "2", "3", "4", "5", "6")
+pokemon_generations <- factor(
+  x = generations,
+  levels = c("1", "2", "3", "4", "5", "6"),
+  labels = c("Prva generacija", "Druga generacija", "Treća generacija", "Četvrta generacija", "Peta generacija", "Šesta generacija"),
+  ordered = TRUE
+)
+pokemon_generations
+
+print(pokemon_types[c(1, 4, 5)])
+```
+:::
+
+Za dodatne provjere provjere ili modifikacije razina već napravljenog faktora može se koristiti funkcija `levels()`.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija levels()"}
+Funkcija `levels()` ima svrhu dohvaćanja razina faktora kada se pozove bez dodjele, ali i postavljanja razina kada se koristi s operatorom dodjele omogućujući mijenjanje naziva razina ili dodavanje novih razina
+
+| Argument | Objašnjenje |
+|-------------------------------|----------------------------------------|
+| `x` | Glavni argument koji predstavlja faktor čije razine želite dohvatiti ili modificirati. |
+| `value` | Koristi se kada mijenjamo razine faktora pomoću operatora dodjele (`<-`), a tip vrijednosti ovisi o metodi: |
+
+-   Ako postavimo `NULL` (zadano), onda će se ukloniti sve razine, a ako se postavi znakovni vektor, onda će se definirati nove razine faktora.
+
+-   Za faktor metodu se stavlja vektor znakovnih nizova s duljinom najmanje jednakom broju razina od x ili imenovani popis koji specificira kako preimenovati razine. Duži vektor omogućuje dodavanje novih razina, dok imenovani popis omogućuje precizno mapiranje starih naziva razina u nove. \|
+:::
+
+```{r}
+# Dohvaćanje razina
+levels(pokemon_generations)
+
+# Mijenjanje naziva razina
+levels(pokemon_generations) <- c("PRVA GENERACIJA", "DRUGA GENERACIJA", "TREĆA GENERACIJA", "ČETVRTA GENERACIJA", "PETA GENERACIJA", "ŠESTA GENERACIJA")
+
+levels(pokemon_generations) <- c(levels(pokemon_generations), "SEDMA GENERACIJA")
+
+# Dodavanje nove razine
+levels(pokemon_generations) <- c("PRVA GENERACIJA", "DRUGA GENERACIJA", "TREĆA GENERACIJA", "ČETVRTA GENERACIJA", "PETA GENERACIJA", "ŠESTA GENERACIJA", "SEDMA GENERACIJA")
+
+pokemon_generations
+```
+
+Za različite situacije postoje posebne funkcije `forcats` za rad s faktorima koje omogućuju premještanje faktora:
+
+-   `fct_reorder()` za promjenu nivoa faktora,
+
+-   `fct_relevel()` za mijenjanje određenih nivoa na početak,
+
+-   `fct_infreq()` za sortiranje nivoa po učestalosti pojavljivanja i
+
+-   `fct_rev()` za obrtanje redoslijeda nivoa.
+
+Ove se funkcije uobičajeno koriste kod vizualizacije faktora u `ggplot2` paketu, a izvan vizualizacija nemaju puno svrhe.
+
+Još je jedna mogućnost u radu s faktorima promjena njihovih vrijednosti. Ovo omogućuje da se razjasne leveli, odnosno nazivi faktora, sažmu nivoi ili promijene nazivi nivoa. To se u R-u omogućuje funkcijom `fct_recode()`.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija fct_recode()"}
+Funkcija `fct_recode()` omogućuje promjenu vrijednosti (naziva) razina faktora.
+
+| Argument \| Objašnjenje \|
+| `.f` \| faktor (ili znakovni vektor) čije razine želimo promijeniti, lijeva strana predstavlja novu razinu, a desna strana staru razinu, razine koje nisu spomenute ostat će nepromijenjene, a razine se mogu ukloniti tako da im se dodijeli `NULL` \|
+:::
+
+```{r}
+pokemon_dataset |>
+  mutate(
+    type_1 = fct_recode(type_1,
+      "vodeni" = "water",
+      "normalni" = "normal",
+      "zemljani" = "grass",
+      "buba" = "bug",
+      "psio" = "psychic",
+      "vatreni" = "fire",
+      "strujni" = "electric",
+      "zemljani" = "rock",
+      "zmaj" = "dragon",
+      "duh" = "ghost"
+    )
+  )
+```
+
+Jedna od karakteristika faktora je mogućnost njihovog hijerarhiziranja. Drugim riječima, faktori se mogu grupirati u različite grupe faktora na temelju neke zajedničke karakteristike. Time se omogućuje jednostavno sažimanje velikog broja kategorija u manji skup s kojim se lakše upravlja. Za to unutar `forcats` paketa postoji funkcija `fct_collapse()`.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija fct_collapse()"}
+Funkcija fct_collapse() je specijalizirana varijanta funkcije `fct_recode()` koja je posebno dizajnirana za grupiranje više razina faktora u manje grupa.
+
+| Argumenti \| Objašnjenje \|
+| `.f` \| faktor čije razine grupiraju \|
+| `...` \| serija imenovanih znakovnih vektora gdje je naziv lijevoj strani nova grupa, a vrijednost vektora na desnoj strani \|
+| `other_level` \| vrijednost razine koja se koristi za "ostale" vrijednosti \|
+:::
+
+```{r}
+pokemon_dataset_type_groups <- pokemon_dataset |>
+  mutate(
+    type_groups = fct_collapse(
+      .f = pokemon_dataset$type_1,
+      "elementary types" = c("fire", "water", "grass", "electric", "rock"),
+      "normal pokemons" = "normal",
+      "creature pokemons" = c("bug", "dragon", "ghost"),
+      other_level = "other types"
+    )
+  )
+
+pokemon_dataset_type_groups
+```
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija fct_lump*()"}
+`forcats` paket sadrži i posebnu skupinu `fct_lump*()` funkcija za sažimanje malih grupa u faktoru u jednu "Other" kategoriju. Ovo je korisno kada imamo faktor s mnogo razina, a neke se pojavljuju vrlo rijetko.
+
+1.  `fct_lump_min()` - sažima razine koje se pojavljuju manje od `min` puta,
+
+2.  `fct_lump_prop()` - sažima razine koje se pojavljuju u manje od (ili jednako) `prop * n` slučajeva,
+
+3.  `fct_lump_n()` - zadržava samo `n` najčešćih (ili najrjeđih ako je `n` \< 0) razina i
+
+4.  `fct_lump_lowfreq()` - sažima najrjeđe razine osiguravajući da "Other" i dalje ostane najmanja razina.
+
+| Argumenti \| Objašnjenje \|
+| `f` \| faktor (ili znakovni vektor) koji želite sažeti \|
+| `n` za `fct_lump_n()` \| Pozitivni n: zadržava n najčešćih razina, Negativni n: zadržava n najrjeđih razina \|
+| `prop` za `fct_lump_prop()` \| Pozitivni prop: sažima razine koje se ne pojavljuju barem prop vremena, Negativni prop: sažima razine koje se ne pojavljuju najviše -prop vremena
+| `min`za `fct_lump_min()` \| zadržava razine koje se pojavljuju barem min puta \|
+| `w` \| neobavezni numerički vektor koji daje težine za učestalost svake vrijednosti \|
+| `other_level` \| vrijednost razine koja se koristi za "ostale" vrijednosti \|
+| `ties.method` \| znakovni niz koji specificira kako se tretiraju izjednačenja \|
+:::

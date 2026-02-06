@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="hr" xml:lang="hr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Faktori – Znanost o podacima u R-u</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03_07_nizovi.html" rel="next">
+<link href="./03_05_logicke_vrijednosti.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-86b712c1a9842e5c5be4cb0afbdd663e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner h1,
+      .quarto-title-block .quarto-title-banner h2,
+      .quarto-title-block .quarto-title-banner h3,
+      .quarto-title-block .quarto-title-banner h4,
+      .quarto-title-block .quarto-title-banner h5,
+      .quarto-title-block .quarto-title-banner h6
+      {
+        color: white;
+      }
+
+      .quarto-title-block .quarto-title-banner {
+        color: white;
+background: #8B3A62;
+      }
+</style>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./03_06_faktori.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Faktori</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./03_06_faktori.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Faktori</span></a></li></ol></nav>
+      <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Faktori</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Znanost o podacima u R-u</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Uvod</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Uvod u znanost o podacima</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_01_uvod_u_znanost_o_podacima.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Uvod u znanost o podacima</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Uvoz i uređivanje podataka</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_01_uvoz_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Uvoz podataka u R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_02_uredivanje_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Uređivanje podataka</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./03_00_transformacija_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformacija podataka</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_01_manipulacija_podacima.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Manipulacija podacima</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_02_nedostajajuce_vrijednosti.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_03_pridruzivanje_podataka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Pridruživanje podataka</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_04_brojevi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Brojevi</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_05_logicke_vrijednosti.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Logičke vrijednosti</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_06_faktori.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Faktori</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_07_nizovi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Nizovi</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_08_regularni_izrazi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Regularni izrazi</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_09_datum_i_vrijeme.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Datum i vrijeme</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p><strong>Faktori</strong> (<em>Factors</em>) su ključna vrsta podataka u R-u koja se koristi za rad s kategorijskim varijablama koje imaju konačan i poznati skup mogućih vrijednosti. Njihovo je glavno obilježje da postoji ograničen broj mogućih kategorija koje faktori mogu poprimiti. Primjeri kategorijskih faktora varijable kao što je je spol (muški, ženski ili drugi spolovi), dani u tjednu (ponedjeljak, utorak, srijeda itd.), mjeseci (siječanj, veljača, ožujak itd.) bračni status (samac, oženjen, razveden, udovac i sl.) ocjene na Likertovoj skali (npr. od “u potpunosti se ne slažem” do “u potpunosti se slažem”).</p>
+<p>Za kreiranje faktora u R-u koristi se funkcija <code>factor()</code>. Funkcija uzima listu karakternih vrijednosti od kojih se stvaraju faktori.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija factor()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija factor()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Funkcija <code>factor()</code> je temeljna funkcija u R-u koja pripada osnovnom skupu funkcija. Funkcija služi za pretvaranje vektora u faktor, odnosno omogućuje R-u da prepozna koje varijable predstavljaju kategorije umjesto kontinuiranih vrijednosti. Ovo je ključno jer R tretira faktore i obične vektore različito u statističkim modelima, vizualizacijama i drugim analizama.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 43%">
+<col style="width: 56%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Atgument</th>
+<th>Objašnjenje</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>Vektor podataka koji sadrži podatke koji se pretvaraju u faktor.</td>
+</tr>
+<tr class="even">
+<td><code>levels</code></td>
+<td>Neobavezni vektor jedinstvenih vrijednosti koje vektor može imati. Zadana vrijednost je jedinstven skup vrijednosti dobiven pomoću <code>as.character(x)</code>, sortiran u rastućem redoslijed od x.</td>
+</tr>
+<tr class="odd">
+<td><code>labels</code></td>
+<td>Može biti neobavezni znakovni vektor za razine (u istom redoslijed kao <code>levels</code>) ili znakovni niz.</td>
+</tr>
+<tr class="even">
+<td><code>exclude</code></td>
+<td>Vektor vrijednosti koje treba isključiti pri formiranju skupa razina. Ovo može biti faktor s istim skupom razina kao x ili treba biti character.</td>
+</tr>
+<tr class="odd">
+<td><code>ordered</code></td>
+<td>Logička vrijednost koja određuje trebaju li se razine poredati u danom redoslijedu. Kada je TRUE, stvara se uređeni faktor koji implicira hijerarhiju između razina.</td>
+</tr>
+<tr class="even">
+<td><code>nmax</code></td>
+<td>Gornja granica broja razina.</td>
+</tr>
+<tr class="odd">
+<td><code>ifany</code></td>
+<td>Dodaje <code>NA</code> razinu ako se koristi. Ovo kontrolira hoće li se automatski dodati <code>NA</code> kao razina faktora.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pokemon_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"water"</span>, <span class="st">"normal"</span>, <span class="st">"grass"</span>, <span class="st">"bug"</span>, <span class="st">"psychic"</span>, <span class="st">"fire"</span>, <span class="st">"electric"</span>, <span class="st">"rock"</span>, <span class="st">"dragon"</span>, <span class="st">"ghost"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">factor</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> pokemon_types,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ordered =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] water    normal   grass    bug      psychic  fire     electric rock    
+ [9] dragon   ghost   
+Levels: bug dragon electric fire ghost grass normal psychic rock water</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>generations <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pokemon_generations <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> generations,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Prva generacija"</span>, <span class="st">"Druga generacija"</span>, <span class="st">"Treća generacija"</span>, <span class="st">"Četvrta generacija"</span>, <span class="st">"Peta generacija"</span>, <span class="st">"Šesta generacija"</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">ordered =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>pokemon_generations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Prva generacija    Druga generacija   Treća generacija   Četvrta generacija
+[5] Peta generacija    Šesta generacija  
+6 Levels: Prva generacija &lt; Druga generacija &lt; ... &lt; Šesta generacija</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pokemon_types[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">5</span>)])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "water"   "bug"     "psychic"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Za dodatne provjere provjere ili modifikacije razina već napravljenog faktora može se koristiti funkcija <code>levels()</code>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija levels()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija levels()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Funkcija <code>levels()</code> ima svrhu dohvaćanja razina faktora kada se pozove bez dodjele, ali i postavljanja razina kada se koristi s operatorom dodjele omogućujući mijenjanje naziva razina ili dodavanje novih razina</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 43%">
+<col style="width: 56%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Argument</th>
+<th>Objašnjenje</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>x</code></td>
+<td>Glavni argument koji predstavlja faktor čije razine želite dohvatiti ili modificirati.</td>
+</tr>
+<tr class="even">
+<td><code>value</code></td>
+<td>Koristi se kada mijenjamo razine faktora pomoću operatora dodjele (<code>&lt;-</code>), a tip vrijednosti ovisi o metodi:</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>Ako postavimo <code>NULL</code> (zadano), onda će se ukloniti sve razine, a ako se postavi znakovni vektor, onda će se definirati nove razine faktora.</p></li>
+<li><p>Za faktor metodu se stavlja vektor znakovnih nizova s duljinom najmanje jednakom broju razina od x ili imenovani popis koji specificira kako preimenovati razine. Duži vektor omogućuje dodavanje novih razina, dok imenovani popis omogućuje precizno mapiranje starih naziva razina u nove. |</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dohvaćanje razina</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Prva generacija"    "Druga generacija"   "Treća generacija"  
+[4] "Četvrta generacija" "Peta generacija"    "Šesta generacija"  </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mijenjanje naziva razina</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PRVA GENERACIJA"</span>, <span class="st">"DRUGA GENERACIJA"</span>, <span class="st">"TREĆA GENERACIJA"</span>, <span class="st">"ČETVRTA GENERACIJA"</span>, <span class="st">"PETA GENERACIJA"</span>, <span class="st">"ŠESTA GENERACIJA"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">levels</span>(pokemon_generations), <span class="st">"SEDMA GENERACIJA"</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Dodavanje nove razine</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PRVA GENERACIJA"</span>, <span class="st">"DRUGA GENERACIJA"</span>, <span class="st">"TREĆA GENERACIJA"</span>, <span class="st">"ČETVRTA GENERACIJA"</span>, <span class="st">"PETA GENERACIJA"</span>, <span class="st">"ŠESTA GENERACIJA"</span>, <span class="st">"SEDMA GENERACIJA"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>pokemon_generations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] PRVA GENERACIJA    DRUGA GENERACIJA   TREĆA GENERACIJA   ČETVRTA GENERACIJA
+[5] PETA GENERACIJA    ŠESTA GENERACIJA  
+7 Levels: PRVA GENERACIJA &lt; DRUGA GENERACIJA &lt; ... &lt; SEDMA GENERACIJA</code></pre>
+</div>
+</div>
+<p>Za različite situacije postoje posebne funkcije <code>forcats</code> za rad s faktorima koje omogućuju premještanje faktora:</p>
+<ul>
+<li><p><code>fct_reorder()</code> za promjenu nivoa faktora,</p></li>
+<li><p><code>fct_relevel()</code> za mijenjanje određenih nivoa na početak,</p></li>
+<li><p><code>fct_infreq()</code> za sortiranje nivoa po učestalosti pojavljivanja i</p></li>
+<li><p><code>fct_rev()</code> za obrtanje redoslijeda nivoa.</p></li>
+</ul>
+<p>Ove se funkcije uobičajeno koriste kod vizualizacije faktora u <code>ggplot2</code> paketu, a izvan vizualizacija nemaju puno svrhe.</p>
+<p>Još je jedna mogućnost u radu s faktorima promjena njihovih vrijednosti. Ovo omogućuje da se razjasne leveli, odnosno nazivi faktora, sažmu nivoi ili promijene nazivi nivoa. To se u R-u omogućuje funkcijom <code>fct_recode()</code>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija fct_recode()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija fct_recode()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Funkcija <code>fct_recode()</code> omogućuje promjenu vrijednosti (naziva) razina faktora.</p>
+<div class="line-block">Argument | Objašnjenje |<br>
+<code>.f</code> | faktor (ili znakovni vektor) čije razine želimo promijeniti, lijeva strana predstavlja novu razinu, a desna strana staru razinu, razine koje nisu spomenute ostat će nepromijenjene, a razine se mogu ukloniti tako da im se dodijeli <code>NULL</code> |</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="fu">fct_recode</span>(type_1,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">"vodeni"</span> <span class="ot">=</span> <span class="st">"water"</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">"normalni"</span> <span class="ot">=</span> <span class="st">"normal"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"zemljani"</span> <span class="ot">=</span> <span class="st">"grass"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"buba"</span> <span class="ot">=</span> <span class="st">"bug"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">"psio"</span> <span class="ot">=</span> <span class="st">"psychic"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">"vatreni"</span> <span class="ot">=</span> <span class="st">"fire"</span>,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">"strujni"</span> <span class="ot">=</span> <span class="st">"electric"</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">"zemljani"</span> <span class="ot">=</span> <span class="st">"rock"</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"zmaj"</span> <span class="ot">=</span> <span class="st">"dragon"</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">"duh"</span> <span class="ot">=</span> <span class="st">"ghost"</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 800 × 13
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       zemlj… poison   318    45     49      49             65
+ 2     2 ivysaur         zemlj… poison   405    60     62      63             80
+ 3     3 venusaur        zemlj… poison   525    80     82      83            100
+ 4     3 venusaurmega v… zemlj… poison   625    80    100     123            122
+ 5     4 charmander      vatre… &lt;NA&gt;     309    39     52      43             60
+ 6     5 charmeleon      vatre… &lt;NA&gt;     405    58     64      58             80
+ 7     6 charizard       vatre… flying   534    78     84      78            109
+ 8     6 charizardmega … vatre… dragon   634    78    130     111            130
+ 9     6 charizardmega … vatre… flying   634    78    104      78            159
+10     7 squirtle        vodeni &lt;NA&gt;     314    44     48      65             50
+# ℹ 790 more rows
+# ℹ 4 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;</code></pre>
+</div>
+</div>
+<p>Jedna od karakteristika faktora je mogućnost njihovog hijerarhiziranja. Drugim riječima, faktori se mogu grupirati u različite grupe faktora na temelju neke zajedničke karakteristike. Time se omogućuje jednostavno sažimanje velikog broja kategorija u manji skup s kojim se lakše upravlja. Za to unutar <code>forcats</code> paketa postoji funkcija <code>fct_collapse()</code>.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija fct_collapse()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija fct_collapse()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Funkcija fct_collapse() je specijalizirana varijanta funkcije <code>fct_recode()</code> koja je posebno dizajnirana za grupiranje više razina faktora u manje grupa.</p>
+<div class="line-block">Argumenti | Objašnjenje |<br>
+<code>.f</code> | faktor čije razine grupiraju |<br>
+<code>...</code> | serija imenovanih znakovnih vektora gdje je naziv lijevoj strani nova grupa, a vrijednost vektora na desnoj strani |<br>
+<code>other_level</code> | vrijednost razine koja se koristi za “ostale” vrijednosti |</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pokemon_dataset_type_groups <span class="ot">&lt;-</span> pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_groups =</span> <span class="fu">fct_collapse</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">.f =</span> pokemon_dataset<span class="sc">$</span>type_1,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">"elementary types"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"fire"</span>, <span class="st">"water"</span>, <span class="st">"grass"</span>, <span class="st">"electric"</span>, <span class="st">"rock"</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"normal pokemons"</span> <span class="ot">=</span> <span class="st">"normal"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"creature pokemons"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"bug"</span>, <span class="st">"dragon"</span>, <span class="st">"ghost"</span>),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">other_level =</span> <span class="st">"other types"</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>pokemon_dataset_type_groups</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 800 × 14
+      id name            type_1 type_2 total    HP attack defense special_attack
+   &lt;dbl&gt; &lt;chr&gt;           &lt;fct&gt;  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;
+ 1     1 bulbasaur       grass  poison   318    45     49      49             65
+ 2     2 ivysaur         grass  poison   405    60     62      63             80
+ 3     3 venusaur        grass  poison   525    80     82      83            100
+ 4     3 venusaurmega v… grass  poison   625    80    100     123            122
+ 5     4 charmander      fire   &lt;NA&gt;     309    39     52      43             60
+ 6     5 charmeleon      fire   &lt;NA&gt;     405    58     64      58             80
+ 7     6 charizard       fire   flying   534    78     84      78            109
+ 8     6 charizardmega … fire   dragon   634    78    130     111            130
+ 9     6 charizardmega … fire   flying   634    78    104      78            159
+10     7 squirtle        water  &lt;NA&gt;     314    44     48      65             50
+# ℹ 790 more rows
+# ℹ 5 more variables: special_defense &lt;dbl&gt;, speed &lt;dbl&gt;, generation &lt;fct&gt;,
+#   legendary &lt;lgl&gt;, type_groups &lt;fct&gt;</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija fct_lump*()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Funkcija fct_lump*()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>forcats</code> paket sadrži i posebnu skupinu <code>fct_lump*()</code> funkcija za sažimanje malih grupa u faktoru u jednu “Other” kategoriju. Ovo je korisno kada imamo faktor s mnogo razina, a neke se pojavljuju vrlo rijetko.</p>
+<ol type="1">
+<li><p><code>fct_lump_min()</code> - sažima razine koje se pojavljuju manje od <code>min</code> puta,</p></li>
+<li><p><code>fct_lump_prop()</code> - sažima razine koje se pojavljuju u manje od (ili jednako) <code>prop * n</code> slučajeva,</p></li>
+<li><p><code>fct_lump_n()</code> - zadržava samo <code>n</code> najčešćih (ili najrjeđih ako je <code>n</code> &lt; 0) razina i</p></li>
+<li><p><code>fct_lump_lowfreq()</code> - sažima najrjeđe razine osiguravajući da “Other” i dalje ostane najmanja razina.</p></li>
+</ol>
+<div class="line-block">Argumenti | Objašnjenje |<br>
+<code>f</code> | faktor (ili znakovni vektor) koji želite sažeti |<br>
+<code>n</code> za <code>fct_lump_n()</code> | Pozitivni n: zadržava n najčešćih razina, Negativni n: zadržava n najrjeđih razina |<br>
+<code>prop</code> za <code>fct_lump_prop()</code> | Pozitivni prop: sažima razine koje se ne pojavljuju barem prop vremena, Negativni prop: sažima razine koje se ne pojavljuju najviše -prop vremena<br>
+<code>min</code>za <code>fct_lump_min()</code> | zadržava razine koje se pojavljuju barem min puta |<br>
+<code>w</code> | neobavezni numerički vektor koji daje težine za učestalost svake vrijednosti |<br>
+<code>other_level</code> | vrijednost razine koja se koristi za “ostale” vrijednosti |<br>
+<code>ties.method</code> | znakovni niz koji specificira kako se tretiraju izjednačenja |</div>
+</div>
+</div>
+</div>
+
+
+<!-- -->
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./03_05_logicke_vrijednosti.html" class="pagination-link" aria-label="Logičke vrijednosti">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Logičke vrijednosti</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03_07_nizovi.html" class="pagination-link" aria-label="Nizovi">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Nizovi</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Faktori"</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> ""</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> "#8B3A62"</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner-color:</span><span class="co"> "white"</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> hr</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: "Tablica"</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: "Slika"</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Aktiviranje paketa</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RKaggle)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hms)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Učitavanje podataka</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>poke_raw <span class="ot">&lt;-</span> <span class="fu">get_dataset</span>(<span class="st">"abcsds/pokemon"</span>)</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Prilagodba podatkovnog okvira</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="ot">&lt;-</span> poke_raw <span class="sc">|&gt;</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">`</span><span class="at">#</span><span class="st">`</span>,</span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">`</span><span class="at">Name</span><span class="st">`</span>,</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="st">`</span><span class="at">Type 1</span><span class="st">`</span>,</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_2 =</span> <span class="st">`</span><span class="at">Type 2</span><span class="st">`</span>,</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack =</span> <span class="st">`</span><span class="at">Attack</span><span class="st">`</span>,</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">defense =</span> <span class="st">`</span><span class="at">Defense</span><span class="st">`</span>,</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_attack =</span> <span class="st">`</span><span class="at">Sp. Atk</span><span class="st">`</span>,</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_defense =</span> <span class="st">`</span><span class="at">Sp. Def</span><span class="st">`</span>,</span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">speed =</span> <span class="st">`</span><span class="at">Speed</span><span class="st">`</span>,</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="st">`</span><span class="at">Generation</span><span class="st">`</span>,</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">legendary =</span> <span class="st">`</span><span class="at">Legendary</span><span class="st">`</span></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>, <span class="st">`</span><span class="at">type_2</span><span class="st">`</span>, generation), as.character),</span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(legendary, as.logical),</span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">str_to_lower</span>(.x))) <span class="sc">|&gt;</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_1</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>),</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_2</span><span class="st">`</span>),</span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">generation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">generation</span><span class="st">`</span>)</span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>**Faktori** (*Factors*) su ključna vrsta podataka u R-u koja se koristi za rad s kategorijskim varijablama koje imaju konačan i poznati skup mogućih vrijednosti. Njihovo je glavno obilježje da postoji ograničen broj mogućih kategorija koje faktori mogu poprimiti. Primjeri kategorijskih faktora varijable kao što je je spol (muški, ženski ili drugi spolovi), dani u tjednu (ponedjeljak, utorak, srijeda itd.), mjeseci (siječanj, veljača, ožujak itd.) bračni status (samac, oženjen, razveden, udovac i sl.) ocjene na Likertovoj skali (npr. od "u potpunosti se ne slažem" do "u potpunosti se slažem").</span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>Za kreiranje faktora u R-u koristi se funkcija <span class="in">`factor()`</span>. Funkcija uzima listu karakternih vrijednosti od kojih se stvaraju faktori.</span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija factor()"}</span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`factor()`</span> je temeljna funkcija u R-u koja pripada osnovnom skupu funkcija. Funkcija služi za pretvaranje vektora u faktor, odnosno omogućuje R-u da prepozna koje varijable predstavljaju kategorije umjesto kontinuiranih vrijednosti. Ovo je ključno jer R tretira faktore i obične vektore različito u statističkim modelima, vizualizacijama i drugim analizama.</span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Atgument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------------------------|----------------------------------------|</span></span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`x`</span> <span class="pp">|</span> Vektor podataka koji sadrži podatke koji se pretvaraju u faktor. <span class="pp">|</span></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`levels`</span> <span class="pp">|</span> Neobavezni vektor jedinstvenih vrijednosti koje vektor može imati. Zadana vrijednost je jedinstven skup vrijednosti dobiven pomoću <span class="in">`as.character(x)`</span>, sortiran u rastućem redoslijed od x. <span class="pp">|</span></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`labels`</span> <span class="pp">|</span> Može biti neobavezni znakovni vektor za razine (u istom redoslijed kao <span class="in">`levels`</span>) ili znakovni niz. <span class="pp">|</span></span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`exclude`</span> <span class="pp">|</span> Vektor vrijednosti koje treba isključiti pri formiranju skupa razina. Ovo može biti faktor s istim skupom razina kao x ili treba biti character. <span class="pp">|</span></span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ordered`</span> <span class="pp">|</span> Logička vrijednost koja određuje trebaju li se razine poredati u danom redoslijedu. Kada je TRUE, stvara se uređeni faktor koji implicira hijerarhiju između razina. <span class="pp">|</span></span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`nmax`</span> <span class="pp">|</span> Gornja granica broja razina. <span class="pp">|</span></span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ifany`</span> <span class="pp">|</span> Dodaje <span class="in">`NA`</span> razinu ako se koristi. Ovo kontrolira hoće li se automatski dodati <span class="in">`NA`</span> kao razina faktora. <span class="pp">|</span></span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>pokemon_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"water"</span>, <span class="st">"normal"</span>, <span class="st">"grass"</span>, <span class="st">"bug"</span>, <span class="st">"psychic"</span>, <span class="st">"fire"</span>, <span class="st">"electric"</span>, <span class="st">"rock"</span>, <span class="st">"dragon"</span>, <span class="st">"ghost"</span>)</span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a><span class="fu">factor</span>(</span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> pokemon_types,</span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a>  <span class="at">ordered =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>generations <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>)</span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a>pokemon_generations <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> generations,</span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span>, <span class="st">"5"</span>, <span class="st">"6"</span>),</span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Prva generacija"</span>, <span class="st">"Druga generacija"</span>, <span class="st">"Treća generacija"</span>, <span class="st">"Četvrta generacija"</span>, <span class="st">"Peta generacija"</span>, <span class="st">"Šesta generacija"</span>),</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">ordered =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a>pokemon_generations</span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pokemon_types[<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">5</span>)])</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a>Za dodatne provjere provjere ili modifikacije razina već napravljenog faktora može se koristiti funkcija <span class="in">`levels()`</span>.</span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija levels()"}</span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`levels()`</span> ima svrhu dohvaćanja razina faktora kada se pozove bez dodjele, ali i postavljanja razina kada se koristi s operatorom dodjele omogućujući mijenjanje naziva razina ili dodavanje novih razina</span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
+<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------------------------|----------------------------------------|</span></span>
+<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`x`</span> <span class="pp">|</span> Glavni argument koji predstavlja faktor čije razine želite dohvatiti ili modificirati. <span class="pp">|</span></span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`value`</span> <span class="pp">|</span> Koristi se kada mijenjamo razine faktora pomoću operatora dodjele (<span class="in">`&lt;-`</span>), a tip vrijednosti ovisi o metodi: <span class="pp">|</span></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Ako postavimo <span class="in">`NULL`</span> (zadano), onda će se ukloniti sve razine, a ako se postavi znakovni vektor, onda će se definirati nove razine faktora.</span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Za faktor metodu se stavlja vektor znakovnih nizova s duljinom najmanje jednakom broju razina od x ili imenovani popis koji specificira kako preimenovati razine. Duži vektor omogućuje dodavanje novih razina, dok imenovani popis omogućuje precizno mapiranje starih naziva razina u nove. <span class="sc">\|</span></span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a><span class="co"># Dohvaćanje razina</span></span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations)</span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a><span class="co"># Mijenjanje naziva razina</span></span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PRVA GENERACIJA"</span>, <span class="st">"DRUGA GENERACIJA"</span>, <span class="st">"TREĆA GENERACIJA"</span>, <span class="st">"ČETVRTA GENERACIJA"</span>, <span class="st">"PETA GENERACIJA"</span>, <span class="st">"ŠESTA GENERACIJA"</span>)</span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">levels</span>(pokemon_generations), <span class="st">"SEDMA GENERACIJA"</span>)</span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a><span class="co"># Dodavanje nove razine</span></span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(pokemon_generations) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PRVA GENERACIJA"</span>, <span class="st">"DRUGA GENERACIJA"</span>, <span class="st">"TREĆA GENERACIJA"</span>, <span class="st">"ČETVRTA GENERACIJA"</span>, <span class="st">"PETA GENERACIJA"</span>, <span class="st">"ŠESTA GENERACIJA"</span>, <span class="st">"SEDMA GENERACIJA"</span>)</span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a>pokemon_generations</span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a>Za različite situacije postoje posebne funkcije <span class="in">`forcats`</span> za rad s faktorima koje omogućuju premještanje faktora:</span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`fct_reorder()`</span> za promjenu nivoa faktora,</span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`fct_relevel()`</span> za mijenjanje određenih nivoa na početak,</span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`fct_infreq()`</span> za sortiranje nivoa po učestalosti pojavljivanja i</span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`fct_rev()`</span> za obrtanje redoslijeda nivoa.</span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a>Ove se funkcije uobičajeno koriste kod vizualizacije faktora u <span class="in">`ggplot2`</span> paketu, a izvan vizualizacija nemaju puno svrhe.</span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a>Još je jedna mogućnost u radu s faktorima promjena njihovih vrijednosti. Ovo omogućuje da se razjasne leveli, odnosno nazivi faktora, sažmu nivoi ili promijene nazivi nivoa. To se u R-u omogućuje funkcijom <span class="in">`fct_recode()`</span>.</span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija fct_recode()"}</span>
+<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`fct_recode()`</span> omogućuje promjenu vrijednosti (naziva) razina faktora.</span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="sc">\|</span> Objašnjenje <span class="sc">\|</span></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`.f`</span> <span class="sc">\|</span> faktor (ili znakovni vektor) čije razine želimo promijeniti, lijeva strana predstavlja novu razinu, a desna strana staru razinu, razine koje nisu spomenute ostat će nepromijenjene, a razine se mogu ukloniti tako da im se dodijeli <span class="in">`NULL`</span> <span class="sc">\|</span></span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="fu">fct_recode</span>(type_1,</span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a>      <span class="st">"vodeni"</span> <span class="ot">=</span> <span class="st">"water"</span>,</span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a>      <span class="st">"normalni"</span> <span class="ot">=</span> <span class="st">"normal"</span>,</span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a>      <span class="st">"zemljani"</span> <span class="ot">=</span> <span class="st">"grass"</span>,</span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a>      <span class="st">"buba"</span> <span class="ot">=</span> <span class="st">"bug"</span>,</span>
+<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a>      <span class="st">"psio"</span> <span class="ot">=</span> <span class="st">"psychic"</span>,</span>
+<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a>      <span class="st">"vatreni"</span> <span class="ot">=</span> <span class="st">"fire"</span>,</span>
+<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a>      <span class="st">"strujni"</span> <span class="ot">=</span> <span class="st">"electric"</span>,</span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a>      <span class="st">"zemljani"</span> <span class="ot">=</span> <span class="st">"rock"</span>,</span>
+<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a>      <span class="st">"zmaj"</span> <span class="ot">=</span> <span class="st">"dragon"</span>,</span>
+<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a>      <span class="st">"duh"</span> <span class="ot">=</span> <span class="st">"ghost"</span></span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a>Jedna od karakteristika faktora je mogućnost njihovog hijerarhiziranja. Drugim riječima, faktori se mogu grupirati u različite grupe faktora na temelju neke zajedničke karakteristike. Time se omogućuje jednostavno sažimanje velikog broja kategorija u manji skup s kojim se lakše upravlja. Za to unutar <span class="in">`forcats`</span> paketa postoji funkcija <span class="in">`fct_collapse()`</span>.</span>
+<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija fct_collapse()"}</span>
+<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a>Funkcija fct_collapse() je specijalizirana varijanta funkcije <span class="in">`fct_recode()`</span> koja je posebno dizajnirana za grupiranje više razina faktora u manje grupa.</span>
+<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argumenti <span class="sc">\|</span> Objašnjenje <span class="sc">\|</span></span>
+<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`.f`</span> <span class="sc">\|</span> faktor čije razine grupiraju <span class="sc">\|</span></span>
+<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`...`</span> <span class="sc">\|</span> serija imenovanih znakovnih vektora gdje je naziv lijevoj strani nova grupa, a vrijednost vektora na desnoj strani <span class="sc">\|</span></span>
+<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`other_level`</span> <span class="sc">\|</span> vrijednost razine koja se koristi za "ostale" vrijednosti <span class="sc">\|</span></span>
+<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a>pokemon_dataset_type_groups <span class="ot">&lt;-</span> pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_groups =</span> <span class="fu">fct_collapse</span>(</span>
+<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>      <span class="at">.f =</span> pokemon_dataset<span class="sc">$</span>type_1,</span>
+<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>      <span class="st">"elementary types"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"fire"</span>, <span class="st">"water"</span>, <span class="st">"grass"</span>, <span class="st">"electric"</span>, <span class="st">"rock"</span>),</span>
+<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a>      <span class="st">"normal pokemons"</span> <span class="ot">=</span> <span class="st">"normal"</span>,</span>
+<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a>      <span class="st">"creature pokemons"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"bug"</span>, <span class="st">"dragon"</span>, <span class="st">"ghost"</span>),</span>
+<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a>      <span class="at">other_level =</span> <span class="st">"other types"</span></span>
+<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a>pokemon_dataset_type_groups</span>
+<span id="cb15-204"><a href="#cb15-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-205"><a href="#cb15-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Funkcija fct_lump*()"}</span>
+<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a><span class="in">`forcats`</span> paket sadrži i posebnu skupinu <span class="in">`fct_lump*()`</span> funkcija za sažimanje malih grupa u faktoru u jednu "Other" kategoriju. Ovo je korisno kada imamo faktor s mnogo razina, a neke se pojavljuju vrlo rijetko.</span>
+<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span><span class="in">`fct_lump_min()`</span> - sažima razine koje se pojavljuju manje od <span class="in">`min`</span> puta,</span>
+<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span><span class="in">`fct_lump_prop()`</span> - sažima razine koje se pojavljuju u manje od (ili jednako) <span class="in">`prop * n`</span> slučajeva,</span>
+<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span><span class="in">`fct_lump_n()`</span> - zadržava samo <span class="in">`n`</span> najčešćih (ili najrjeđih ako je <span class="in">`n`</span> <span class="sc">\&lt;</span> 0) razina i</span>
+<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span><span class="in">`fct_lump_lowfreq()`</span> - sažima najrjeđe razine osiguravajući da "Other" i dalje ostane najmanja razina.</span>
+<span id="cb15-216"><a href="#cb15-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argumenti <span class="sc">\|</span> Objašnjenje <span class="sc">\|</span></span>
+<span id="cb15-218"><a href="#cb15-218" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`f`</span> <span class="sc">\|</span> faktor (ili znakovni vektor) koji želite sažeti <span class="sc">\|</span></span>
+<span id="cb15-219"><a href="#cb15-219" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`n`</span> za <span class="in">`fct_lump_n()`</span> <span class="sc">\|</span> Pozitivni n: zadržava n najčešćih razina, Negativni n: zadržava n najrjeđih razina <span class="sc">\|</span></span>
+<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`prop`</span> za <span class="in">`fct_lump_prop()`</span> <span class="sc">\|</span> Pozitivni prop: sažima razine koje se ne pojavljuju barem prop vremena, Negativni prop: sažima razine koje se ne pojavljuju najviše -prop vremena</span>
+<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`min`</span>za <span class="in">`fct_lump_min()`</span> <span class="sc">\|</span> zadržava razine koje se pojavljuju barem min puta <span class="sc">\|</span></span>
+<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`w`</span> <span class="sc">\|</span> neobavezni numerički vektor koji daje težine za učestalost svake vrijednosti <span class="sc">\|</span></span>
+<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`other_level`</span> <span class="sc">\|</span> vrijednost razine koja se koristi za "ostale" vrijednosti <span class="sc">\|</span></span>
+<span id="cb15-224"><a href="#cb15-224" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ties.method`</span> <span class="sc">\|</span> znakovni niz koji specificira kako se tretiraju izjednačenja <span class="sc">\|</span></span>
+<span id="cb15-225"><a href="#cb15-225" aria-hidden="true" tabindex="-1"></a>:::</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

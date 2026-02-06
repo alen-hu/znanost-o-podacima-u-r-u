@@ -1,0 +1,872 @@
+---
+title: "Datum i vrijeme"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+Rad s **datumima** i **vremenima** predstavlja jednu od ključnih vještina u analizi podataka, no istovremeno je i jedan od najsloženijih aspekata obrade podataka u R-u. Na prvi pogled datumi i vremena izgledaju jednostavno jer ih koristimo svakodnevno u običnom životu i ne čine se problem, no što dublje ulazimo u problematiku, to postaju složeniji. Datumi i vremena su teški jer moraju pomiriti dva fizička fenomena (rotaciju Zemlje i njezinu orbitu oko Sunca) s cijelim nizom geopolitičkih fenomena uključujući mjesece, vremenske zone i ljetno računanje vremena. Za rad s datumima i vremenima u R-u potrebno je razumjeti da postoje različiti tipovi podataka koji se odnose na trenutak u vremenu. Postoje tri tipa datum/ vrijeme podataka koji se odnose na trenutak u vremenu: datum, vrijeme unutar dana i datum-vrijeme koji je kombinacija datuma i vremena.
+
+Pristup rada s datumima i vremenima usmjeren na `lubridate` paket koji olakšava rad s datumima i vremenima u R-u. Paket `lubridate` je R paket koji olakšava rad s datumima i vremenima te ima konzistentnu i lako pamtljivu sintaksu koja čini rad s datumima jednostavnim. Ovaj rad predstavlja `lubridate` paket za R koji olakšava rad s datumima i vremenima jer datum-vremena stvaraju različite tehničke probleme za analitičara podataka. Paket je dizajniran s ciljem rješavanja uobičajenih problema s kojima se analitičari susreću prilikom rada s vremenskim podacima.
+
+Jedan od najvećih izazova u radu s datumima je natjerati R da se složi da podaci sadrže datume i vremena za koje mislite da ih sadrže može biti trikovno. `lubridate` rješava ovaj problem pružanjem intuitivnih funkcija za parsiranje različitih formata datuma i vremena te omogućava elementarne operacije poput izdvajanja komponenti datuma, aritmetike s datumima i rada s vremenskim zonama.
+
+### Kreiranje datuma i vremena u R-u
+
+Postoje tri tipa datum/vrijeme podataka koji se odnose na trenutak u vremenu:
+
+1.  datum (`<date>`),
+
+2.  vrijeme unutar dana (`<time>`) i
+
+3.  datum-vrijeme koji je kombinacija datuma i vremena i jedinstveno identificira trenutak u vremenu (`<dttm>`).
+
+U ovom je poglavlju fokus na datume i datum-vremena jer R nema osnovnu klasu za pohranu vremena, a ako trebamo raditi samo s vremenom, onda možemo koristiti paket `hms`. Uvijek je najbolje koristiti najjednostavniji mogući tip podataka koji odgovara trenutnim potrebama - to znači da ako možemo koristiti datum umjesto datum-vremena, to je ono što je najbolje koristiti. Datum-vremena su znatno složeniji zbog potrebe za rukovanje vremenskim zonama.
+
+Za dobivanje trenutnog datuma ili datum-vremena mogu se koristiti funkcije `today()` ili `now()`.
+
+```{r}
+# Današnji datum
+today()
+
+# Trenutno datum-vrijeme
+now()
+```
+
+Ako CSV sadrži oznaku ISO8601 datum ili datum-vrijeme, ne morate ništa raditi - `readr` će ga automatski prepoznati. ISO8601 je međunarodni standard za pisanje datuma gdje su komponente datuma organizirane od najveće prema najmanjoj razdvojene crticama.
+
+```{r}
+# Primjer CSV-a s Pokemon podacima
+csv_pokemon <- "
+name,caught_date,caught_datetime
+Pikachu,2023-05-15,2023-05-15 14:30
+Charizard,2023-06-02,2023-06-02 09:15
+Blastoise,2023-07-20,2023-07-20 18:45
+"
+
+pokemon_data <- read_csv(csv_pokemon)
+pokemon_data
+```
+
+Za druge formate datum-vremena potrebno je koristiti `col_types` a `col_date()` ili `col_datetime()` zajedno s formatom datum-vremena. Format koristi `%` praćen jednim znakom za opisivanje komponente datuma.
+
+```{r}
+# CSV s različitim formatima datuma
+csv_pokemon_formats <- "
+name,caught_date
+Pikachu,15/05/23
+Charizard,05-15-2023
+Venusaur,2023 May 15
+"
+
+# Parsiranje različitih formata
+read_csv(
+  csv_pokemon_formats,
+  col_types = cols(caught_date = col_date("%d/%m/%y"))
+)
+
+read_csv(
+  csv_pokemon_formats,
+  col_types = cols(caught_date = col_date("%m-%d-%Y"))
+)
+```
+
+Alternativni pristup je korištenje `lubridate` pomoćnih funkcija koje automatski pokušavaju odrediti format kada specificirate redoslijed komponenti. Da biste ih koristili, identificirajte redoslijed u kojem se godina, mjesec i dan pojavljuju u vašim datumima, a zatim poredajte "y", "m" i "d" u istom redoslijed.
+
+```{r}
+# Različiti formati datuma
+ymd("2023-05-15")
+mdy("May 15, 2023")
+dmy("15-May-2023")
+
+# Datumi Pokemon turnira u različitim formatima
+pokemon_tournament_dates <- c(
+  "2023-07-15",
+  "August 20, 2023",
+  "25-Sep-2023"
+)
+
+# Parsiranje različitih formata
+ymd(pokemon_tournament_dates[1])
+mdy(pokemon_tournament_dates[2])
+dmy(pokemon_tournament_dates[3])
+```
+
+`ymd()` i slične funkcije stvaraju datume. Za stvaranje datum-vremena, dodajte podvlaku i jedan ili više znakova "h", "m" i "s" na naziv funkcije za parsiranje.
+
+```{r}
+# Datum-vrijeme kada je Pokemon uhvaćen
+ymd_hms("2023-05-15 14:30:59")
+ymd_hm("2023-05-15 14:30")
+```
+
+Ponekad ćete imati individualne komponente datum-vremena razmještene u više stupaca. U takvim slučajevima koristite `make_date()` za datume ili `make_datetime()` za datum-vremena.
+
+```{r}
+# Simuliramo podatke o uhvaćenim Pokemonima
+pokemon_catches <- data.frame(
+  name = c("Pikachu", "Charizard", "Blastoise", "Venusaur"),
+  year = c(2023, 2023, 2023, 2023),
+  month = c(5, 6, 7, 8),
+  day = c(15, 2, 20, 10),
+  hour = c(14, 9, 18, 11),
+  minute = c(30, 15, 45, 20)
+)
+
+# Stvaranje datuma
+pokemon_catches$catch_date <- make_date(
+  pokemon_catches$year,
+  pokemon_catches$month,
+  pokemon_catches$day
+)
+
+# Stvaranje datum-vremena
+pokemon_catches$catch_datetime <- make_datetime(
+  pokemon_catches$year,
+  pokemon_catches$month,
+  pokemon_catches$day,
+  pokemon_catches$hour,
+  pokemon_catches$minute
+)
+
+pokemon_catches
+```
+
+Možda ćete htjeti prebacivati između datum-vremena i datuma. To je posao funkcija `as_date()` i `as_datetime()`.
+
+```{r}
+# Pretvorba datum-vremena u datum
+pokemon_datetime <- ymd_hms("2023-05-15 14:30:59")
+as_date(pokemon_datetime)
+
+# Pretvorba datuma u datum-vrijeme
+pokemon_date <- ymd("2023-05-15")
+as_datetime(pokemon_date)
+```
+
+Ponekad ćete dobiti datum/vremena kao numeričke pomake od "Unix Epoch", 1970-01-01. Ako je pomak u sekundama, koristite `as_datetime()`, a ako je u danima, koristite `as_date()`.
+
+```{r}
+# Simuliramo da su Pokemon podaci pohranjeni kao Unix timestamp
+pikachu_timestamp <- 1684159859
+charizard_days <- 19510
+
+# Pretvorba u čitljive formate
+as_datetime(pikachu_timestamp)
+as_date(charizard_days)
+```
+
+```{r}
+# Kompletniji primjer s Pokemon lovom kroz različite regije
+pokemon_log <- data.frame(
+  trainer = c("Ash", "Misty", "Brock", "Ash", "Gary"),
+  pokemon = c("Pikachu", "Staryu", "Onix", "Charizard", "Blastoise"),
+  region = c("Kanto", "Cerulean", "Pewter", "Charicific Valley", "Pallet"),
+  caught_string = c("2023-04-01 08:30", "2023-04-15 16:45", "2023-05-02 12:15", "2023-06-20 19:30", "2023-07-10 14:20"),
+  stringsAsFactors = FALSE
+)
+
+# Parsiranje datum-vremena
+pokemon_log$caught_datetime <- ymd_hm(pokemon_log$caught_string)
+
+# Dodavanje datuma bez vremena
+pokemon_log$caught_date <- as_date(pokemon_log$caught_datetime)
+
+# Pregled rezultata
+pokemon_log
+```
+
+### Komponente datum-vremena
+
+Možete izdvojiti pojedine dijelove datuma pomoću pristupnih funkcija `year()`, `month()`, `mday()` (dan u mjesecu), `yday()` (dan u godini), `wday()` (dan u tjednu), `hour()`, `minute()` i `second()`. Ove su funkcije jednostavne za dobivanje i postavljanje komponenti datum-vremena.
+
+```{r}
+# Stvaramo datum-vrijeme kada je Pikachu uhvaćen
+pikachu_datetime <- ymd_hms("2023-05-15 14:30:45")
+
+# Izdvajanje komponenti
+year(pikachu_datetime)
+month(pikachu_datetime)
+mday(pikachu_datetime)
+yday(pikachu_datetime)
+wday(pikachu_datetime)
+hour(pikachu_datetime)
+minute(pikachu_datetime)
+second(pikachu_datetime)
+```
+
+Za `month()` i `wday()` možete postaviti `label = TRUE` da vratite skraćeni naziv mjeseca ili dana u tjednu. Postavite `abbr = FALSE` da vratite puni naziv.
+
+```{r}
+# Datumi Pokemon turnira
+pokemon_tournaments <- data.frame(
+  tournament = c("Indigo Plateau", "Silver Conference", "Ever Grande", "Lily of the Valley", "Vertress Conference"),
+  date = ymd(c("2023-03-15", "2023-06-20", "2023-09-10", "2023-11-05", "2023-12-18")),
+  stringsAsFactors = FALSE
+)
+
+# Dodavanje informacija o mjesecu
+pokemon_tournaments$month_num <- month(pokemon_tournaments$date)
+pokemon_tournaments$month_name <- month(pokemon_tournaments$date, label = TRUE)
+pokemon_tournaments$month_full <- month(pokemon_tournaments$date, label = TRUE, abbr = FALSE)
+
+# Dodavanje informacija o danu u tjednu
+pokemon_tournaments$weekday <- wday(pokemon_tournaments$date, label = TRUE)
+pokemon_tournaments$weekday_full <- wday(pokemon_tournaments$date, label = TRUE, abbr = FALSE)
+
+pokemon_tournaments
+```
+
+```{r}
+# Simuliramo podatke o uhvaćenim Pokemonima
+set.seed(42)
+pokemon_catches <- data.frame(
+  pokemon = sample(c("Pikachu", "Charizard", "Blastoise", "Venusaur", "Butterfree", "Pidgeot", "Alakazam", "Machamp"),  100, replace = TRUE),
+  caught_datetime = ymd("2023-01-01") + days(sample(0:364, 100, replace = TRUE)) + hours(sample(0:23, 100, replace = TRUE)) + minutes(sample(0:59, 100, replace = TRUE)),
+  stringsAsFactors = FALSE
+)
+
+# Analiza po danima u tjednu
+pokemon_catches$weekday <- wday(pokemon_catches$caught_datetime, label = TRUE, abbr = FALSE)
+
+pokemon_by_weekday <- pokemon_catches |>
+  group_by(weekday) |>
+  summarise(
+    count = n(),
+    .groups = "drop"
+  ) |>
+  arrange(weekday)
+
+pokemon_by_weekday
+```
+
+```{r}
+# Simuliramo podatke o Pokemon borbama
+pokemon_battles <- data.frame(
+  battle_id = 1:500,
+  battle_time = ymd_hms("2023-06-01 00:00:00") + hours(sample(0:23, 500, replace = TRUE)) + minutes(sample(0:59, 500, replace = TRUE)),
+  winner = sample(c("Ash", "Gary", "Misty", "Brock"), 500, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+# Izdvajanje sata
+pokemon_battles$battle_hour <- hour(pokemon_battles$battle_time)
+
+# Analiza aktivnosti po satima
+battles_per_hour <- pokemon_battles |>
+  group_by(battle_hour) |>
+  summarise(
+    battle_count = n(),
+    .groups = "drop"
+  )
+
+battles_per_hour
+
+ggplot(battles_per_hour, aes(x = battle_hour, y = battle_count)) +
+  geom_col(fill = "steelblue") +
+  labs(
+    title = "Pokemon Battle Activity by Hour of Day",
+    x = "Hour of Day",
+    y = "Number of Battles"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+# Simuliramo podatke o Pokemon Gym borbama
+gym_battles <- data.frame(
+  gym = sample(c("Pewter", "Cerulean", "Vermilion", "Celadon", "Fuchsia", "Saffron", "Cinnabar", "Viridian"), 1000, replace = TRUE),
+  scheduled_time = ymd_hms("2023-01-01 00:00:00") + days(sample(0:364, 1000, replace = TRUE)) + hours(sample(8:20, 1000, replace = TRUE)),
+  actual_delay = sample(-10:60, 1000, replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+# Dodavanje dana u tjednu
+gym_battles$weekday <- wday(gym_battles$scheduled_time, label = TRUE)
+
+# Analiza prosječnog kašnjenja po danima
+delay_by_weekday <- gym_battles |>
+  group_by(weekday) |>
+  summarise(
+    avg_delay = mean(actual_delay),
+    n_battles = n(),
+    .groups = "drop"
+  )
+
+delay_by_weekday
+```
+
+Možemo također pogledati prosječno vrijeme po minuti unutar sata. Postoji zanimljiv uzorak: Pokemon posjeti koji se događaju u minutama 20-30 i 50-60 imaju mnogo niža kašnjenja od ostatka sata.
+
+```{r}
+# Simuliramo podatke o posjetima Pokemon Centru
+pokemon_center_visits <- data.frame(
+  trainer = sample(c("Ash", "Misty", "Brock", "Gary", "May"), 2000, replace = TRUE),
+  scheduled_time = ymd_hms("2023-06-01 08:00:00") + hours(rep(0:11, each = 167))[1:2000] + minutes(sample(0:59, 2000, replace = TRUE)),
+  actual_time = ymd_hms("2023-06-01 08:00:00") + hours(rep(0:11, each = 167))[1:2000] + minutes(sample(0:59, 2000, replace = TRUE)) + minutes(sample(-5:30, 2000, replace = TRUE)),
+  stringsAsFactors = FALSE
+)
+
+# Izračunavanje kašnjenja
+pokemon_center_visits$delay <- as.numeric(
+  difftime(pokemon_center_visits$actual_time, pokemon_center_visits$scheduled_time, units = "mins")
+)
+
+# Analiza po minutama
+pokemon_center_visits$minute <- minute(pokemon_center_visits$scheduled_time)
+
+delay_by_minute <- pokemon_center_visits |>
+  group_by(minute) |>
+  summarise(
+    avg_delay = mean(delay),
+    n = n(),
+    .groups = "drop"
+  )
+
+delay_by_minute
+
+# Vizualizacija
+ggplot(delay_by_minute, aes(x = minute, y = avg_delay)) +
+  geom_line(color = "red", size = 1) +
+  geom_point(color = "darkred") +
+  labs(
+    title = "Average Pokemon Center Visit Delay by Minute",
+    x = "Minute of Hour",
+    y = "Average Delay (minutes)"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+# Simuliramo podatke o posjetima Pokemon Centru
+pokemon_center_visits <- data.frame(
+  trainer = sample(c("Ash", "Misty", "Brock", "Gary", "May"), 2000, replace = TRUE),
+  scheduled_time = ymd_hms("2023-06-01 08:00:00") + hours(rep(0:11, each = 167))[1:2000] + minutes(sample(0:59, 2000, replace = TRUE)),
+  actual_time = ymd_hms("2023-06-01 08:00:00") + hours(rep(0:11, each = 167))[1:2000] + minutes(sample(0:59, 2000, replace = TRUE)) + minutes(sample(-5:30, 2000, replace = TRUE)),
+  stringsAsFactors = FALSE
+)
+
+# Izračunavanje kašnjenja
+pokemon_center_visits$delay <- as.numeric(
+  difftime(pokemon_center_visits$actual_time, pokemon_center_visits$scheduled_time, units = "mins")
+)
+
+# Analiza po minutama
+pokemon_center_visits$minute <- minute(pokemon_center_visits$scheduled_time)
+
+delay_by_minute <- pokemon_center_visits |>
+  group_by(minute) |>
+  summarise(
+    avg_delay = mean(delay),
+    n = n(),
+    .groups = "drop"
+  )
+
+delay_by_minute
+
+# Vizualizacija
+ggplot(delay_by_minute, aes(x = minute, y = avg_delay)) +
+  geom_line(color = "red", size = 1) +
+  geom_point(color = "darkred") +
+  labs(
+    title = "Average Pokemon Center Visit Delay by Minute",
+    x = "Minute of Hour",
+    y = "Average Delay (minutes)"
+  ) +
+  theme_minimal()
+```
+
+**Zaokruživanje**
+
+Alternativni pristup crtanju individualnih komponenti je zaokruživanje datuma na obližnju vremensku jedinicu pomoću `floor_date()`, `round_date()` i `ceiling_date()`. Svaka funkcija prima vektor datuma za prilagodbu i zatim naziv jedinice za zaokruživanje prema dolje, prema gore ili najbližoj vrijednosti.
+
+```{r}
+# Stvaramo podatke o uhvaćenim Pokemonima kroz godinu
+pokemon_yearly <- data.frame(
+  pokemon = sample(c("Pikachu", "Charizard", "Blastoise", "Venusaur", "Gengar", "Dragonite", "Mewtwo", "Mew"), 365, replace = TRUE),
+  caught_date = ymd("2023-01-01") + days(0:364),
+  stringsAsFactors = FALSE
+)
+
+# Zaokruživanje na tjedne
+pokemon_weekly <- pokemon_yearly |>
+  mutate(week = floor_date(caught_date, "week")) |>
+  count(week, name = "pokemon_count")
+
+pokemon_weekly
+
+# Vizualizacija
+ggplot(pokemon_weekly, aes(x = week, y = pokemon_count)) +
+  geom_line(color = "blue") +
+  geom_point(color = "darkblue") +
+  labs(
+    title = "Pokemon Caught per Week in 2023",
+    x = "Week",
+    y = "Number of Pokemon Caught"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+# Zaokruživanje na mjesece
+pokemon_monthly <- pokemon_yearly |>
+  mutate(month = floor_date(caught_date, "month")) |>
+  count(month, name = "pokemon_count")
+
+# Pregled
+pokemon_monthly
+```
+
+Možete koristiti zaokruživanje da pokažete distribuciju aktivnosti tijekom dana izračunavanjem razlike između vremena i najranijeg trenutka tog dana.
+
+```{r}
+# Analiza Pokemon borbi tijekom dana
+daily_battles <- pokemon_battles |>
+  mutate(battle_time_from_midnight = battle_time - floor_date(battle_time, "day"))
+
+# Ova razlika daje difftime objekt
+head(daily_battles$battle_time_from_midnight)
+
+daily_battles <- daily_battles |>
+  mutate(battle_hour_hms = as_hms(battle_time - floor_date(battle_time, "day")))
+
+# Vizualizacija
+ggplot(daily_battles, aes(x = battle_hour_hms)) +
+  geom_freqpoly(binwidth = 60 * 30, color = "red", size = 1) +
+  labs(
+    title = "Distribution of Pokemon Battles Throughout the Day",
+    x = "Time of Day",
+    y = "Number of Battles"
+  ) +
+  theme_minimal()
+```
+
+**Modificiranje komponenti**
+
+Također možete koristiti svaku pristupnu funkciju za modificiranje komponenti datum-vremena. Ovo se često koristi pri čišćenju podataka koji imaju očito netočne datume.
+
+```{r}
+# Podaci s greškom u godini
+pokemon_data_error <- data.frame(
+  pokemon = c("Pikachu", "Charizard", "Blastoise"),
+  caught_date = ymd(c("2023-05-15", "2023-06-20", "2022-07-10")),
+  stringsAsFactors = FALSE
+)
+
+# Ispravljamo grešku - Blastoise je uhvaćen 2023, ne 2022
+year(pokemon_data_error$caught_date[3]) <- 2023
+
+pokemon_data_error
+```
+
+Alternativno, umjesto modificiranja postojeće varijable, možete stvoriti novi datum-vrijeme pomoću `update()`. Ovo također omogućava postavljanje više vrijednosti u jednom koraku.
+
+```{r}
+# Korištenje update() funkcije
+pokemon_datetime <- ymd_hms("2023-05-15 14:30:45")
+
+# Ažuriranje samo sata
+update(pokemon_datetime, hour = 10)
+
+# Ažuriranje više komponenti odjednom
+update(pokemon_datetime, year = 2024, month = 1, day = 1, hour = 0)
+```
+
+```{r}
+# Turniri iz različitih godina
+tournaments <- data.frame(
+  name = c("Indigo Plateau", "Silver Conference", "Ever Grande"),
+  date = ymd(c("2021-03-15", "2022-06-20", "2023-09-10")),
+  stringsAsFactors = FALSE
+)
+
+# Normaliziramo sve na 2023. godinu za usporedbu
+tournaments$normalized_date <- update(tournaments$date, year = 2023)
+
+tournaments
+```
+
+Ako su vrijednosti prevelike, one će se prebaciti.
+
+```{r}
+# Primjer prebacivanja
+update(ymd("2023-01-31"), month = 2)
+update(ymd("2023-01-31"), hour = 400)
+```
+
+```{r}
+# Praćenje Pokemon evolucija
+pokemon_evolutions <- data.frame(
+  pokemon = c("Charmander", "Charmeleon", "Charizard"),
+  evolution_time = ymd_hms(c("2023-03-01 08:30:00", "2023-03-01 08:30:00", "2023-03-01 08:30:00")),
+  level = c(1, 16, 36),
+  stringsAsFactors = FALSE
+)
+
+# Ažuriramo vremena evolucije na osnovu razine
+pokemon_evolutions$evolution_time[2] <- pokemon_evolutions$evolution_time[1] + days(15)
+
+pokemon_evolutions$evolution_time[3] <- pokemon_evolutions$evolution_time[2] + days(20)
+
+pokemon_evolutions
+```
+
+**Vremenski raspon**
+
+Idući dio bavljenja s datumima i vremenima je funkcioniranje aritmetika s datumima, uključujući oduzimanje, zbrajanje i dijeljenje. Ključan segment toga su vremenski rasponi: trajanja (durations) koja predstavljaju točan broj sekundi, periodi (periods) koji predstavljaju ljudske jedinice poput tjedana i mjeseci i intervali (intervals) koji predstavljaju početnu i završnu točku. Kao i uvijek najbolje je odabrati najjednostavniju strukturu podataka koja rješava problem. Ako vas zanima samo fizičko vrijeme, koristite trajanje; ako trebate dodati ljudsko vrijeme, koristite period; ako trebate saznati koliko dugo traje raspon u ljudskim jedinicama, koristite interval
+
+U R-u, kada oduzmete dva datuma, dobivate difftime objekt koja bilježi vremenski raspon u sekundama, minutama, satima, danima ili tjednima. Ova dvosmislenost može učiniti difftime objekte pomalo bolnim za rad, stoga `lubridate` pruža alternativu koja uvijek koristi sekunde - **trajanje** koja mogu doći s gomilom praktičnih konstruktora.
+
+```{r}
+# Koliko je vremena prošlo od kada je Ash dobio Pikachu-a?
+ash_got_pikachu <- ymd("2023-04-01")
+today_date <- ymd("2023-09-29")
+
+pikachu_age <- today_date - ash_got_pikachu
+pikachu_age
+
+# Pretvorba u duration
+as.duration(pikachu_age)
+
+# Konstruktori za trajanja
+dseconds(15)
+dminutes(10)
+dhours(c(12, 24))
+ddays(0:5)
+dweeks(3)
+dyears(1)
+```
+
+Trajanja uvijek bilježe vremenski raspon u sekundama. Veće jedinice nastaju pretvaranjem minuta, sati, dana, tjedana i godina u sekunde: 60 sekundi u minuti, 60 minuta u satu, 24 sata u danu i 7 dana u tjednu. Veće vremenske jedinice su problematičnije. Godina koristi "prosječan" broj dana u godini, tj. 365.25.
+
+Aritmetika s trajanjima:
+
+```{r}
+# Možete zbrajati i množiti trajanja
+2 * dyears(1)
+dyears(1) + dweeks(12) + dhours(15)
+```
+
+```{r}
+# Pokemon trening raspored
+pokemon_training_schedule <- data.frame(
+  pokemon = c("Pikachu", "Charizard", "Blastoise", "Venusaur"),
+  daily_training = c(dhours(2), dhours(3), dhours(2.5), dhours(2)),
+  days_trained = c(30, 25, 28, 32),
+  stringsAsFactors = FALSE
+)
+
+# Izračunavanje ukupnog vremena treninga
+pokemon_training_schedule$total_training <- pokemon_training_schedule$daily_training * pokemon_training_schedule$days_trained
+
+pokemon_training_schedule
+
+# Kada će Pokemon biti spreman za borbu?
+start_training <- ymd("2023-06-01")
+
+# Dodavanje trajanja
+start_training + ddays(30)
+start_training + dweeks(4)
+```
+
+Međutim, budući da trajanja predstavljaju točan broj sekundi, ponekad možete dobiti neočekivani rezultat.
+
+```{r}
+# Problem s ljetnim računanjem vremena
+one_am <- ymd_hms("2023-03-12 01:00:00", tz = "America/New_York")
+one_am
+
+one_am + ddays(1)
+```
+
+Zašto je jedan dan nakon 1 ujutro 12. ožujka, 2 ujutro 13. ožujka? Ako pažljivo pogledate datum, možda ćete primijetiti i da su se vremenske zone promijenile. 12. ožujka ima samo 23 sata jer je to kada počinje ljetno računanje vremena, pa ako dodamo puni dani vrijednosti sekundi, završavamo s različitim vremenom.
+
+```{r}
+# Evolucija Pokemon na dan promjene na ljetno računanje vremena
+evolution_time <- ymd_hms("2023-03-12 01:00:00", tz = "America/New_York")
+
+# Dodavanje 1 dana kao trajanje
+evolution_time + ddays(1)
+
+# Dodavanje točno 24 sata
+evolution_time + dhours(24)
+```
+
+Da bi se riješio ovaj problem, `lubridate` pruža **periode**. Periodi su vremenski rasponi, ali nemaju fiksnu duljinu u sekundama; umjesto toga rade s "ljudskim" vremenima, poput dana i mjeseci. To im omogućava rad na intuitivniji način.
+
+```{r}
+one_am
+
+one_am + days(1)
+```
+
+Poput trajanja, periodi se mogu stvoriti nizom korisnih funkcija konstruktora.
+
+```{r}
+seconds(15)
+minutes(10)
+hours(c(12, 24))
+days(7)
+months(1:6)
+weeks(3)
+years(1)
+```
+
+```{r}
+# Evolucijska vremena različitih Pokemon
+pokemon_evolutions <- data.frame(
+  species = c("Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle", "Blastoise"),
+  evolution_stage = c(1, 2, 3, 1, 2, 3, 1, 2, 3),
+  time_to_evolve = c(months(0), months(2), months(3), months(0), months(2), months(4), months(0), months(2) + weeks(2), months(3) + weeks(2)),
+  stringsAsFactors = FALSE
+)
+
+# Izračunavanje ukupnog vremena od početka do finalne evolucije
+pokemon_evolutions |>
+  mutate(evolution_line = case_when(
+    grepl("Bulb|Ivy|Venu", species) ~ "Bulbasaur line",
+    grepl("Char", species) ~ "Charmander line",
+    grepl("Squir|Wart|Blast", species) ~ "Squirtle line"
+  )) |>
+  group_by(evolution_line) |>
+  summarise(
+    final_form = last(species),
+    total_time = sum(time_to_evolve),
+    .groups = "drop"
+  )
+```
+
+Aritmetika s periodima:
+
+```{r}
+# Zbrajanje perioda
+10 * (months(6) + days(1))
+
+days(50) + hours(25) + minutes(2)
+```
+
+```{r}
+# Planiranje sezone Pokemon turnira
+tournament_start <- ymd("2024-01-15")
+
+# Turniri svaka 2 mjeseca
+tournament_dates <- tournament_start + months(0:5) * 2
+
+tournament_schedule <- data.frame(
+  tournament_number = 1:6,
+  date = tournament_dates,
+  tournament_name = c("Pewter City", "Cerulean City", "Vermilion City", "Celadon City", "Fuchsia City", "Saffron City")
+)
+
+tournament_schedule
+```
+
+U usporedbi s trajanjima, periodi će vjerojatnije učiniti ono što očekujete.
+
+```{r}
+# Usporedba perioda i trajanja
+one_am
+
+one_am + days(1)
+
+one_am + ddays(1)
+```
+
+```{r}
+# Simuliramo Pokemon putovanja između regija
+pokemon_travels <- data.frame(
+  pokemon = c("Pidgeot", "Charizard", "Dragonite", "Aerodactyl"),
+  departure = ymd_hms(c("2023-06-15 22:30:00", "2023-06-15 23:45:00", "2023-06-15 21:15:00", "2023-06-15 23:00:00")),
+  arrival = ymd_hms(c("2023-06-15 02:30:00", "2023-06-15 01:20:00", "2023-06-15 03:45:00", "2023-06-15 00:30:00")),
+  stringsAsFactors = FALSE
+)
+
+# Ovi Pokemon su letjeli preko noći!
+pokemon_travels |>
+  filter(arrival < departure)
+```
+
+To su noćni letovi. Koristili smo iste informacije o datumu za vrijeme odlaska i dolaska, ali ovi Pokemon su stigli sljedećeg dana. Možemo to popraviti dodavanjem `days(1)` vremenu dolaska svaki noćni let.
+
+```{r}
+# Ispravljanje noćnih letova
+pokemon_travels <- pokemon_travels |>
+  mutate(
+    overnight = arrival < departure,
+    arrival_fixed = if_else(overnight, arrival + days(1), arrival)
+  )
+
+pokemon_travels
+
+# Sada svi letovi poštuju zakone fizike
+pokemon_travels |>
+  filter(arrival_fixed < departure)
+```
+
+Što vraća dyears(1) / ddays(365)? Nije baš jedan, jer dyears() je definiran kao broj sekundi po prosječnoj godini, što je 365.25 dana.
+
+```{r}
+dyears(1) / ddays(365)
+```
+
+Što vraća years(1) / days(1)? Pa, ako je godina bila 2015, trebalo bi vratiti 365, ali ako je bila 2016, trebalo bi vratiti 366! Nema dovoljno informacija da lubridate da jasan odgovor. Umjesto toga daje procjenu.
+
+```{r}
+years(1) / days(1)
+```
+
+Ako želite točnije mjerenje, morat ćete koristiti interval. Interval je par datuma početka i kraja, ili ga možete zamisliti kao trajanje s početnom točkom
+
+```{r}
+# Stvaranje intervala pomoću %--% operatora
+pikachu_training_start <- ymd("2023-01-01")
+pikachu_training_end <- ymd("2023-12-31")
+
+pikachu_training_interval <- pikachu_training_start %--% pikachu_training_end
+pikachu_training_interval
+```
+
+Zatim ga možete podijeliti s `days()` da saznate koliko dana stane u godinu.
+
+```{r}
+pikachu_training_interval / days(1)
+```
+
+```{r}
+# Različiti Pokemon i njihova razdoblja treninga
+pokemon_training_periods <- data.frame(
+  pokemon = c("Pikachu", "Charizard", "Blastoise", "Venusaur"),
+  start_date = ymd(c("2023-01-01", "2023-02-15", "2023-03-01", "2023-01-15")),
+  end_date = ymd(c("2023-06-30", "2023-08-20", "2023-09-15", "2023-12-31")),
+  stringsAsFactors = FALSE
+)
+
+# Stvaranje intervala
+pokemon_training_periods$interval <- pokemon_training_periods$start_date %--% pokemon_training_periods$end_date
+
+# Izračunavanje broja dana
+pokemon_training_periods$days_trained <- pokemon_training_periods$interval / days(1)
+
+# Izračunavanje broja tjedana
+pokemon_training_periods$weeks_trained <- pokemon_training_periods$interval / weeks(1)
+
+# Izračunavanje broja mjeseci (približno)
+pokemon_training_periods$months_trained <- pokemon_training_periods$interval / months(1)
+
+pokemon_training_periods
+```
+
+```{r}
+# Pokemon koji se razvijaju na različitim razinama
+pokemon_evolution_data <- data.frame(
+  pokemon = c("Charmander", "Charmeleon", "Bulbasaur", "Ivysaur", "Squirtle", "Wartortle"),
+  birth_date = ymd(c("2023-01-01", "2023-01-01", "2023-02-01", "2023-02-01", "2023-03-01", "2023-03-01")),
+  evolution_date = ymd(c("2023-03-15", "2023-06-20", "2023-04-10", "2023-07-01", "2023-05-15", "2023-08-30")),
+  stringsAsFactors = FALSE
+)
+
+# Stvaranje intervala i izračunavanje trajanja
+pokemon_evolution_data <- pokemon_evolution_data |>
+  mutate(
+    growth_interval = birth_date %--% evolution_date,
+    days_to_evolve = growth_interval / days(1),
+    weeks_to_evolve = growth_interval / weeks(1),
+    approx_months = growth_interval / months(1)
+  )
+
+pokemon_evolution_data
+```
+
+```{r}
+# Stvaranje intervala za Pokemon turnire
+pokemon_tournaments <- data.frame(
+  tournament_name = c("Indigo Plateau", "Silver Conference", "Ever Grande", "Lily of the Valley"),
+  start_date = ymd(c("2023-06-01", "2023-06-10", "2023-07-01", "2023-07-15")),
+  end_date = ymd(c("2023-06-15", "2023-06-25", "2023-07-10", "2023-07-30")),
+  stringsAsFactors = FALSE
+)
+
+# Stvaranje intervala
+pokemon_tournaments$interval <- pokemon_tournaments$start_date %--% pokemon_tournaments$end_date
+
+# Duljina turnira u danima - ISPRAVNO
+pokemon_tournaments$duration_days <- pokemon_tournaments$interval / days(1)
+
+# Duljina u tjednima
+pokemon_tournaments$duration_weeks <- pokemon_tournaments$interval / weeks(1)
+
+pokemon_tournaments
+
+# Provjera preklapanja turnira
+int_overlaps(pokemon_tournaments$interval[1], pokemon_tournaments$interval[2])
+
+int_overlaps(pokemon_tournaments$interval[2], pokemon_tournaments$interval[3])
+
+# Provjera da li jedan interval sadrži drugi
+int_overlaps(pokemon_tournaments$interval[1], pokemon_tournaments$interval[3])
+
+# Početak i kraj intervala
+int_start(pokemon_tournaments$interval[1])
+
+int_end(pokemon_tournaments$interval[1])
+
+# Pomicanje intervala za 5 dana
+shifted_interval <- (int_start(pokemon_tournaments$interval[1]) + days(5)) %--% (int_end(pokemon_tournaments$interval[1]) + days(5))
+shifted_interval
+```
+
+Kako odabrati između trajanja, perioda i intervala? Kao i uvijek, odaberite najjednostavniju strukturu podataka koja rješava vaš problem. Ako vas zanima samo fizičko vrijeme, koristite trajanje; ako trebate dodati ljudsko vrijeme, koristite period; ako trebate saznati koliko dugo traje raspon u ljudskim jedinicama, koristite interval.
+
+Razumijevanje ovih triju klasa ključno je za točno rukovanje vremenskim rasponima u analizi podataka. Trajanja su pouzdana za precizna mjerenja, periodi su intuitivni za ljudsko razumijevanje vremena, a intervali su najbolji kada trebate znati točno trajanje između dvije specifične točke u vremenu.

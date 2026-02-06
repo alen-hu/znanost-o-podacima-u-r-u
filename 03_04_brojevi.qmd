@@ -1,0 +1,1081 @@
+---
+title: "Brojevi"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+Brojčani podaci predstavljaju temelj znanosti o podacima i statistike općenito. Numerički vektori čine okosnicu gotovo svih analiza podataka te su ključni za izgradnju prediktivnih modela i donošenje odluka temeljenih na podacima. Brojevi omogućuju kvantifikaciju stvarnosti, mjerenje promjena, usporedbu između različitih entiteta te otkrivanje skrivenih obrazaca u podacima.
+
+U kontekstu projekata analize podataka, brojčani podaci koriste se za mjerenje različitih varijabli od interesa, bilo da se radi o financijskim prihodima tvrtke, demografskim karakteristikama populacije ili performansnim metrikama modela strojnog učenja. Prema autorima knjige R for Data Science, numerički vektori su fundamentalni građevni blokovi analize podataka te se koriste u svim fazama projekta, od početnog istraživanja podataka do finalnog modeliranja. Ova svestranost numeričkih podataka čini ih nezamjenjivima u praktičnoj primjeni znanosti o podacima.
+
+Važnost brojeva u znanosti o podacima očituje se kroz nekoliko ključnih dimenzija. Prvo, brojevi omogućuju precizno mjerenje i kvantifikaciju fenomena od interesa. Umjesto kvalitativnih opisa poput "visoka cijena" ili "niska prodaja", numerički podaci omogućuju precizne vrijednosti koje se mogu uspoređivati, kombinirati i analizirati matematičkim metodama. Drugo, brojevi služ kao osnova za primjenu statističkih testova i procedura koje omogućuju donošenje zaključaka temeljenih na dokazima umjesto na intuiciji ili pretpostavkama. Treće, numerički podaci omogućuju primjenu algoritama strojnog učenja koji otkrivaju složene obrasce i relacije u podacima koje bi ljudska analiza teško mogla detektirati.
+
+Kada govorimo o Pokemon datasetu koji ćemo koristiti za ilustraciju koncepata, varijable poput "HP", "attack", "defense" i "speed" predstavljaju numeričke vrijednosti koje opisuju različite karakteristike Pokemon stvorenja. Ove brojčane vrijednosti omogućuju nam provedbu raznovrsnih analiza, od jednostavnih deskriptivnih statistika (prosječna snaga napada po generaciji) do složenijih prediktivnih modela (predviđanje je li Pokemon legendarni na temelju njegovih statističkih atributa).
+
+U većini slučajeva brojevi u R-u dolaze već spremni za analizu iz podatkovnih okvira koje učitavamo pomoću funkcija poput `read_csv()` iz paketa `readr`. Međutim, postoje situacije u kojima je potrebno stvoriti brojeve iz drugih vrsta podataka ili ih pretvoriti iz različitih formata.
+
+Kada učitavamo podatke iz CSV datoteka, `readr` paket koristi heuristiku koja pokušava automatski prepoznati tip podataka u svakom stupcu. Ako stupac sadrži samo brojeve i možda posebne vrijednosti kao što su `NA`, `readr` će ga automatski parsirati kao numerički vektor. Na primjer, u `pokemon_dataset` podatkovnom okviru varijable poput "HP", "attack", "defense", "special_attack", "special_defense" i "speed" automatski se prepoznaju kao numeričke vrijednosti jer sadrže isključivo brojčane podatke koje predstavljaju različite statističke karakteristike Pokemona.
+
+Ponekad se dogodi da podaci koji bi trebali biti brojevi budu učitani kao znakovni nizovi ili karakteri. To se najčešće događa kada su brojevi u izvornoj datoteci formatirani na poseban način, primjerice kada sadrže zareze kao separatore tisućica, valutne simbole, postotke ili druge ne-numeričke znakove. U takvim situacijama R ne može automatski prepoznati brojčanu prirodu podataka i tretira ih kao tekst. Za pretvaranje takvih znakovnih nizova u brojeve koristi se funkcija `parse_number()` iz paketa `readr` koja je dizajnirana da izvuče brojčane vrijednosti ignorirajući sve ne-numeričke znakove koji okružuju broj.
+
+Primjer primjene `parse_number()` funkcije može se ilustrirati na hipotetskoj situaciji u kojoj bi podaci o težini Pokemona bili formatirani s dodatnim tekstom. Pretpostavimo da umjesto čistih brojčanih vrijednosti u varijabli weight_kg imamo zapise poput "12.5 kg" ili "weight: 89.3". U takvom slučaju bi `parse_number()` funkcija izvukla samo brojčane vrijednosti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+# Primjer s formatiranim podacima o težini
+formatted_weight <- c("12.5 kg", "weight: 89.3", "45.7kg", "150.2 kilograms")
+numeric_weight <- parse_number(formatted_weight)
+numeric_weight
+```
+:::
+
+Slično tome, ako bi podaci o snazi napada u pokemon_dataset okviru bili zapisani s postotnim oznakama ili bodovima, `parse_number()` bi mogla izdvojiti čiste brojčane vrijednosti. Na primjer, ako bi varijabla attack sadržavala vrijednosti poput "Attack: 49 pts" ili "55%", funkcija bi automatski pretvorila te zapise u brojeve 49 i 55.
+
+Važno je napomenuti da `parse_number()` radi tako što ignorira sve ne-numeričke znakove prije i poslije broja, ali zadržava decimalnu točku i negativni predznak ako postoje. Ova funkcija je posebno korisna pri čišćenju podataka koji dolaze iz različitih izvora gdje numerički podaci nisu standardizirano formatirani, što omogućava brzu i jednostavnu pretvorbu u format pogodan za daljnju analizu i vizualizaciju.
+
+Iznenađujuće je koliko se analize podataka može provesti samo pomoću brojanja i osnovnih aritmetičkih operacija, stoga paket `dplyr` nastoji učiniti brojanje što jednostavnijim putem funkcije `count()`. Ova funkcija predstavlja moćan alat za brzu eksploraciju podataka i provjeru tijekom analize, omogućujući istraživačima da brzo dobiju uvid u distribuciju vrijednosti unutar podatkovnog okvira.
+
+Funkcija `count()` broji koliko se puta svaka jedinstvena vrijednost pojavljuje u određenom stupcu podatkovnog okvira. Primjerice, ako želimo saznati koliko Pokémona pripada svakoj vrsti (type_1) u `pokemon_dataset` podatkovnom okviru, možemo jednostavno koristiti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> count(type_1)
+```
+:::
+
+Ovaj kod vraća tibble koji prikazuje svaku jedinstvenu vrstu Pokémona zajedno s brojem Pokémona koji pripadaju toj vrsti. Takav pristup omogućuje brzu identifikaciju najčešćih i najrjeđih vrsta u skupu podataka.
+
+Unatoč savjetu iz ranijih poglavlja o stilskom formatiranju koda, funkcija `count()` se često stavlja u jedan redak jer se obično koristi u konzoli za brzu provjeru da li izračun funkcionira prema očekivanjima. Ova fleksibilnost u formatiranju odražava pragmatičan pristup analizi podataka gdje je brzina istraživanja često važnija od stroge adherencije stilskim pravilima.
+
+Ako želimo vidjeti najčešće vrijednosti, možemo dodati argument `sort = TRUE` funkciji `count()`:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> count(type_1, sort = TRUE)
+```
+:::
+
+Ova naredba daje popis vrsta Pokémona poredanih od najčešćih prema najrjeđima. Ovo je osobito korisno kada radimo s podatkovnim okvirima koji sadrže mnogo jedinstvenih vrijednosti i želimo brzo identificirati dominantne kategorije. U slučaju pokemon_dataset podatkovnog okvira, takva analiza otkriva da su Pokémoni vodenog tipa (water) najčešći, dok su neki specijalizirani tipovi znatno rjeđi.
+
+Važno je napomenuti da ako želimo vidjeti sve vrijednosti u rezultatu funkcije count(), možemo koristiti `|> View()` za otvaranje interaktivnog pregleda u RStudio-u ili `|> print(n = Inf)` za ispisivanje svih redaka u konzoli. Ovo je korisno kada radimo s varijablama koje imaju umjeren broj jedinstvenih vrijednosti i želimo dobiti potpun pregled distribucije.
+
+Istu računsku operaciju možemo postići "ručno" koristeći kombinaciju funkcija `group_by()`, `summarize()` i specijalne funkcije `n()`:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(n = n())
+```
+:::
+
+Ovaj pristup je koristan jer omogućuje istovremeno računanje drugih sažetaka uz brojanje. Funkcija `n()` je posebna funkcija sažimanja koja ne prima nikakve argumente, već pristupa informacijama o trenutnoj grupi podataka. To znači da funkcionira samo unutar dplyr funkcija poput `mutate()`, `filter()` i `group_by()`. Ako pokušamo koristiti `n()` izvan konteksta ovih funkcija, dobit ćemo grešku. Primjerice, možemo brojati Pokémone po vrsti i istovremeno izračunati prosječnu snagu napada:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(
+    n = n(),
+    avg_attack = mean(attack, na.rm = TRUE)
+  )
+```
+:::
+
+Ovaj kod grupira Pokémone prema njihovoj primarnoj vrsti, broji koliko ih ima u svakoj grupi pomoću `n()`, i izračunava prosječnu vrijednost napada za svaku grupu.
+
+Postoji nekoliko varijanti funkcija `n()` i `count()` koje mogu biti korisne u različitim situacijama. Funkcija `n_distinct()` broji broj različitih, odnosno jedinstvenih vrijednosti jedne ili više varijabli. Na primjer, možemo saznati koliko različitih generacija Pokémona postoji za svaku vrstu:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(generations = n_distinct(generation)) |>
+  arrange(desc(generations))
+```
+:::
+
+Ovaj pristup omogućuje identificiranje vrsta Pokémona koje su prisutne kroz više generacija igara.
+
+Ponderirano brojanje predstavlja još jednu korisnu varijantu standardnog brojanja. Zapravo, ponderirano brojanje je suma određene varijable. Primjerice, mogli bismo "prebrojati" ukupnu snagu svih Pokémona određene vrste zbrajajući njihove vrijednosti napada:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(total_attack = sum(attack, na.rm = TRUE))
+```
+:::
+
+Budući da je ponderirano brojanje čest problem u analizi podataka, funkcija `count()` ima argument `wt` koji omogućuje istu operaciju na jednostavniji način:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> count(type_1, wt = attack)
+```
+:::
+Ovaj pristup je elegantniji i čitljiviji od eksplicitnog korištenja `group_by()` i `summarize()`.
+
+Možemo brojati i nedostajuće vrijednosti kombiniranjem funkcija `sum()` i `is.na()`. Primjerice, ako želimo saznati koliko Pokémona u svakoj generaciji ima nedostajuće podatke o tipu 2, možemo koristiti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  summarize(missing_height = sum(is.na(type_2)))
+```
+:::
+
+Ovaj pristup koristi činjenicu da is.na() vraća logičku vrijednost (`TRUE` ili `FALSE`), a `sum()` tretira `TRUE` kao 1 i `FALSE` kao 0, što rezultira brojem nedostajućih vrijednosti. U kontekstu `pokemon_dataset` podatkovnog okvira, analiza nedostajućih vrijednosti može otkriti probleme s kvalitetom podataka ili sistematske razlike između generacija u dostupnosti određenih informacija o Pokémonima.
+
+### Brojčane transformacije
+
+Funkcije transformacije dobro funkcioniraju s `mutate()` jer njihov rezultat ima istu duljinu kao ulazni podaci. Velika većina funkcija transformacije već je ugrađena u osnovni R. Nepraktično je navesti sve takve funkcije, stoga će ovo poglavlje prikazati najkorisnije od njih. Kao primjer, iako R pruža sve trigonometrijske funkcije koje biste mogli zamisliti, one ovdje nisu navedene jer se rijetko koriste u analizi podataka.
+
+**Aritmetika i pravila recikliranja**
+
+Osnove aritmetike (`+`, `-`, `*`, `/`, `^`) često se koriste pri radu s podacima. Ove funkcije ne zahtijevaju opsežno objašnjenje jer izvršavaju operacije koje su poznate iz osnovne matematike. Međutim, potrebno je kratko razmotriti pravila recikliranja koja određuju što se događa kada lijeva i desna strana operacije imaju različite duljine. Ovo je važno za operacije poput `pokemon_dataset |> mutate(attack_per_gen = attack / generation)` jer postoji 800 brojeva na lijevoj strani operatora `/`, ali samo šest različitih vrijednosti generacija na desnoj strani.
+
+R rješava neusklađene duljine vektora pomoću recikliranja, odnosno ponavljanja kraćeg vektora. Ovu operaciju možemo lakše vidjeti ako stvorimo vektore izvan podatkovnog okvira:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x <- c(1, 2, 3, 4, 5, 6)
+y <- c(10, 20)
+x * y
+```
+:::
+Općenito, poželjno je reciklirati samo pojedinačne brojeve (odnosno vektore duljine 1), ali R će reciklirati bilo koji kraći vektor. Obično (ali ne uvijek) R daje upozorenje ako duži vektor nije višekratnik kraćeg vektora:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x <- c(1, 2, 3, 4, 5)
+y <- c(10, 20)
+x * y
+```
+:::
+
+Ova pravila recikliranja primjenjuju se i na logičke usporedbe (`==`, `<`, `<=`, `>`, `>=`, `!=`) i mogu dovesti do iznenađujućih rezultata ako slučajno koristite `==` umjesto `%in%` i podatkovni okvir ima nepovoljan broj redaka. Na primjer, uzmimo ovaj kod koji pokušava pronaći sve Pokémone iz prve i druge generacije:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> filter(generation == c(1, 2))
+```
+:::
+Kod se izvršava bez greške, ali ne vraća ono što želimo. Zbog pravila recikliranja, ovaj kod pronalazi Pokémone u redovima s neparnim brojevima koji su iz generacije 1 i Pokémone u redovima s parnim brojevima koji su iz generacije 2. Nažalost, nema upozorenja jer pokemon_dataset ima paran broj redaka.
+
+Da bi se zaštitili od ovakvog tihog neuspjeha, većina `tidyverse` funkcija koristi strožu formu recikliranja koja reciklira samo pojedinačne vrijednosti. Nažalost, to ne pomaže u ovom slučaju, niti u mnogim drugim, jer se ključni izračun provodi osnovnom R funkcijom `==`, a ne `filter()`. Ispravno rješenje za ovaj problem je korištenje operatora `%in%`:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> filter(generation %in% c(1, 2))
+```
+:::
+
+**Minimum i maksimum**
+
+Aritmetičke funkcije rade s parovima varijabli. Dvije usko povezane funkcije su `pmin()` i `pmax()` koje, kada im se daju dvije ili više varijabli, vraćaju najmanju ili najveću vrijednost u svakom retku:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(
+    lower_stat = pmin(attack, defense),
+    higher_stat = pmax(attack, defense)
+  ) |>
+  select(name, attack, defense, lower_stat, higher_stat)
+```
+:::
+Ovaj primjer pokazuje kako možemo usporediti napad i obranu svakog Pokémona i identificirati koja je statistika niža, a koja viša.
+
+Važno je razlikovati ove funkcije od funkcija sažimanja `min()` i `max()` koje uzimaju više opservacija i vraćaju jednu vrijednost. Možete prepoznati da ste koristili pogrešnu formu kada su svi minimumi i svi maksimumi iste vrijednosti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(
+    lower_stat = min(attack, defense),
+    higher_stat = max(attack, defense)
+  ) |>
+  select(name, attack, defense, lower_stat, higher_stat)
+```
+:::
+
+U ovom slučaju, `min()` i `max()` vraćaju globalni minimum i maksimum svih vrijednosti napada i obrane u cijelom podatkovnom skupu, što nije željeni rezultat.
+
+**Modularna aritmetika**
+
+Modularna aritmetika je tehnički naziv za vrstu matematike koju ste radili prije nego što ste naučili o decimalnim brojevima, odnosno dijeljenje koje daje cijeli broj i ostatak. U R-u, `%/%` izvodi cjelobrojno dijeljenje, a `%%` izračunava ostatak:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+13 %/% 5
+
+13 %% 5
+```
+:::
+
+Modularna aritmetika je korisna u pokemon_dataset podatkovnom okviru jer je možemo koristiti za kategorizaciju Pokémona. Na primjer, možemo grupirati Pokémone prema tome da li je njihov broj djeljiv s 10, što bi moglo otkriti obrazac u dizajnu:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(
+    divisible_by_10 = id %% 10 == 0
+  ) |>
+  count(divisible_by_10)
+```
+:::
+
+Možemo kombinirati modularnu aritmetiku s `mean(is.na(x))` trikom za analizu proporcija. Na primjer, možemo vidjeti kako se proporcija legendarnih Pokémona mijenja kroz generacije:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  summarize(
+    prop_legendary = mean(legendary, na.rm = TRUE),
+    n = n()
+  )
+```
+:::
+
+Rezultati pokazuju da proporcija legendarnih Pokémona varira između generacija, s nešto većim udjelom u kasnijim generacijama.
+
+**Logaritmi**
+
+Logaritmi su izuzetno korisna transformacija za rad s podacima koji se protežu kroz više redova veličine i za pretvaranje eksponencijalnog rasta u linearni rast. U R-u možete odabrati između tri logaritma: `log()` (prirodni logaritam, baza e), `log2()` (baza 2) i `log10()` (baza 10). Preporučuje se korištenje `log2()` ili `log10()`. Funkcija `log2()` je laka za interpretaciju jer razlika od 1 na logaritamskoj skali odgovara udvostručenju na originalnoj skali, a razlika od -1 odgovara prepolovljenju. Funkcija `log10()` je laka za povratnu transformaciju jer je, na primjer, 3 jednako `10^3 = 1000`. Inverzna funkcija za `log()` je `exp()`, a za izračun inverzne funkcije za `log2()` ili `log10()` potrebno je koristiti `2^` ili `10^`.
+
+U kontekstu pokemon_dataset podatkovnog okvira, logaritamska transformacija može biti korisna za analizu statistika koje imaju širok raspon vrijednosti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(
+    log_hp = log10(HP),
+    log_attack = log10(attack)
+  ) |>
+  select(name, HP, log_hp, attack, log_attack)
+```
+:::
+
+Ova transformacija može pomoći u vizualizaciji podataka kada postoje ekstremne vrijednosti ili kada želimo usporediti relativne, a ne apsolutne razlike između Pokémona.
+
+**Zaokruživanje**
+
+Funkcija `round()` zaokružuje broj na najbliži cijeli broj:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+round(123.456)
+```
+:::
+
+Preciznost zaokruživanja možete kontrolirati pomoću drugog argumenta digits. Funkcija `round(x, digits)` zaokružuje na najbliži `10^-n`, tako da `digits = 2` zaokružuje na najbliže 0.01. Ova definicija je korisna jer implicira da će `round(x, -3)` zaokružiti na najbližu tisuću:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+round(123.456, 2)
+round(123.456, -1)
+```
+:::
+
+Postoji jedna neobičnost kod `round()` koja na prvi pogled izgleda iznenađujuće: ova funkcija koristi ono što je poznato kao "zaokruživanje polovice na parno" ili bankovno zaokruživanje. Ako je broj točno na sredini između dva cijela broja, zaokružit će se na parni broj. Ovo je dobra strategija jer održava zaokruživanje nepristranim: polovica svih 0.5 vrijednosti zaokružuje se prema gore, a polovica prema dolje:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+round(c(1.5, 2.5, 3.5, 4.5))
+```
+:::
+
+Funkcija `round()` uparena je s `floor()` koja uvijek zaokružuje prema dolje i `ceiling()` koja uvijek zaokružuje prema gore:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+floor(123.456)
+ceiling(123.456)
+```
+:::
+
+Ove funkcije nemaju argument `digits`, stoga možete umjesto toga skalirati prema dolje, zaokružiti, a zatim skalirati natrag:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+round(x / 10) * 10
+floor(x / 10) * 10
+```
+:::
+
+Istu tehniku možete koristiti ako želite zaokružiti na višekratnik nekog drugog broja:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+round(x / 5) * 5
+```
+:::
+
+U kontekstu `pokemon_dataset` podatkovnog okvira, zaokruživanje može biti korisno za kategorizaciju statistika:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(
+    hp_rounded = round(HP, -1),
+    speed_category = round(speed / 25) * 25
+  ) |>
+  select(name, HP, hp_rounded, speed, speed_category)
+```
+:::
+
+**Rezanje brojeva u raspone**
+
+Funkcija `cut()` koristi se za razbijanje (odnosno biniranje) numeričkog vektora u diskretne kategorije:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x <- c(1, 5, 10, 15, 20)
+cut(x, breaks = c(0, 5, 10, 15, 20))
+```
+:::
+
+Granice ne moraju biti jednako raspoređene:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+cut(x, breaks = c(0, 5, 15, 20))
+```
+:::
+
+Možete opcionalno definirati vlastite oznake (`labels`). Imajte na umu da bi trebalo biti za jednu oznaku manje nego što ima granica:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+cut(x, breaks = c(0, 5, 10, 15, 20), labels = c("very low", "low", "medium", "high"))
+```
+:::
+
+Bilo koje vrijednosti izvan raspona granica postat će `NA`:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+cut(x, breaks = c(5, 10, 15))
+```
+:::
+
+U `pokemon_dataset` podatkovnom okviru, `cut()` možemo koristiti za kategorizaciju Pokémona prema njihovim statistikama:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(attack_category = cut(attack, breaks = c(0, 50, 100, 150, 200), labels = c("weak", "average", "strong", "very strong"))
+  ) |>
+  select(name, attack, attack_category) |>
+  count(attack_category)
+```
+:::
+
+Ova analiza pokazuje da većina Pokémona ima prosječnu snagu napada (između 50 i 100), dok je samo manji broj izuzetno snažan.
+
+**Kumulativni i pomični agregati**
+
+Osnovni R pruža `cumsum()`, `cumprod()`, `cummin()` i `cummax()` za tekuće ili kumulativne sume, produkte, minimume i maksimume. Paket dplyr pruža cummean() za kumulativne prosjeke. Kumulativne sume najčešće se koriste u praksi:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x <- 1:10
+cumsum(x)
+```
+:::
+
+Ako trebate složenije pomične ili klizne agregate, pokušajte koristiti paket `slider`.
+
+U `pokemon_dataset` podatkovnom okviru možemo koristiti kumulativne funkcije za praćenje kako se ukupna snaga Pokémona akumulira kroz generacije:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  mutate(
+    cumulative_total = cumsum(total),
+    cumulative_mean = cummean(total)
+  ) |>
+  select(id, name, total, cumulative_total, cumulative_mean) |>
+  filter(id <= 10)
+```
+:::
+
+Ovaj primjer pokazuje kako se ukupna snaga akumulira kroz prve Pokémone, a kumulativni prosjek pruža uvid u prosječnu snagu do određenog Pokémona u redoslijedu.
+
+### Opće transformacije
+
+Sljedeći odjeljci opisuju neke opće transformacije koje se često koriste s numeričkim vektorima, ali se mogu primijeniti i na sve druge vrste stupaca podatkovnog okvira.
+
+**Rangovi**
+
+Paket dplyr pruža niz funkcija rangiranja inspiriranih SQL-om, ali uvijek biste trebali započeti s `min_rank()`. Ova funkcija koristi tipičnu metodu za rješavanje izjednačenih vrijednosti, na primjer 1., 2., 2., 4. mjesto:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x <- c(1, 2, 2, 3, 4, NA)
+min_rank(x)
+```
+:::
+
+Važno je primijetiti da najmanje vrijednosti dobivaju najniže rangove. Koristite `desc(x)` da biste najvećim vrijednostima dali najniže rangove:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+min_rank(desc(x))
+```
+:::
+
+U kontekstu pokemon_dataset podatkovnog okvira, možemo rangirati Pokémone prema njihovim različitim statistikama:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  mutate(
+    attack_rank = min_rank(desc(attack)),
+    defense_rank = min_rank(desc(defense)),
+    speed_rank = min_rank(desc(speed))
+  ) |>
+  select(name, attack, attack_rank, defense, defense_rank, speed, speed_rank) |>
+  arrange(attack_rank) |>
+  head(10)
+```
+:::
+
+Ovaj primjer pokazuje Pokémone s najvišim rangovima napada, zajedno s njihovim rangovima obrane i brzine, što omogućuje usporedbu različitih dimenzija snage.
+
+Ako `min_rank()` ne radi ono što vam treba, pogledajte varijante `row_number()`, `dense_rank()`, `percent_rank()` i `cume_dist()`. Pogledajte dokumentaciju za detalje:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+df <- tibble(x = x)
+df |>
+  mutate(
+    row_number = row_number(x),
+    dense_rank = dense_rank(x),
+    percent_rank = percent_rank(x),
+    cume_dist = cume_dist(x)
+  )
+```
+:::
+
+U `pokemon_dataset` podatkovnom okviru možemo usporediti različite metode rangiranja:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  select(name, total) |>
+  arrange(desc(total)) |>
+  mutate(
+    min_rank = min_rank(desc(total)),
+    dense_rank = dense_rank(desc(total)),
+    row_number = row_number(desc(total)),
+    percent_rank = percent_rank(desc(total))
+  ) |>
+  head(10)
+```
+:::
+
+Ovaj primjer pokazuje razlike između `min_rank()` (koji daje isti rang izjednačenim vrijednostima i preskače sljedeći rang), `dense_rank()` (koji daje isti rang izjednačenim vrijednostima ali ne preskače rangove), `row_number()` (koji daje jedinstvene rangove čak i za izjednačene vrijednosti), i `percent_rank()` (koji daje proporciju vrijednosti koje su manje).
+
+Funkciju `row_number()` također možete koristiti bez ikakvih argumenata kada je unutar `dplyr` funkcije. U tom slučaju, dat će broj "trenutnog" retka. Kada se kombinira s `%%` ili `%/%`, ovo može biti koristan alat za dijeljenje podataka u grupe slične veličine:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+df <- tibble(id = 1:10)
+df |>
+  mutate(
+    row0 = row_number() - 1,
+    three_groups = row0 %% 3,
+    three_in_each_group = row0 %/% 3
+  )
+```
+:::
+
+U `pokemon_dataset` podatkovnom okviru možemo koristiti ovu tehniku za dijeljenje Pokémona u grupe:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  mutate(
+    row0 = row_number() - 1,
+    group_of_5 = row0 %% 5,
+    batch = row0 %/% 100
+  ) |>
+  select(id, name, row0, group_of_5, batch) |>
+  head(15)
+```
+:::
+
+Ova tehnika omogućuje stvaranje rotacijskih grupa ili grupa za procesiranje u serijama.
+
+**Pomaci**
+
+Funkcije `lag()` i `lead()` omogućuju vam da se referencirate na vrijednosti neposredno prije ili neposredno poslije "trenutne" vrijednosti. Vraćaju vektor iste duljine kao ulazni vektor, dopunjen s `NA` vrijednostima na početku ili kraju:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x <- c(2, 5, 11, 11, 19, 35)
+lag(x)
+lead(x)
+```
+:::
+
+Izrazi `x - lag(x)` daju vam razliku između trenutne i prethodne vrijednosti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x - lag(x)
+```
+:::
+
+Izraz `x == lag(x)` govori vam kada se trenutna vrijednost mijenja:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x == lag(x)
+```
+:::
+
+U `pokemon_dataset` podatkovnom okviru možemo koristiti ove funkcije za usporedbu uzastopnih Pokémona:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  mutate(
+    total_diff = total - lag(total),
+    total_change = total != lag(total),
+    next_total = lead(total)
+  ) |>
+  select(id, name, total, total_diff, total_change, next_total) |>
+  head(10)
+```
+:::
+
+Ovaj primjer pokazuje kako se ukupna snaga Pokémona mijenja od jednog do drugog, što može otkriti evolucijske skokove u snazi.
+
+Možete pomicati ili voditi za više od jedne pozicije koristeći drugi argument `n`:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+x - lag(x, n = 2)
+```
+:::
+
+U `pokemon_dataset` podatkovnom okviru možemo usporediti Pokémone s onima dva mjesta ranije:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  mutate(total_diff_2 = total - lag(total, n = 2)) |>
+  select(id, name, total, total_diff_2) |>
+  head(10)
+```
+:::
+
+**Uzastopni identifikatori**
+
+Ponekad želite započeti novu grupu svaki put kada se dogodi neki događaj. Na primjer, kada gledate podatke s web stranice, uobičajeno je da želite razbiti događaje u sesije, gdje započinjete novu sesiju nakon praznine od više od x minuta od posljednje aktivnosti. Na primjer, zamislite da imate vremena kada je netko posjetio web stranicu:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+events <- tibble(time = c(0, 1, 2, 3, 5, 10, 12, 15, 17, 19, 20, 27, 28, 30))
+```
+:::
+
+I izračunali ste vrijeme između svakog događaja i otkrili postoji li praznina dovoljno velika da kvalificira:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+events <- events |>
+  mutate(
+    diff = time - lag(time, default = first(time)),
+    has_gap = diff >= 5
+  )
+events
+```
+:::
+
+Ali kako prijeći s tog logičkog vektora na nešto što možemo koristiti s `group_by()`? Funkcija `cumsum()` dolazi u pomoć jer svaki put kada praznina (odnosno has_gap) postaje `TRUE`, grupa će se povećati za jedan:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+events |> mutate(
+  group = cumsum(has_gap)
+)
+```
+:::
+
+Drugi pristup za stvaranje grupnih varijabli je `consecutive_id()` koja započinje novu grupu svaki put kada se promijeni jedan od njezinih argumenata. Na primjer, inspiriran ovim Stack Overflow pitanjem, zamislite da imate podatkovni okvir s mnogo ponovljenih vrijednosti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+df <- tibble(
+  x = c("a", "a", "a", "b", "c", "c", "d", "e", "a", "a", "b", "b"),
+  y = c(1, 2, 3, 2, 4, 1, 3, 9, 4, 8, 10, 199)
+)
+```
+:::
+
+Ako želite zadržati prvi redak iz svakog ponovljenog x, možete koristiti `group_by()`, `consecutive_id()` i `slice_head()`:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+df |>
+  group_by(id = consecutive_id(x)) |> 
+  slice_head(n = 1)
+```
+:::
+
+U `pokemon_dataset` podatkovnom okviru možemo koristiti consecutive_id() za identifikaciju skupina uzastopnih Pokémona iste vrste:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  mutate(type_group = consecutive_id(type_1)) |>
+  select(id, name, type_1, type_group) |>
+  head(20)
+```
+:::
+
+Ovaj primjer pokazuje kako `consecutive_id()` stvara nove grupe svaki put kada se promijeni primarna vrsta Pokémona, što može biti korisno za analizu evolucijskih linija ili grupiranja sličnih Pokémona u Pokédexu.
+
+Možemo također analizirati kako se uzastopne grupe legendarnih i ne-legendarnih Pokémona mijenjaju:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  mutate(
+    legendary_group = consecutive_id(legendary)
+  ) |>
+  group_by(legendary_group) |>
+  summarize(
+    legendary = first(legendary),
+    count = n(),
+    first_pokemon = first(name),
+    last_pokemon = last(name)
+  ) |>
+  head(10)
+```
+:::
+
+Ovaj primjer otkriva obrazac distribucije legendarnih Pokémona kroz Pokédex, pokazujući da se obično pojavljuju u skupinama na kraju svake generacije.
+
+### Sažimanje brojeva
+
+Samo korištenje brojanja, prosjeka i suma koje smo već uveli može vas odvesti daleko u analizi podataka, ali R pruža mnoge druge korisne funkcije sažimanja. Ovdje je izbor funkcija koje možda smatrate korisnima u radu s numeričkim podacima
+
+**Središte**
+
+Do sada smo većinom koristili `mean()` za sažimanje središta vektora vrijednosti. Kao što smo vidjeli u ranijim poglavljima, budući da je prosjek suma podijeljena s brojem opservacija, osjetljiv je čak i na samo nekoliko neobično visokih ili niskih vrijednosti. Alternativa je korištenje `median()` koja pronalazi vrijednost koja leži u "sredini" vektora, odnosno 50 % vrijednosti je iznad nje, a 50% je ispod nje. Ovisno o obliku distribucije varijable koja vas zanima, prosjek ili medijan mogu biti bolja mjera središta. Na primjer, za simetrične distribucije općenito prijavljujemo prosjek, dok za asimetrične distribucije obično prijavljujemo medijan.
+
+U kontekstu `pokemon_dataset` podatkovnog okvira možemo usporediti prosjek i medijan za različite statistike:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  summarize(
+    mean_attack = mean(attack, na.rm = TRUE),
+    median_attack = median(attack, na.rm = TRUE),
+    mean_defense = mean(defense, na.rm = TRUE),
+    median_defense = median(defense, na.rm = TRUE),
+    mean_speed = mean(speed, na.rm = TRUE),
+    median_speed = median(speed, na.rm = TRUE)
+  )
+```
+:::
+
+Ovaj primjer pokazuje da su prosjeci svih statistika nešto viši od medijana, što sugerira blagu pozitivnu asimetričnost u distribucijama - postoje neki Pokémoni s izuzetno visokim vrijednostima koji povlače prosjek prema gore.
+
+Možemo usporediti prosjek i medijan ukupne snage Pokémona po vrsti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(
+    mean_total = mean(total, na.rm = TRUE),
+    median_total = median(total, na.rm = TRUE),
+    n = n()
+  ) |>
+  arrange(desc(mean_total))
+```
+:::
+
+Za većinu vrsta Pokémona, prosjek i medijan su relativno bliski, što ukazuje na relativno simetrične distribucije unutar svake vrste.
+
+Možda biste se također pitali o modalnoj vrijednosti, odnosno najčešćoj vrijednosti. Ovo je sažetak koji dobro funkcionira samo za vrlo jednostavne slučajeve, ali ne funkcionira dobro za mnoge stvarne skupove podataka. Ako su podaci diskretni, može postojati više najčešćih vrijednosti, a ako su podaci kontinuirani, možda ne postoji najčešća vrijednost jer je svaka vrijednost malo drugačija. Iz ovih razloga, modus se obično ne koristi od strane statističara i ne postoji funkcija za modus uključena u osnovni R.
+
+**Minimum, maksimum i kvantili**
+
+Što ako vas zanimaju pozicije različite od središta? Funkcije `min()` i `max()` dat će vam najveću i najmanju vrijednost. Još jedan moćan alat je `quantile()`, koji je generalizacija medijana. Funkcija `quantile(x, 0.25)` pronaći će vrijednost x koja je veća od 25 % vrijednosti, `quantile(x, 0.5)` je ekvivalentna medijanu, a `quantile(x, 0.95)` pronaći će vrijednost koja je veća od 95% vrijednosti.
+
+U `pokemon_dataset` podatkovnom okviru možemo istražiti raspon i kvantile različitih statistika:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  summarize(
+    min_attack = min(attack, na.rm = TRUE),
+    q25_attack = quantile(attack, 0.25, na.rm = TRUE),
+    median_attack = median(attack, na.rm = TRUE),
+    q75_attack = quantile(attack, 0.75, na.rm = TRUE),
+    max_attack = max(attack, na.rm = TRUE)
+  )
+```
+:::
+
+Ovaj rezultat pokazuje da najslabiji Pokémon ima napad od samo 5, dok najjači ima 190. Medijalna vrijednost od 75 i kvartili pokazuju da je distribucija napada relativno ravnomjerno raspoređena.
+
+Možemo pogledati 95. percentil napada umjesto maksimuma, jer će ignorirati 5 % Pokémona s najjačim napadom koji mogu biti ekstremni:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  summarize(
+    max_attack = max(attack, na.rm = TRUE),
+    q95_attack = quantile(attack, 0.95, na.rm = TRUE),
+    n = n()
+  )
+```
+:::
+
+Ovaj primjer pokazuje da, iako maksimalni napad raste kroz generacije (posebno u generaciji 6), 95. percentil je stabilniji i pruža bolji uvid u tipične vrijednosti napada.
+
+Možemo analizirati kvantile ukupne snage po vrsti kako bismo dobili potpuniju sliku distribucije:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(
+    min = min(total, na.rm = TRUE),
+    q25 = quantile(total, 0.25, na.rm = TRUE),
+    median = median(total, 0.5, na.rm = TRUE),
+    q75 = quantile(total, 0.75, na.rm = TRUE),
+    max = max(total, na.rm = TRUE),
+    n = n()
+  ) |>
+  arrange(desc(median))
+```
+:::
+
+Ova analiza otkriva da zmajevi (dragon) imaju najviši medijalan ukupnu snagu, dok razlika između kvartila pokazuje koliko varijabilnosti postoji unutar svake vrste.
+
+**Raspršenost**
+
+Ponekad niste toliko zainteresirani za to gdje leži glavni dio podataka, već za to kako su podaci raspoređeni. Dva često korištena sažetka su standardna devijacija `sd(x)` i interkvartilni raspon `IQR()`. Nećemo ovdje objašnjavati `sd()` jer je vjerojatno već poznata, ali `IQR()` je `quantile(x, 0.75) - quantile(x, 0.25)` i daje vam raspon koji sadrži srednjih 50 % podataka.
+
+U `pokemon_dataset` podatkovnom okviru možemo koristiti ove mjere za analizu varijabilnosti:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  summarize(
+    sd_attack = sd(attack, na.rm = TRUE),
+    iqr_attack = IQR(attack, na.rm = TRUE),
+    sd_defense = sd(defense, na.rm = TRUE),
+    iqr_defense = IQR(defense, na.rm = TRUE),
+    sd_speed = sd(speed, na.rm = TRUE),
+    iqr_speed = IQR(speed, na.rm = TRUE)
+  )
+```
+:::
+
+Ovi rezultati pokazuju da napad ima najveću standardnu devijaciju i interkvartilni raspon, što znači da postoji najveća varijabilnost u napadnim statistikama među Pokémonima.
+
+Možemo usporediti raspršenost različitih vrsta Pokémona:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(
+    sd_total = sd(total, na.rm = TRUE),
+    iqr_total = IQR(total, na.rm = TRUE),
+    n = n()
+  ) |>
+  arrange(desc(sd_total))
+```
+:::
+
+Normalni tipovi Pokémona pokazuju najveću standardnu devijaciju, što sugerira da ova kategorija sadrži vrlo različite Pokémone - od vrlo slabih do vrlo jakih.
+
+Možemo koristiti `IQR()` za otkrivanje neobičnosti u podacima. Na primjer, možemo istražiti postoji li varijabilnost u visini Pokémona iste vrste:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  summarize(
+    HP_iqr = IQR(HP, na.rm = TRUE),
+    n = n()
+  ) |>
+  filter(HP_iqr > 0) |>
+  arrange(desc(HP_iqr))
+```
+:::
+
+Zmajevi pokazuju najveću varijabilnost u visini, što ima smisla jer ova kategorija uključuje i male zmajeve i ogromne legendarne zmajeve.
+
+**Distribucije**
+
+Važno je zapamtiti da su sve gore opisane statistike sažimanja način sažimanja distribucije na jedan broj. To znači da su fundamentalno reduktivne i ako odaberete pogrešan sažetak, lako možete propustiti važne razlike između grupa. Zbog toga je uvijek dobra ideja vizualizirati distribuciju prije nego što se posvetite vašim statistikama sažimanja.
+
+Možemo vizualizirati cjelokupnu distribuciju napada u pokemon_dataset podatkovnom okviru:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> 
+  ggplot(aes(x = attack)) +
+  geom_histogram(binwidth = 10, fill = "steelblue", color = "white") +
+  labs(title = "Distribucija napada Pokémona", x = "Napad", y = "Broj Pokémona")
+```
+:::
+
+Distribucija je asimetrična s dugim repom prema višim vrijednostima, što sugerira da je medijana vjerojatno bolji sažetak od prosjeka. Možemo detaljnije pogledati podatke zumiranjem na područje između 0 i 150:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> 
+  filter(attack <= 150) |>
+  ggplot(aes(x = attack)) +
+  geom_histogram(binwidth = 5, fill = "steelblue", color = "white") +
+  labs(title = "Distribucija napada Pokémona (do 150)", x = "Napad", y = "Broj Pokémona")
+```
+:::
+
+Također je dobra ideja provjeriti da li distribucije za podgrupe nalikuju cjelini. U sljedećem grafu prikazujemo histograme ukupne snage za svaku generaciju:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> 
+  ggplot(aes(x = total, fill = factor(generation))) +
+  geom_histogram(binwidth = 25, alpha = 0.6, position = "identity") +
+  facet_wrap(~ generation, ncol = 2) +
+  labs(title = "Distribucija ukupne snage po generacijama", x = "Ukupna snaga", y = "Broj Pokémona", fill = "Generacija")
+```
+:::
+
+Distribucije izgledaju kao da slijede sličan obrazac kroz sve generacije, što sugerira da je u redu koristiti isti sažetak za svaku generaciju.
+
+Možemo također koristiti frekvencijske poligone za usporedbu distribucija između vrsta:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> 
+  filter(type_1 %in% c("water", "fire", "grass", "electric")) |>
+  ggplot(aes(x = total, color = type_1)) +
+  geom_freqpoly(binwidth = 25, size = 1) +
+  labs(title = "Usporedba distribucija ukupne snage", x = "Ukupna snaga", y = "Broj Pokémona", color = "Vrsta")
+```
+:::
+
+Ne bojte se istraživati vlastite prilagođene sažetke specifično prilagođene podacima s kojima radite. U ovom slučaju, to može značiti odvojeno sažimanje legendarnih i ne-legendarnih Pokémona:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(legendary) |>
+  summarize(
+    mean_total = mean(total, na.rm = TRUE),
+    median_total = median(total, na.rm = TRUE),
+    sd_total = sd(total, na.rm = TRUE),
+    n = n()
+  )
+```
+:::
+
+Ovaj rezultat jasno pokazuje da legendarni Pokémoni imaju znatno veću prosječnu ukupnu snagu (638 naspram 417), ali manju varijabilnost (standardna devijacija od 60.3 naspram 101), što sugerira da su legendarni Pokémoni konzistentno snažni.
+
+Budući da su vrijednosti tako asimetrične, možete pokušati logaritamsku transformaciju za bolju analizu:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |> 
+  mutate(log_total = log10(total)) |>
+  ggplot(aes(x = log_total)) +
+  geom_histogram(binwidth = 0.1, fill = "steelblue", color = "white") +
+  labs(title = "Logaritamska transformacija ukupne snage", x = "log10(Ukupna snaga)", y = "Broj Pokémona")
+```
+:::
+
+Na kraju, nemojte zaboraviti što ste naučili u ranijim poglavljima: kad god stvarate numeričke sažetke, dobra je ideja uključiti broj opservacija u svakoj grupi.
+
+**Pozicije**
+
+Postoji još jedna završna vrsta sažetka koja je korisna za numeričke vektore, ali također funkcionira sa svakom drugom vrstom vrijednosti: izvlačenje vrijednosti na specifičnoj poziciji pomoću funkcija `first(x)`, `last(x)` i `nth(x, n)`.
+
+Na primjer, možemo pronaći prvog, petog i posljednjeg Pokémona za svaku generaciju:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  group_by(generation) |>
+  summarize(
+    first_pokemon = first(name),
+    fifth_pokemon = nth(name, 5),
+    last_pokemon = last(name),
+    n = n()
+  )
+```
+:::
+
+Budući da dplyr funkcije koriste `_` za odvajanje komponenti naziva funkcija i argumenata, ove funkcije koriste `na_rm` umjesto `na.rm`. Ako izvlačite vrijednosti na pozicijama, možete pružiti zadanu vrijednost ako navedena pozicija ne postoji, argument `order_by` omogućuje vam lokalno prepisivanje redoslijeda redaka, a argument `na_rm` omogućuje vam ispuštanje nedostajućih vrijednosti.
+
+Možemo pronaći Pokémone s najjačim napadom u svakoj generaciji koristeći kombinaciju pozicija i rangiranja:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  arrange(desc(attack)) |>
+  summarize(
+    strongest_pokemon = first(name),
+    strongest_attack = first(attack),
+    n = n()
+  )
+```
+:::
+
+Ovaj primjer pokazuje kako se najjači Pokémoni mijenjaju kroz generacije, s mega evolucijom Mewtwoa u generaciji 6 koja drži apsolutni rekord napada.
+
+Izvlačenje vrijednosti na pozicijama komplementarno je filtriranju na rangovima. Filtriranje daje sve varijable, sa svakom opservacijom u odvojenom retku:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  mutate(r = min_rank(desc(attack))) |>
+  filter(r %in% c(1, max(r))) |>
+  select(generation, name, attack, r) |>
+  arrange(generation, r)
+```
+:::
+
+Ovaj pristup omogućuje nam da vidimo i najjače i najslabije Pokémone u svakoj generaciji zajedno sa svim njihovim varijablama.
+
+**S glagolom `mutate()`**
+
+Kao što nazivi sugeriraju, funkcije sažimanja obično se koriste s `summarize()`. Međutim, zbog pravila recikliranja o kojima smo raspravljali ranije, one se također mogu korisno kombinirati s `mutate()`, osobito kada želite provesti neku vrstu grupne standardizacije.
+
+Izraz `x / sum(x)` izračunava proporciju ukupnog iznosa:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  mutate(
+    prop_of_total = total / sum(total)
+  ) |>
+  select(generation, name, total, prop_of_total) |>
+  arrange(generation, desc(prop_of_total)) |>
+  head(12)
+```
+:::
+
+Izraz `(x - mean(x)) / sd(x)` izračunava Z-score (standardiziran na prosjek 0 i standardnu devijaciju 1):
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(type_1) |>
+  mutate(
+    attack_zscore = (attack - mean(attack)) / sd(attack)
+  ) |>
+  select(type_1, name, attack, attack_zscore) |>
+  arrange(type_1, desc(attack_zscore)) |>
+  head(12)
+```
+:::
+
+Izraz `(x - min(x)) / (max(x) - min(x))` standardizira na raspon \[0, 1\]:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  group_by(generation) |>
+  mutate(attack_scaled = (attack - min(attack)) / (max(attack) - min(attack))) |>
+  select(generation, name, attack, attack_scaled) |>
+  arrange(generation, desc(attack_scaled)) |>
+  head(12)
+```
+:::
+
+Izraz `x / first(x)` izračunava indeks temeljen na prvoj opservaciji:
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+```{r}
+pokemon_dataset |>
+  arrange(id) |>
+  group_by(generation) |>
+  mutate(attack_index = attack / first(attack)) |>
+  select(generation, name, attack, attack_index) |>
+  head(12)
+```
+:::
+
+Ove tehnike omogućuju usporedbu Pokémona unutar njihovih grupa na relativnoj skali, što može biti korisnije od apsolutnih vrijednosti kada analizirate obrazce i odnose između različitih kategorija Pokémona.

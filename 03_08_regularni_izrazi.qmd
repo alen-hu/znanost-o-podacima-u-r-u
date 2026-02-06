@@ -1,0 +1,609 @@
+---
+title: "Regularni izrazi"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+**Regularni izrazi** (*regular expressions*, *regex*) su koncizan jezik za opisivanje uzoraka unutar nizova znakova. Funkcioniraju kao formalni jezik koji omogućuje precizno definiranje uzoraka pretraživanja u tekstualnim podacima kroz kombinaciju literalnih znakova i metaznakova. Osnovni elementi regularnih izraza čine literalni znakovi koji se poklapaju s odgovarajućim znakovima u tekstu te metaznakovi koji imaju posebna značenja. Slova i brojevi su literalni znakovi, a većina interpunkcijskih znakova (., +, \*, \[, \], i ?) ima posebna značenja i pa su oni metaznakovi.
+
+Regularni izrazi predstavljaju nezamjenjiv alat u znanosti o podacima. Prvenstveno, omogućavaju sofisticiranu manipulaciju tekstualnih podataka što je posebno važno u kontekstu nestrukturiranih podataka. Osim toga, u procesu čišćenja podataka regularni izrazi omogućavaju identificiranje i uklanjanje neispravnih ili nepotrebnih dijelova teksta, normalizaciju formata podataka te standardizaciju unosa. Nadalje, regularni izrazi omogućuju ekstrakciju specifičnih informacija iz velikih skupova tekstualnih podataka. Klase znakova su definirane sa `[]` i omogućavaju poklapanje skupa znakova, a što je korisno za izdvajanje strukturiranih informacija poput datuma, adresa ili identifikacijskih brojeva.
+
+Tekstualni podaci čine značajan dio ukupne količine podataka. Regularni izrazi omogućavaju transformaciju nestrukturiranih tekstualnih podataka u strukturirane formate pogodne za analizu. Ova sposobnost je osobito važna u područjima poput analize sentimenta, obradi prirodnog jezika i analizi teksta.
+
+Regularni izrazi također omogućavaju validaciju podataka kroz definiranje preciznih kriterija za prihvatljive formate unosa. Ovo je posebno važno u fazama prikupljanja i pretprocesiranja podataka gdje je potrebno osigurati konzistentnost i kvalitetu podataka prije početka analize.
+
+Najjednostavniji uzorci se sastoje od slova i brojeva koji se poklapaju točno s tim znakovima. U kontekstu analize Pokémon naziva, ovo znači da možemo tražiti određene Pokémone pomoću jednostavnih literalnih znakova. Na primjer, ako želimo pronaći sve Pokémone čiji naziv sadrži "*char*", jednostavno ćemo koristiti uzorak "*char*" koji će pronaći Pokémone poput Charmander, Charmeleon ili Charizard. Slova i brojevi se poklapaju točno te se nazivaju literalni znakovi. Većina interpunkcijskih znakova ima posebna značenja i nazivaju se metaznakovi. Kada analiziramo Pokémon nazive, posebno je korisno razumjeti da točka (.) kao metaznak može zamijeniti bilo koji znak. Tako uzorak "`p.ka`" može pronaći "`Pika`" u nazivu Pikachu.
+
+```{r}
+pokemon_names <- c("Pikachu", "Charmander", "Charmeleon", "Charizard", "Bulbasaur", "Ivysaur", "Venusaur", "Squirtle", "Wartortle", "Blastoise", "Magikarp", "Gyarados", "Nidoran", "Nidoking", "Nidoqueen", "Alakazam", "Abra", "Kadabra", "Scyther", "Scizor", "Rattata", "Wigglytuff", "Jigglypuff", "Oddish", "Gloom")
+
+str_view(pokemon_names, "Char")
+
+str_view(pokemon_names, "saur")
+
+str_view(pokemon_names, "P.ka")
+
+str_view(pokemon_names, "ar.e")
+```
+
+Kvantifikatori kontroliraju koliko se puta uzorak može poklapati. U analizi Pokémon naziva, kvantifikatori omogućavaju fleksibilno pretraživanje različitih varijanti. Zato znak upitnik čini uzorak opcijonalnim (tj. poklapaju se 0 ili 1 put). Kod Pokémona, ovo je korisno za pronalaženje naziva koji mogu imati opcijska slova. Na primjer, uzorak "nidos?aur" pronaći će i "Nidosaur" (ako takav postoji) i "Nidosaurus" varijante naziva. Osim toga, on omogućava uzorku ponavljanje (tj. poklapaju se najmanje jednom). Kod analizi Pokémon tipova, uzorak "gras+" može pronaći sve varijante tipa "grass" s jednim ili više slova 's' na kraju. Također, omogućava uzorku biti opcionalan ili se ponavljati (tj. poklapaju se bilo koji broj puta, uključujući 0). Ovo je posebno korisno za pronalaženje Pokémona s varijabilnim brojem određenih slova u nazivu.
+
+```{r}
+str_view(pokemon_names, "nido(ran)?")
+
+str_view(pokemon_names, "t+")
+
+str_view(pokemon_names, "l+")
+
+str_view(pokemon_names, "Glo*m")
+```
+
+Klase znakova su definirane sa `[]` i omogućavaju poklapanje skupa znakova, npr. `[abcd]` se poklapaju s "a", "b", "c", ili "d". U analizi Pokémon naziva, ovo omogućava traženje naziva koji počinju određenim skupom slova. Na primjer, `[PFBSW]` može pronaći Pokémone čiji nazivi počinju slovima P (Pikachu), F (Feraligatr), B (Blastoise), S (Squirtle), ili W (Wartortle). Također možete invertirati poklapanje počevši s `^`: `[^abcd]` poklapaju sve osim "a", "b", "c", ili "d". Kod analize Pokémon tipova, možemo koristiti `[^FireWater]` za pronalaženje svih tipova osim Fire i Water tipova.
+
+```{r}
+# Pokémoni koji počinju s određenim slovima
+str_view(pokemon_names, "^[BCPV]")
+
+# Pokémoni koji završavaju samoglasnicima
+str_view(pokemon_names, "[aeiou]$")
+```
+
+Možete koristiti alternaciju `|` za biranje između jednog ili više alternativnih uzoraka. U kontekstu Pokémon analize, ovo je korisno za traženje različitih tipova ili grupa Pokémona. Na primjer, uzorak `"fire|water|grass"` može pronaći sve Pokémone osnovnih tipova. Također, uzorci traženja ponavljanih samoglasnika kao što je `"aa|ee|ii|oo|uu"` mogu biti korisni za pronalaženje Pokémona s karakterističnim duplikovanim slovima u nazivima, poput nekih japanskih naziva koji su transliterirani u engleski jezik.
+
+```{r}
+# Dodajemo tipove za demonstraciju
+pokemon_with_types <- c("Pikachu Electric", "Charmander Fire", "Squirtle Water", "Bulbasaur Grass Poison", "Geodude Rock Ground", "Zubat Poison Flying")
+
+# Tražimo Pokémone Fire, Water ili Grass tipova
+str_view(pokemon_with_types, "Fire|Water|Grass")
+
+# Tražimo Pokémone s duplikovanim slovima u nazivu
+str_view(pokemon_names, "([a-z])\\1")
+```
+
+Regularni izrazi su vrlo kompaktni i koriste mnogo interpunkcijskih znakova pa mogu djelovati zastrašujuće i teški za čitanje, no kada se primjenjuju na konkretan skup podataka poput Pokémon naziva i tipova, njihova praktička korist postaje jasnija. U praktičnoj primjeni na Pokémon podacima, ovi osnovni uzorci omogućavaju efikasno kategoriziranje Pokémona prema različitim kriterijima, analizu obrazaca u imenima te pripremu podataka za dublju analizu performansi i karakteristika različitih grupa Pokémona.
+
+```{r}
+# Simuliramo Pokémon podatke s HP vrijednostima
+pokemon_stats <- c("Pikachu HP:35", "Charizard HP:78", "Blastoise HP:79", "Venusaur HP:80", "Alakazam HP:55", "Machamp HP:90")
+
+# Tražimo Pokémone s HP između 70-89
+str_view(pokemon_stats, "HP:[7-8][0-9]")
+
+
+# Tražimo sve HP vrijednosti
+str_view(pokemon_stats, "HP:[0-9]+")
+```
+
+### Ključne funkcije za rad s regularnim izrazima
+
+**Detektiranje poklapanja**
+
+`str_detect()` vraća logički vektor koji je `TRUE` ako se uzorak poklapa s elementom znakovna vektora i `FALSE` inače. Budući da `str_detect()` vraća logički vektor iste duljine kao početni vektor, funkcija dobro se uparuje s filter() glagolom iz `dplyr` paketa. Također možemo koristiti `str_detect()` s `summarize()` koji daje izračun broja opažanja koja se poklapaju ili `mean()` koja govori udio koji se poklapa.
+
+```{r}
+# Stvaramo vektor Pokémon naziva
+pokemon_names <- c("Pikachu", "Charmander", "Charmeleon", "Charizard", "Bulbasaur", "Ivysaur", "Venusaur", "Squirtle", "Wartortle", "Blastoise")
+
+# Detektiramo koji Pokémoni sadrže "char"
+str_detect(pokemon_names, "char")
+
+# Koji Pokémoni završavaju sa "saur"
+str_detect(pokemon_names, "saur$")
+
+# Stvaramo Pokémon data frame
+library(dplyr)
+pokemon_data <- data.frame(
+  name = c("Pikachu", "Raichu", "Charmander", "Charmeleon", "Charizard", "Alakazam", "Machamp", "Gyarados", "Dragonite", "Mewtwo"),
+  type = c("Electric", "Electric", "Fire", "Fire", "Fire", "Psychic", "Fighting", "Water", "Dragon", "Psychic"),
+  generation = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+)
+
+# Pronalazimo sve Pokémone koji sadrže slovo "a"
+pokemon_data |>
+  filter(str_detect(name, "a")) |>
+  count(name, sort = TRUE)
+
+# Dodajemo više Pokémon generacija
+pokemon_extended <- data.frame(
+  name = c("Pikachu", "Charmander", "Alakazam", "Dragonite", "Chikorita", "Cyndaquil", "Totodile", "Lugia"),
+  generation = c(1, 1, 1, 1, 2, 2, 2, 2)
+)
+
+# Analiziramo udio Pokémona koji sadrže "a" po generacijama
+pokemon_extended |>
+  group_by(generation) |>
+  summarize(
+    total_pokemon = n(),
+    with_a = sum(str_detect(name, "a")),
+    proportion_with_a = mean(str_detect(name, "a"))
+  )
+```
+
+Postoje dvije funkcije koje su usko povezane s `str_detect()`, `str_subset()` i `str_which()`. `str_subset()` vraća znakovni vektor koji sadrži samo nizove koji se poklapaju, a `str_which()` vraća cjelobrojni vektor koji daje pozicije nizova koji se poklapaju.
+
+```{r}
+# str_subset() - vraća samo Pokémone s "char"
+str_subset(pokemon_names, "char")
+
+# str_which() - vraća pozicije Pokémona s "char"
+str_which(pokemon_names, "char")
+```
+
+**Brojanje poklapanja**
+
+Sljedeći korak je brojanje poklapanja funkcijom `str_count()` koja umjesto `TRUE` ili `FALSE`, govori koliko je poklapanja u svakom nizu.
+
+```{r}
+# Brojimo koliko puta se pojavljuje slovo "a" u Pokémon nazivima
+str_count(pokemon_names, "a")
+
+# Pokémoni s ponavljajućim slovima
+pokemon_repeats <- c("Rattata", "Wigglytuff", "Jigglypuff", "Oddish", "Seel")
+str_count(pokemon_repeats, "l")
+```
+
+Važno je napomenuti da se svako poklapanje počinje na kraju prethodnog poklapanja, tj. regex poklapanja se nikad ne preklapaju. Na primjer, u "abababa", koliko će se puta poklopiti uzorak "aba"? Regularni izrazi kažu dva, ne tri.
+
+```{r}
+# Demonstracija s Pokémon nazivom
+str_count("Rattata", "tat")
+```
+
+Prirodno je koristiti `str_count()` s `mutate()`. Sljedeći primjer koristi klase znakova za brojanje samoglasnika i suglasnika u svakom naziv.
+
+```{r}
+# Analiziramo samoglasnike i suglasnike u Pokémon nazivima
+pokemon_data |>
+  mutate(
+    vowels = str_count(str_to_lower(name), "[aeiou]"),
+    consonants = str_count(str_to_lower(name), "[^aeiou]")
+  ) |>
+  select(name, vowels, consonants)
+```
+
+**Zamjena vrijednosti**
+
+Regularne izraze možemo modificirati s funkcijom `str_replace()` i `str_replace_all()`. `str_replace()` zamjenjuje samo prvo poklapanje, a `str_replace_all()` zamjenjuje sva poklapanja prema nekom kriteriju.
+
+```{r}
+# Zamjenjujemo "char" s "flame" u Pokémon nazivima
+str_replace(pokemon_names, "[Cc]har", "Flame")
+
+# Uklanjamo sve samoglasnike iz naziva
+str_replace_all(pokemon_names, "[aeiou]", "")
+
+# Uklanjamo "char" iz naziva
+str_remove(pokemon_names, "[Cc]har")
+
+# Čišćenje Pokémon tipova s nekonzistentnim formatiranjem
+pokemon_types <- c("Electric-type", "Fire/Flying", "Grass & Poison", "Water_type")
+pokemon_types |>
+  str_remove_all("-type|_type") |>
+  str_replace_all("[&/]", " ")
+```
+
+**Ekstraktiranje varijabli**
+
+Posljednja funkcija ove skupine je `separate_wider_regex()` koja koristi regularne izraze za ekstraktiranje podataka iz jednog stupca u jedan ili više novih stupaca.
+
+```{r}
+# Složeni Pokémon podaci u jednom stupcu
+pokemon_complex <- data.frame(
+  pokemon_info = c(
+    "<Pikachu>-E_025",
+    "<Charmander>-F_004",
+    "<Bulbasaur>-G_001",
+    "<Squirtle>-W_007"
+  )
+)
+
+# Ekstraktiramo komponente koristeći separate_wider_regex()
+pokemon_complex |>
+  separate_wider_regex(
+    pokemon_info,
+    patterns = c(
+      "<",
+      name = "[A-Za-z]+",
+      ">-",
+      type_code = ".",
+      "_",
+      pokedex_number = "[0-9]+"
+    )
+  )
+
+# Pokémon podaci s miješanim formatom borbi
+pokemon_battle_data <- data.frame(
+  battle_info = c(
+    "Pikachu HP:35 ATK:55 won",
+    "Charizard HP:78 ATK:84 lost",
+    "Blastoise HP:79 ATK:83 won"
+  )
+)
+
+pokemon_battle_data |>
+  separate_wider_regex(
+    battle_info,
+    patterns = c(
+      name = "[A-Za-z]+", " HP:",
+      hp = "[0-9]+", " ATK:",
+      attack = "[0-9]+", " ",
+      result = "[a-z]+"
+    )
+  )
+```
+
+### Detalji uzoraka u regularnim izrazima
+
+Drugi dio bavljenja regularnim izrazima je ulazak u detalje regularnih izraza. To uključuje escaping koji omogućava poklapanje metaznakova koji bi inače bili tretirani posebno, anchore koji omogućavaju poklapanje početka ili kraja niza, klasame znakova i njihove prečace koji omogućavaju poklapanje bilo kojeg znaka iz skupa, detalje kvantifikatora koji kontroliraju koliko se puta uzorak može poklapati te prioritete operatora i zagrada.
+
+**Escaping**
+
+Da biste se poklopili s literalnom točkom (.), trebate escape koji govori regularnom izrazu da se poklopi s metaznakovima doslovno. Kao i nizovi, regexovi koriste backslash za escaping. Dakle, da se poklopite s točkom, trebate regex. Nažalost, ovo stvara problem. Koristimo nizove za predstavljanje regularnih izraza, a  se također koristi kao escape simbol u nizovima. Dakle, da biste stvorili regularni izraz `.`, trebate niz `"\."`.
+
+```{r}
+# Pokémon nazivi s točkama (često kod skraćenica)
+pokemon_with_dots <- c("Mr. Mime", "Mime Jr.", "Type: Null", "Farfetch'd", "Ho-Oh")
+
+# Pogrešno - traži bilo koji znak umjesto točke
+str_view(pokemon_with_dots, ".")
+
+# Ispravno - traži literalnu točku
+str_view(pokemon_with_dots, "\\.")
+```
+
+Ako `\` se koristi kao escape znak u regularnim izrazima, kako se poklapate s literalnim? Pa, morate ga escapati, stvarajući regularni izraz `\`. Da biste stvorili taj regularni izraz, morate koristiti niz koji također mora escapati. To znači da se za poklapanje s literalnim `\` morate napisati `"\\"`.
+
+```{r}
+# Pokémon putanje s backslash znakovima (hipotetski primjer)
+pokemon_paths <- c("data\\pokemon\\pikachu.txt", "stats\\charizard.csv")
+
+# Tražimo literalni backslash
+str_view(pokemon_paths, "\\\\")
+
+# Pokémon nazivi s različitim interpunkcijskim znakovima
+pokemon_punctuation <- c("Ho-Oh", "Porygon-Z", "Type: Null", "Mr. Mime", "Nidoran♂")
+
+# Tražimo dvotočku koristeći klasu znakova
+str_view(pokemon_punctuation, "[:]")
+
+# Tražimo crticu
+str_view(pokemon_punctuation, "[-]")
+```
+
+**Anchori**
+
+Po defaultu, regularni izrazi će se poklopiti s bilo kojim dijelom niza. Ako se želite poklopiti na početku ili kraju, trebate usiditi regularni izraz koristeći `^` za poklapanje početka ili `$` za poklapanje kraja, a da biste prisilili regularni izraz da se poklopi samo s cijelim nizom, usidriti ga s `^` i `$`.
+
+```{r}
+pokemon_names <- c("Pikachu", "Raichu", "Machamp", "Machoke", "Machop")
+
+# Pokémoni koji počinju s "Pika"
+str_view(pokemon_names, "^Pika")
+
+# Pokémoni koji završavaju s "chu"
+str_view(pokemon_names, "chu$")
+
+# Točno "Pikachu", ne dio naziva
+str_view(pokemon_names, "^Pikachu$")
+```
+
+Također se možete poklopiti s granicom između riječi (tj. početak ili kraj riječi) s `\b`. Ovo može biti posebno korisno pri korištenju alata za pronalaženje i zamjenu.
+
+```{r}
+# Evolucijska linija Machamp obitelji
+machamp_family <- c("Machop", "Machoke", "Machamp", "Supermachamp")
+
+# Tražimo točno "Mach" na početku riječi
+str_view(machamp_family, "\\bMach\\b")
+
+# Tražimo "Machop" kao potpunu riječ
+str_view(machamp_family, "\\bMachop\\b")
+```
+
+**Klase znakova**
+
+Klasa znakova, ili skup znakova, omogućava poklapanje bilo kojeg znaka u skupu. Možete konstruirati vlastite skupove s `[]` gdje `[abc]` poklapaju "a", "b" ili "c" i `[^abc]` poklapaju bilo koji znak osim "a", "b" ili "c".
+
+```{r}
+# Pokémoni čiji nazivi počinju određenim slovima
+pokemon_starters <- c("Bulbasaur", "Charmander", "Squirtle", "Pikachu", "Eevee")
+
+# Pokémoni koji počinju samoglasnicima
+str_view(pokemon_starters, "^[AEIOU]")
+
+# Pokémoni koji ne počinju samoglasnicima
+str_view(pokemon_starters, "^[^AEIOU]")
+```
+
+Osim `^` postoje dva druga znaka koja imaju posebno značenje unutar `[]`:
+
+-   `-` koji definira raspon, npr., `[a-z]` poklapaju bilo koje malo slovo i `[0-9]` poklapaju bilo koji broj.
+
+-   `\` escapira posebne znakove, tako da `[^-]]` poklapaju `^`, `-` ili `]`.
+
+```{r}
+# Pokémoni s brojevima u nazivu (Gen VII+)
+pokemon_with_numbers <- c("Type: Null", "Silvally", "UB-01", "UB-02", "Porygon-Z")
+
+# Tražimo Pokémone s brojevima
+str_view(pokemon_with_numbers, "[0-9]")
+
+# Pokémon nazivi s crticama
+str_view(pokemon_with_numbers, "[\\-]")
+```
+
+Neke klase znakova se koriste tako često da dobivaju vlastite prečace. Već ste vidjeli `.` koji poklapaju bilo koji znak osim newline. Postoje tri druga posebno korisna para:
+
+-   `\d` poklapaju bilo koji broj i `\D` poklapaju sve što nije broj.
+
+-   `\s` poklapaju bilo koji whitespace i `\S` poklapaju sve što nije whitespace.
+
+-   `\w` poklapaju bilo koji "word" znak, tj. slova i brojevi i `\W` poklapaju bilo koji "non-word" znak.
+
+```{r}
+# Pokémon podaci s miješanim formatom
+pokemon_data_mixed <- c("Pikachu Lv25", "Charizard HP78", "Mewtwo Lv100", "Mew HP200")
+
+# Tražimo brojeve (leveli i HP)
+str_view(pokemon_data_mixed, "\\d+")
+
+# Tražimo slova (nazivi Pokémona)
+str_view(pokemon_data_mixed, "\\w+")
+```
+
+**Kvantifikatori**
+
+Kvantifikatori kontroliraju koliko se puta uzorak poklapaju. U ranijim odjeljcima naučili ste `o` ? (0 ili 1 poklapanja), `+` (1 ili više poklapanja) i `*` (0 ili više poklapanja). Također možete precizno specificirati broj poklapanja s `{}`.
+
+```{r}
+# Pokémon nazivi različitih duljina
+pokemon_lengths <- c("Mew", "Alakazam", "Ho-Oh", "Articuno", "Zapdos")
+
+# Točno 3 znaka
+str_view(pokemon_lengths, "^\\w{3}$")
+
+# Između 5 i 7 znakova
+str_view(pokemon_lengths, "^\\w{5,7}$")
+
+# 5 ili više znakova
+str_view(pokemon_lengths, "^\\w{5,}$")
+```
+
+**Prioritet operatora i zagrade**
+
+Što poklapaju ab+? Poklapaju li "a" praćen jednim ili više "b" ili poklapaju "ab" ponovljen bilo koji broj puta? Što poklapaju \^a\|b\$? Poklapaju li cijeli niz a ili cijeli niz b, ili poklapaju niz koji počinje s a ili niz koji završava s b? Kao i algebra, možete koristiti zagrade za prebrisavanje uobičajenog reda. Ali za razliku od algebre, vjerojatno nećete pamtiti pravila prioriteta za regexove, pa slobodno koristite zagrade liberalno.
+
+```{r}
+# Pokémon nazivi za testiranje prioriteta
+pokemon_test <- c("Pikachu", "Pikablu", "Raichu", "Raiblu", "Pika", "Rai")
+
+# ab+ znači a(b+), ne (ab)+
+str_view(pokemon_test, "Pika+")
+
+# Za (ab)+ trebate zagrade
+pokemon_repeat <- c("Pikapika", "Rairai", "Pikablu")
+str_view(pokemon_repeat, "(Pika)+")
+```
+
+**Grupiranje i hvatanje**
+
+Osim prebrisavanja prioriteta operatora, zagrade imaju još jedan važan učinak - stvaraju grupe za hvatanje koje omogućavaju korištenje pod-komponenti poklapanja.
+
+```{r}
+# Pokémoni s ponavljajućim parovima slova
+pokemon_pairs <- c("Rattata", "Diglett", "Seel", "Koffing")
+
+# Tražimo ponavljajuće parove slova koristeći backreference
+str_view(pokemon_pairs, "(..)\\1")
+
+# Pokémoni koji počinju i završavaju istim parom
+pokemon_palindrome <- c("Rotom", "Girafarig", "Ho-Oh")
+str_view(pokemon_palindrome, "^(..).*\\1$")
+```
+
+Također možete koristiti back reference u `str_replace()`. Na primjer, ovaj kod mijenja redoslijed drugog i trećeg riječi.
+
+```{r}
+# Pokémon evolucijske linije
+evolution_lines <- c(
+  "Bulbasaur evolves into Ivysaur",
+  "Charmander evolves into Charmeleon",
+  "Squirtle evolves into Wartortle"
+)
+
+# Mijenjamo redoslijed riječi pomoću grupa
+str_replace(evolution_lines, "(\\w+) (\\w+) (\\w+)", "\\1 \\3 \\2")
+```
+
+### Kontrola uzoraka u regularnim izrazima
+
+Moguće je vršiti dodatnu kontrolu nad detaljima poklapanja korištenjem pattern objekta umjesto samo niza. Ovo omogućava kontrolu nad takozvanim regex flagovima i poklapanje različitih tipova fiksnih nizova.
+
+**Regex flagovi**
+
+Postoji nekoliko postavki koje se mogu koristiti za kontrolu detalja regexp-a. Ove postavke se često nazivaju flagovi u drugim programskim jezicima. U `stringr`-u ih možete koristiti tako da zavisate uzorak u poziv `regex()`. Najkorisniji flag je `ignore_case = TRUE` jer omogućava znakovima da se poklapaju s velikim ili malim slovima.
+
+```{r}
+# Pokémon nazivi s miješanim velikim/malim slovima
+pokemon_mixed_case <- c("PIKACHU", "pikachu", "Pikachu", "PiKaChU", "CHARIZARD", "charizard", "Charizard")
+
+# Tražimo "pikachu" ignorirajući razlike u velikim/malim slovima
+str_view(pokemon_mixed_case, regex("pikachu", ignore_case = TRUE))
+
+# Brojimo koliko Pokémona sadrži "char" bez obzira na velika/mala slova
+str_count(pokemon_mixed_case, regex("char", ignore_case = TRUE))
+```
+
+Ako radite mnogo s višelinijskim nizovima (tj. nizovi koji sadrže `\n`), `dotall` i `multiline` mogu također biti korisni, `dotall = TRUE` omogućava `.` da se poklapa s sve, uključujući `\n`, a `multiline = TRUE` čini `^` i `$` da se poklapaju s početkom i krajem svake linije umjesto početka i kraja cijelog niza.
+
+```{r}
+# Pokémon opis s više linija
+pokemon_description <- "Pikachu is an Electric-type Pokémon.\nIt evolves from Pichu.\nIt can evolve into Raichu."
+
+# Bez dotall flag - točka ne poklapa newline
+str_extract(pokemon_description, "Electric.*Pichu")
+
+# S dotall flag - točka poklapa sve uključujući newline
+str_extract(pokemon_description, regex("Electric.*Pichu", dotall = TRUE))
+
+# Višelinijski Pokémon popis
+pokemon_list <- "Generation 1:\nPikachu\nCharizard\nGeneration 2:\nLugia\nHo-Oh"
+
+# Bez multiline - ^ i $ se odnose na cijeli string
+str_extract_all(pokemon_list, "^Generation.*")
+
+# S multiline - ^ i $ za svaku liniju
+str_extract_all(pokemon_list, regex("^Generation.*", multiline = TRUE))
+```
+
+Konačno, ako pišete komplicirani regularni izraz i zabrinuti ste da ga možda nećete razumjeti u budućnosti, možete pokušati `comments = TRUE`. To mijenja jezik uzorka da ignorira razmake i nove linije, kao i sve nakon `#`. Ovo omogućava korištenje komentara i razmaka da učinite složene regularne izraze razumljivijima.
+
+```{r}
+# Složeni uzorak za parsiranje Pokémon statistika s komentarima
+pokemon_stats_pattern <- regex(
+  r"(
+    (\w+)
+    \s+
+    HP:(\d+)
+    \s+
+    ATK:(\d+)
+    \s+
+    DEF:(\d+)
+  )",
+  comments = TRUE
+)
+
+pokemon_battle_data <- c(
+  "Pikachu HP:35 ATK:55 DEF:40",
+  "Charizard HP:78 ATK:84 DEF:78"
+)
+
+str_match(pokemon_battle_data, pokemon_stats_pattern)
+```
+
+**Fiksna poklapanja**
+
+Možete se odlučiti za izlaz iz pravila regularnih izraza korištenjem `fixed()`. Ona također daje mogućnost ignoriranja velikih/malih slova.
+
+```{r}
+# Pokémon nazivi s posebnim znakovima
+pokemon_special <- c("Type: Null", "Mr. Mime", "Farfetch'd", "Ho-Oh", "Porygon-Z")
+
+# Tražimo literalni ":"  koristeći fixed()
+str_view(pokemon_special, fixed(":"))
+
+# Tražimo literalni "-" koristeći fixed()
+str_view(pokemon_special, fixed("-"))
+
+# Poredba s regex pristupom (trebalo bi escapiranje)
+str_view(pokemon_special, ":")
+
+# Pokémoni s različitim kombinacijama velikih/malih slova
+pokemon_cases <- c("PIKACHU", "pikachu", "Pikachu", "Mr. MIME", "mr. mime")
+
+# Tražimo "mr. mime" ignorirajući velika/mala slova
+str_detect(pokemon_cases, fixed("mr. mime", ignore_case = TRUE))
+```
+
+```{r}
+# Kombiniranje različitih flagova za složenije pretraživanje
+pokemon_complex_data <- "Generation I (1996):\nPikachu - Electric Type\nCharizard - Fire/Flying Type\n\nGeneration II (1999):\nLugia - Psychic/Flying Type"
+
+# Ekstraktiranje svih generacija s njihovim godinama
+generation_pattern <- regex(
+  r"(
+    Generation\s+
+    ([IVX]+)
+    \s*\(
+    (\d{4})
+    \)
+  )",
+  comments = TRUE,
+  ignore_case = TRUE
+)
+
+str_extract_all(pokemon_complex_data, generation_pattern)
+
+# Ekstraktiranje Pokémon naziva s tipovima
+pokemon_type_pattern <- regex(
+  r"(
+    ^([A-Za-z]+)
+    \s+-\s+
+    (.+)\s+Type
+  )",
+  comments = TRUE,
+  multiline = TRUE
+)
+
+str_match_all(pokemon_complex_data, pokemon_type_pattern)
+
+# Veliki skup Pokémon naziva za testiranje performansi
+large_pokemon_dataset <- rep(c("Pikachu", "Charizard", "Blastoise", "Venusaur"), 1000)
+
+# Fiksno pretraživanje je brže za jednostavne nizove
+system.time({
+  fixed_results <- str_detect(large_pokemon_dataset, fixed("Pikachu"))
+})
+
+# Regex pretraživanje za istu stvar
+system.time({
+  regex_results <- str_detect(large_pokemon_dataset, "Pikachu")
+})
+
+# Za jednostavna poklapanja, fixed() može biti značajno brži
+identical(fixed_results, regex_results)
+```

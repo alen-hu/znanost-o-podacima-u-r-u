@@ -1,0 +1,716 @@
+---
+title: "Logičke vrijednosti"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+Logičke vrijednosti predstavljaju temeljni koncept u znanosti o podacima i programiranju koji omogućuje izražavanje istinitosti ili neistinitosti određenih tvrdnji. U svojoj najjednostavnijoj formi, logičke vrijednosti mogu poprimiti samo dva moguća stanja: istinito ili lažno, što odgovara konceptu Booleove logike nazvanoj po britanskom matematičaru Georgeu Booleu iz 19. stoljeća. Ove binarne vrijednosti čine osnovu za donošenje odluka u analizi podataka, omogućavajući programerima i analitičarima da filtriraju podatke, provjeravaju uvjete i kontroliraju tijek izvršavanja programa.
+
+U kontekstu znanosti o podacima, logičke vrijednosti igraju ključnu ulogu u procesu istraživanja i transformacije podataka. Analitičari redovito koriste logičke operacije kako bi identificirali redove koji zadovoljavaju određene kriterije, izdvojili relevantne podskupove podataka ili provjerili valjanost podataka. Na primjer, pri analizi skupa podataka o kupcima, logičke vrijednosti omogućuju jednostavno filtriranje kupaca čija je dob veća od određene granice ili čiji ukupni iznos kupnje prelazi određeni prag. Bez mogućnosti izražavanja i evaluacije logičkih uvjeta, moderna analiza podataka bila bi znatno ograničena u svojoj fleksibilnosti i moći.
+
+U programskom jeziku R, logičke vrijednosti implementirane su kroz poseban tip podataka poznat kao logical. R koristi ključne riječi TRUE i FALSE za predstavljanje istinitih i lažnih vrijednosti, pri čemu je važno napomenuti da R razlikuje velika i mala slova, što znači da moraju biti napisane velikim slovima kako bi bile prepoznate kao logičke konstante. Osim ovih dviju osnovnih vrijednosti, R također podržava posebnu vrijednost NA koja predstavlja nedostajuću ili nepoznatu logičku vrijednost, što je posebno važno pri radu s realnim skupovima podataka koji često sadrže nepotpune informacije. Logički vektori u R-u nastaju kao rezultat usporedbi i logičkih operacija, omogućavajući elegantno i učinkovito manipuliranje podacima kroz vektorizirane operacije koje su jedna od ključnih prednosti ovog programskog jezika.
+
+### Uspoređivanje
+
+Usporedbe predstavljaju najčešći način stvaranja logičkih vrijednosti u R-u, a temelje se na upotrebi operatora usporedbe koji omogućavaju evaluaciju odnosa između vrijednosti. R pruža standardni skup operatora usporedbe koji uključuju:
+
+-   veće od (\>),
+
+-   veće ili jednako (\>=),
+
+-   manje od (\<),
+
+-   manje ili jednako (\<=),
+
+-   jednako (==) i
+
+-   različito od (!=).
+
+Ovi operatori primjenjuju se na različite tipove podataka, uključujući numeričke vrijednosti, znakovne nizove i datume, pri čemu svaka usporedba kao rezultat vraća logičku vrijednost `TRUE` ili `FALSE`.
+
+Kad se koriste operatori usporedbe na numeričkim vrijednostima, R provodi standardne matematičke usporedbe koje su intuitivne i jednostavne za razumijevanje. Na primjer, pri radu sa skupom podataka o Pokemonima pohranjenim u `pokemon_dataset`, možemo koristiti usporedbe za identificiranje posebno moćnih stvorenja. Ova naredba stvorit će logički vektor koji sadrži `TRUE` za sve Pokemone čija je vrijednost napada veća od 100, a `FALSE` za sve ostale. Slično tome, možemo provjeriti koji Pokemoni imaju iznimno visoku obranu.
+
+```{r}
+# Provjera koji Pokemoni imaju Attack veći od 100
+pokemon_dataset$attack > 100
+
+# Identifikacija Pokemona s visokom obranom
+pokemon_dataset$defense >= 120
+```
+
+Operator jednakosti (`==`) zahtijeva posebnu pažnju jer se razlikuje od operatora dodjele (`=`) koji se koristi za pripisivanje vrijednosti varijablama. Ova distinkcija je kritična za izbjegavanje čestih grešaka. Pri uspoređivanju znakovih nizova, operator `==` provjerava potpunu jednakost između stringova, uključujući razlikovanje velikih i malih slova. U kontekstu Pokemona, možemo identificirati specifične tipove ili je li pokemon dio skupine legendarnih pokemona. Prvi izraz vratit će logički vektor koji identificira sve Pokemone čiji je primarni tip "Water", dok će drugi identificirati sve legendarne Pokemone u skupu podataka.
+
+```{r}
+# Identifikacija svih Water-type Pokemona
+pokemon_dataset$type_1 == "Water"
+
+# Provjera koji Pokemoni su legendarni
+pokemon_dataset$legendary == TRUE
+```
+
+Posebnu pažnju treba obratiti na rad s decimalnim brojevima i njihovim usporedbama. Zbog načina na koji računala interno pohranjuju decimalne brojeve, mogu se pojaviti problemi s numeričkom preciznošću. Usporedba poput `(0.1 + 0.2) == 0.3` može neočekivano vratiti `FALSE` zbog minimalnih razlika u reprezentaciji brojeva koje su posljedica ograničenja preciznosti računala. Za sigurnije uspoređivanje decimalnih brojeva, preporučuje se korištenje funkcije `near()` koja omogućava usporedbu s određenom tolerancijom pogreške. Ova funkcija je posebno korisna pri analizi podataka gdje se radi s izračunatim vrijednostima koje mogu sadržavati male zaokruživačke pogreške.
+
+```{r}
+# Nesigurna usporedba decimalnih brojeva
+(0.1 + 0.2) == 0.3
+
+# Sigurnija usporedba koristeći near()
+near(0.1 + 0.2, 0.3)
+```
+
+Usporedbe se mogu provoditi i na znakovima nizovima, pri čemu R koristi leksikografski poredak temeljen na Unicode vrijednostima znakova. To znači da `"a" < "b"` vraća `TRUE` jer slovo "a" dolazi prije slova "b" u abecedi. Pri radu s podacima o Pokemonima, možemo koristiti ovakve usporedbe za sortiranje ili filtriranje prema imenima, na primjer `pokemon_dataset$name < "M"` identificira sve Pokemone čija imena abecedno dolaze prije slova "M". Međutim, važno je napomenuti da R razlikuje velika i mala slova gdje velika slova dolaze prije malih slova u Unicode poretku.
+
+```{r}
+# Identifikacija Pokemona čija imena dolaze prije slova M
+pokemon_dataset$name < "M"
+
+# Provjera imena koja dolaze nakon slova P
+pokemon_dataset$name > "P"
+```
+
+Nedostajuće vrijednosti zahtijevaju poseban tretman pri usporedbama. Bilo koja usporedba koja uključuje `NA` kao rezultat će vratiti `NA` umjesto `TRUE` ili `FALSE` što odražava činjenicu da ne možemo sa sigurnošću tvrditi je li nepoznata vrijednost veća, manja ili jednaka nekoj drugoj vrijednosti. Ako u skupu podataka o Pokemonima neki Pokemoni imaju nedostajuće vrijednosti za brzinu, izraz `pokemon_dataset$speed > 80` vratit će `NA` za te specifične slučajeve.
+
+```{r}
+# Usporedba koja može sadržavati NA vrijednosti
+pokemon_dataset$type_2 > "M"
+
+# Eksplicitna provjera nedostajućih vrijednosti
+is.na(pokemon_dataset$type_2)
+```
+
+Rezultati usporedbi često se koriste za indeksiranje i filtriranje podataka, što predstavlja jednu od najmoćnijih primjena logičkih vrijednosti u R-u. Logički vektori mogu se koristiti unutar uglate zagrade za odabir podskupa podataka koji zadovoljavaju određene kriterije. Na primjer, `pokemon_dataset[pokemon_dataset$HP > 100, ]` izdvojit će sve retke podataka gdje Pokemoni imaju više od 100 HP-ova, omogućavajući analitičarima da se fokusiraju na robusnije Pokemone. Kombiniranjem više usporedbi moguće je stvarati složenije filtere koji istovremeno provjeravaju više uvjeta, što omogućava preciznu selekciju podataka prema specifičnim potrebama analize.
+
+```{r}
+# Filtriranje Pokemona s više od 100 HP
+pokemon_dataset[pokemon_dataset$HP > 100, ]
+
+# Odabir Pokemona s Attack većim od 150
+snazni_pokemoni <- pokemon_dataset[pokemon_dataset$attack > 150, ]
+snazni_pokemoni
+
+# Izdvajanje Fire-type Pokemona
+vaterni_pokemoni <- pokemon_dataset[pokemon_dataset$type_1 == "Fire", ]
+vaterni_pokemoni
+```
+
+### Booleova algebra
+
+Booleova algebra predstavlja matematički sustav za rad s logičkim vrijednostima koji omogućava kombiniranje jednostavnih logičkih izraza u složenije uvjete. Ovaj sustav, nazvan po britanskom matematičaru Georgeu Booleu, temelji se na trima osnovnim operacijama koji su implementirani kroz posebne simbole
+
+-   AND (logičko I) - simbol `&`,
+
+-   OR (logičko ILI) - simbol `|` i
+
+-   NOT (logička negacija) - simbol `!`.
+
+Ove operacije omogućuju analitičarima da konstruiraju kompleksne logičke uvjete koji precizno opisuju kriterije za filtriranje i analizu podataka.
+
+Operator AND vraća `TRUE` samo kada su obje usporedbe istinite, dok u svim ostalim slučajevima vraća `FALSE`. Ovaj operator je posebno koristan kada trebamo identificirati podatke koji istovremeno zadovoljavaju više uvjeta. U kontekstu Pokemona, možemo kombinirati više kriterija za pronalaženje specifičnih podskupova:
+
+```{r}
+# Pronalaženje Pokemona s visokim Attack i Defense
+pokemon_dataset$attack > 100 & pokemon_dataset$defense > 100
+
+# Identifikacija snažnih Water-type Pokemona
+pokemon_dataset$type_1 == "Water" & pokemon_dataset$total > 500
+```
+
+Prvi primjer identificira Pokemone koji imaju i napad i obranu veću od 100, što predstavlja balansirane borce s dobrim ofenzivnim i obrambenim sposobnostima. Drugi primjer pronalazi Water-type Pokemone koji su generalno snažni, s ukupnim statistikama većim od 500.
+
+Operator OR vraća `TRUE` ako je barem jedna od usporedbi istinita, a `FALSE` samo kada su obje usporedbe lažne. Ovaj operator omogućava fleksibilnije filtriranje gdje tražimo podatke koji zadovoljavaju bilo koji od navedenih uvjeta:
+
+```{r}
+# Pokemoni koji su ili legendarni ili imaju visok Attack
+pokemon_dataset$legendary == TRUE | pokemon_dataset$attack > 150
+
+# Fire ili Dragon type Pokemoni
+pokemon_dataset$type_1 == "Fire" | pokemon_dataset$type_1 == "Dragon"
+
+# Pokemoni s izuzetno visokom brzinom ili HP
+pokemon_dataset$speed > 120 | pokemon_dataset$HP > 150
+```
+
+Prvi izraz identificira sve Pokemone koji su ili legendarni ili posjeduju iznimno visok napad, omogućavajući široku selekciju moćnih stvorenja. Drugi primjer pokazuje kako možemo odabrati Pokemone koji pripadaju bilo kojem od dva željena tipa, što je korisno pri analizi specifičnih grupa Pokemona.
+
+Operator NOT invertira logičku vrijednost tako da `TRUE` postaje `FALSE` i obrnuto. Ovaj operator je koristan za negiranje uvjeta ili za identificiranje komplementarnih skupova podataka:
+
+```{r}
+# Pokemoni koji NISU Water type
+!pokemon_dataset$type_1 == "Water"
+
+# Ekvivalentno prethodnom izrazu
+pokemon_dataset$type_1 != "Water"
+
+# Pokemoni koji NISU legendarni
+!pokemon_dataset$legendary
+
+# Pokemoni koji NEMAJU visok Attack
+!(pokemon_dataset$attack > 100)
+```
+
+Ovi primjeri pokazuju kako možemo koristiti negaciju za pronalaženje Pokemona koji ne zadovoljavaju određene kriterije, što je često jednako važno kao i pronalaženje onih koji ih zadovoljavaju.
+
+Booleovi operatori mogu se kombinirati u složene izraze koji omogućavaju preciznu specifikaciju kriterija, ali je važno razumjeti prioritet operatora i koristiti zagrade za eksplicitno definiranje redoslijeda evaluacije. Operator NOT ima najviši prioritet, zatim slijedi AND, a najniži prioritet ima OR. Bez pravilne upotrebe zagrada, složeni izrazi mogu proizvesti neočekivane rezultate:
+
+```{r}
+# Pronalaženje moćnih Pokemona specifičnih tipova
+(pokemon_dataset$type_1 == "Fire" | pokemon_dataset$type_1 == "Dragon") & pokemon_dataset$attack > 100
+
+# Legendarni Pokemoni s visokom brzinom ili neobično jakom obranom
+pokemon_dataset$legendary == TRUE & (pokemon_dataset$speed > 100 | pokemon_dataset$defense > 120)
+
+# Balansirani Pokemoni koji nisu Normal type
+!pokemon_dataset$type_1 == "Normal" & pokemon_dataset$attack > 80 & pokemon_dataset$defense > 80
+```
+
+Prvi primjer koristi zagrade kako bi osigurao da se prvo evaluira OR uvjet između Fire i Dragon tipova, a zatim se taj rezultat kombinira s uvjetom za visok napad. Bez zagrada, prioritet operatora mogao bi proizvesti različit rezultat.
+
+De Morganovi zakoni predstavljaju važna pravila u Booleovoj algebri koja opisuju kako se negacija distribuira preko AND i OR operatora. Prvi zakon kaže da negacija AND operacije ekvivalentna je OR operaciji negiranih operanada: !(A & B) je isto što i !A \| !B. Drugi zakon kaže da negacija OR operacije ekvivalentna je AND operaciji negiranih operanada: !(A \| B) je isto što i !A & !B. Ovi zakoni mogu pojednostaviti kompleksne logičke izraze i učiniti kod čitljivijim:
+
+```{r}
+# Pokemoni koji NISU istovremeno Fire type I legendarni
+!(pokemon_dataset$type_1 == "Fire" & pokemon_dataset$legendary == TRUE)
+
+# Ekvivalentno prema De Morganovim zakonima
+pokemon_dataset$type_1 != "Fire" | pokemon_dataset$legendary != TRUE
+
+# Pokemoni koji nemaju niti visok Attack niti visok Speed
+!(pokemon_dataset$attack > 120 | pokemon_dataset$speed > 100)
+
+# Ekvivalentno
+pokemon_dataset$attack <= 120 & pokemon_dataset$speed <= 100
+```
+
+Ovi primjeri ilustriraju kako isti logički uvjet može biti izražen na različite načine, a razumijevanje De Morganovih zakona pomaže u pisanju jasnog i efikasnog koda.
+
+Posebnu kategoriju Booleovih operatora čine vektorizirane verzije & i \| te njihove kratko-spojene varijante && i \|\|. Vektorizirane verzije (&, \|) primjenjuju se element-po-element na cijele vektore i vraćaju vektor logičkih vrijednosti iste duljine kao operandi, što je standardno ponašanje u R-u prilikom rada s vektorima podataka. S druge strane, kratko-spojene verzije (&&, \|\|) evaluiraju samo prvi element svakog vektora i vraćaju jednu logičku vrijednost, te se koriste prvenstveno u kontrolnim strukturama kao što su if naredbe:
+
+```{r}
+# Vektorizirana operacija - vraća vektor
+pokemon_dataset$attack > 100 & pokemon_dataset$defense > 100
+
+# Brojanje koliko Pokemona zadovoljava oba uvjeta
+sum(pokemon_dataset$attack > 100 & pokemon_dataset$defense > 100)
+
+# Provođenje analize samo ako postoje legendarni Pokemoni
+if (any(pokemon_dataset$legendary == TRUE) && nrow(pokemon_dataset) > 0) {
+  legendarni <- pokemon_dataset[pokemon_dataset$legendary == TRUE, ]
+  print(paste("Pronađeno", nrow(legendarni), "legendarnih Pokemona"))
+}
+```
+
+U prvom primjeru, operator & uspoređuje svaki element vektora Attack sa svakim elementom vektora Defense, rezultirajući vektorom logičkih vrijednosti. U if strukturi koristimo && jer evaluiramo pojedinačne logičke uvjete, a ne vektore.
+
+Funkcija `%in%` predstavlja specijaliziran operator koji provjerava pripada li vrijednost skupu mogućih vrijednosti, što je elegantnije rješenje od korištenja višestrukih OR operatora. Ovaj operator je posebno koristan pri filtriranju podataka prema višestrukim kategorijama:
+
+```{r}
+# Tradicionalni pristup s višestrukim OR operatorima
+pokemon_dataset$type_1 == "Fire" | pokemon_dataset$type_1 == "Water" | pokemon_dataset$type_1 == "Grass"
+
+# Elegantniji pristup koristeći %in%
+pokemon_dataset$type_1 %in% c("Fire", "Water", "Grass")
+
+# Pronalaženje Pokemona iz određenih generacija
+pokemon_dataset$generation %in% c(1, 2, 3)
+
+# Identifikacija specifičnih legendarnih Pokemona
+pokemon_dataset$name %in% c("Mewtwo", "Lugia", "Rayquaza")
+```
+
+Prvi primjer pokazuje kako %in% operator zamjenjuje niz OR usporedbi, čineći kod znatno kraćim i čitljivijim. Ovaj pristup posebno briljira kada radimo s dugim listama mogućih vrijednosti.
+
+Kombiniranje Booleovih operatora s funkcijama za sumiranje i agregaciju omogućava moćne analitičke uvide. Funkcije poput `sum()`, `mean()`, `any()` i `all()` mogu raditi s logičkim vektorima za stvaranje numeričkih sažetaka:
+
+```{r}
+# Brojanje Pokemona s visokim Attack
+sum(pokemon_dataset$attack > 100)
+
+# Postotak legendarnih Pokemona
+mean(pokemon_dataset$legendary == TRUE) * 100
+
+# Provjera postoji li barem jedan Dragon type Pokemon
+any(pokemon_dataset$type_1 == "Dragon")
+
+# Provjera imaju li svi Pokemoni pozitivan HP
+all(pokemon_dataset$HP > 0)
+
+# Prosječan Attack Fire-type Pokemona
+mean(pokemon_dataset$attack[pokemon_dataset$type_1 == "Fire"])
+```
+
+Ovi primjeri demonstriraju kako logički vektori, kada se koriste s numeričkim funkcijama, omogućavaju brzo izračunavanje statistika o podskupovima podataka koji zadovoljavaju određene uvjete, što je fundamentalna tehnika u eksplorativnoj analizi podataka.
+
+### Sažimanje logičkih vektora
+
+Sažimanje logičkih vektora predstavlja moćnu tehniku u analizi podataka koja omogućava brzo izvlačenje agregatnih informacija o podacima koji zadovoljavaju određene uvjete. Dvije najvažnije funkcije za numeričko sažimanje logičkih vektora su `sum()` i `mean()` koje koriste činjenicu da R tretira `TRUE` kao 1 i `FALSE` kao 0 pri numeričkim operacijama. Ova konverzija omogućava intuitivno brojanje i izračunavanje proporcija na temelju logičkih uvjeta.
+
+Funkcija `sum()` broji koliko elemenata u logičkom vektoru ima vrijednost `TRUE` što je izuzetno korisno za određivanje koliko zapisa u skupu podataka zadovoljava određeni kriterij. Pri radu s Pokemonima, ova funkcija omogućava brzo odgovaranje na pitanja o učestalosti određenih karakteristika:
+
+```{r}
+# Koliko Pokemona ima Attack veći od 100
+sum(pokemon_dataset$attack > 100)
+
+# Broj legendarnih Pokemona u skupu podataka
+sum(pokemon_dataset$legendary == TRUE)
+
+# Brojanje Water-type Pokemona
+sum(pokemon_dataset$type_1 == "Water")
+
+# Koliko Pokemona ima HP veći od 80
+sum(pokemon_dataset$HP > 80)
+
+# Broj Pokemona s visokom obranom (Defense > 100)
+sum(pokemon_dataset$defense > 100)
+```
+
+Svaki od ovih izraza vraća jedan numerički rezultat koji predstavlja točan broj Pokemona koji zadovoljavaju navedeni uvjet, omogućavajući brzu kvantitativnu procjenu distribucije karakteristika u skupu podataka.
+
+Funkcija `mean()` izračunava proporciju `TRUE` vrijednosti u logičkom vektoru što je ekvivalentno dijeljenju broja `TRUE` vrijednosti s ukupnim brojem elemenata. Rezultat je decimalni broj između 0 i 1 koji predstavlja udio zapisa koji zadovoljavaju uvjet, a može se jednostavno pretvoriti u postotak množenjem sa 100:
+
+```{r}
+# Postotak Pokemona s visokim Attack
+mean(pokemon_dataset$attack > 100) * 100
+
+# Udio legendarnih Pokemona
+mean(pokemon_dataset$legendary == TRUE)
+
+# Postotak Fire-type Pokemona
+mean(pokemon_dataset$type_1 == "Fire") * 100
+
+# Koliki udio Pokemona ima Speed veći od 80
+mean(pokemon_dataset$speed > 80)
+
+# Proporcija Pokemona s ukupnim statistikama većim od 500
+mean(pokemon_dataset$total > 500)
+```
+
+Ovi primjeri pokazuju kako `mean()` pruža perspektivu relativne učestalosti što je često informativnije od apsolutnih brojeva jer omogućava lakšu usporedbu između različitih kategorija ili skupova podataka različitih veličina.
+
+Kombiniranje `sum()` i `mean()` funkcija s Booleovim operatorima omogućava analizu kompleksnijih uvjeta koji uključuju više kriterija istovremeno. Ovo je posebno korisno pri istraživanju interakcija između različitih karakteristika u podacima:
+
+```{r}
+# Broj Pokemona koji su istovremeno Fire type i legendarni
+sum(pokemon_dataset$type_1 == "Fire" & pokemon_dataset$legendary == TRUE)
+
+# Postotak Pokemona s visokim Attack ILI visokom Defense
+mean(pokemon_dataset$attack > 100 | pokemon_dataset$defense > 100) * 100
+
+# Koliko Pokemona ima balansiran Attack i Defense (oba veća od 80)
+sum(pokemon_dataset$attack > 80 & pokemon_dataset$defense > 80)
+
+# Udio Pokemona prve generacije s visokim Total
+mean(pokemon_dataset$generation == 1 & pokemon_dataset$total > 450)
+
+# Broj Pokemona koji nisu Normal type i imaju Speed veći od 100
+sum(pokemon_dataset$type_1 != "Normal" & pokemon_dataset$speed > 100)
+```
+
+Ovi složeniji primjeri demonstriraju kako logički operatori omogućavaju preciznu specifikaciju uvjeta za analizu, a funkcije sažimanja ih pretvaraju u lako interpretabilne numeričke rezultate.
+
+Logičke funkcije `any()` i `all()` pružaju drugačiji tip sažetka koji odgovara na pitanja o postojanju ili univerzalnosti određenih uvjeta u podacima. Funkcija `any()` vraća `TRUE` ako barem jedan element u logičkom vektoru ima vrijednost `TRUE`, dok `all()` vraća `TRUE` samo ako svi elementi imaju vrijednost `TRUE`. Ove funkcije su posebno korisne za validaciju podataka i provjeru pretpostavki:
+
+```{r}
+# Postoji li barem jedan Dragon type Pokemon
+any(pokemon_dataset$type_1 == "Dragon")
+
+# Ima li barem jedan Pokemon s Attack većim od 180
+any(pokemon_dataset$attack > 180)
+
+# Imaju li svi Pokemoni pozitivne HP vrijednosti
+all(pokemon_dataset$HP > 0)
+
+# Jesu li svi Pokemoni iz poznatih generacija (1-7)
+all(pokemon_dataset$generation %in% 1:7)
+
+# Postoji li barem jedan legendarni Pokemon u svakoj generaciji
+tapply(pokemon_dataset$legendary, pokemon_dataset$generation, any)
+```
+
+Prvi primjer provjerava prisutnost Dragon type Pokemona u skupu podataka, što bi moglo biti važno za istraživanje raznolikosti tipova. Treći primjer osigurava integritet podataka provjerom da svi Pokemoni imaju validne zdravstvene bodove, što je osnovna provjera kvalitete podataka.
+
+Funkcija `which()` predstavlja komplementarnu tehniku sažimanja koja vraća indekse elemenata koji zadovoljavaju uvjet, umjesto same logičke vrijednosti ili brojčanog sažetka. Ova funkcija je korisna kada trebamo znati ne samo koliko elemenata zadovoljava uvjet, već i njihove točne pozicije u vektoru:
+
+```{r}
+# Indeksi Pokemona s najvišim Attack (veći od 150)
+which(pokemon_dataset$attack > 150)
+
+# Pozicije legendarnih Pokemona u skupu podataka
+which(pokemon_dataset$legendary == TRUE)
+
+# Indeksi prvih 10 Water-type Pokemona
+head(which(pokemon_dataset$type_1 == "Water"), 10)
+
+# Pronalaženje pozicije specifičnog Pokemona
+which(pokemon_dataset$name == "Pikachu")
+
+# Indeksi Pokemona s izuzetno visokim Speed (veći od 130)
+which(pokemon_dataset$speed > 130)
+```
+
+Rezultati funkcije `which()` mogu se koristiti za direktno indeksiranje i pristup specifičnim recima podataka, što je korisno pri detaljnijem istraživanju podataka koji zadovoljavaju određene kriterije.
+
+Kombiniranje funkcija sažimanja s grupiranjem podataka omogućava usporednu analizu različitih podskupina podataka. Funkcije poput `tapply()`, `aggregate()` ili funkcije iz paketa `dplyr` omogućavaju primjenu sažimanja na grupe definirane kategoričkom varijablom:
+
+```{r}
+# Prosječan broj Pokemona s visokim Attack po generaciji
+tapply(pokemon_dataset$attack > 100, pokemon_dataset$generation, mean)
+
+# Ukupan broj legendarnih Pokemona po generaciji
+tapply(pokemon_dataset$legendary, pokemon_dataset$generation, sum)
+
+# Postotak Pokemona s visokim HP po tipu
+tapply(pokemon_dataset$HP > 80, pokemon_dataset$type_1, mean) * 100
+
+# Provođenje validacije: imaju li sve generacije barem jednog Pokemona
+tapply(rep(TRUE, nrow(pokemon_dataset)), pokemon_dataset$generation, any)
+
+# Prosječan Attack po tipu za Pokemone s visokom obranom
+tapply(pokemon_dataset$attack[pokemon_dataset$defense > 100], pokemon_dataset$type_1[pokemon_dataset$defense > 100], mean)
+```
+
+Ovi primjeri pokazuju kako grupiranje podataka s funkcijama sažimanja omogućava identifikaciju obrazaca i razlika između kategorija, što je ključno za razumijevanje strukture podataka.
+
+Funkcije `cumsum()`, `cumprod()`, `cummin()` i `cummax()` pružaju kumulativne sažetke koji zadržavaju duljinu originalnog vektora, za razliku od prethodno spomenutih funkcija koje vraćaju jedan rezultat. Kumulativni sažeci omogućavaju praćenje kako se određena vrijednost mijenja kroz vektor:
+
+```{r}
+# Kumulativni broj legendarnih Pokemona kroz skup podataka
+cumsum(pokemon_dataset$legendary == TRUE)
+
+# Koliko je Pokemona s visokim Attack viđeno do svakog reda
+cumsum(pokemon_dataset$attack > 100)
+
+# Kumulativni postotak Water-type Pokemona
+cumsum(pokemon_dataset$type_1 == "Water") / seq_along(pokemon_dataset$type_1) * 100
+
+# Praćenje maksimalnog Attack viđenog do svakog reda
+cummax(pokemon_dataset$attack)
+
+# Broj Pokemona s brzinom većom od 100 akumuliran kroz skup
+cumsum(pokemon_dataset$speed > 100)
+```
+
+Kumulativni sažeci su posebno korisni pri vizualizaciji trenda kako se određena karakteristika mijenja kroz redoslijed podataka, što može otkriti obrasce povezane s redoslijedom Pokemona u skupu podataka.
+
+Nedostajuće vrijednosti u logičkim operacijama zahtijevaju pažljivo rukovanje pri sažimanju. Većina funkcija sažimanja ima argument `na.rm` koji kontrolira kako se nedostajuće vrijednosti tretiraju. Ako postoje `NA` vrijednosti u logičkom vektoru, funkcije poput `sum()` i `mean()` vratit će `NA` kao rezultat osim ako se eksplicitno ne postavi `na.rm = TRUE`:
+
+```{r}
+# Brojanje Pokemona s visokim Speed, ignoriranje NA vrijednosti
+sum(pokemon_dataset$speed > 100, na.rm = TRUE)
+
+# Postotak legendarnih Pokemona, isključujući nedostajuće
+mean(pokemon_dataset$legendary == TRUE, na.rm = TRUE) * 100
+
+# Provjera postoje li NA vrijednosti u Attack stupcu
+any(is.na(pokemon_dataset$attack))
+
+# Ukupan broj nedostajućih vrijednosti u Defense
+sum(is.na(pokemon_dataset$defense))
+
+# Postotak podataka s kompletnim informacijama o brzini
+mean(!is.na(pokemon_dataset$speed)) * 100
+```
+
+Pravilno rukovanje nedostajućim vrijednostima osigurava da sažeci točno odražavaju dostupne podatke i sprječava neočekivane rezultate u analizi, što je kritično za pouzdanost zaključaka izvedenih iz podataka.
+
+### Uvjetne transformacije
+
+Uvjetne transformacije omogućavaju kreiranje novih vrijednosti ili modifikaciju postojećih na temelju logičkih uvjeta, što predstavlja fundamentalnu tehniku u pripremi i čišćenju podataka. Za razliku od funkcija sažimanja koje reduciraju vektor na jednu ili nekoliko vrijednosti, uvjetne transformacije vraćaju vektor iste duljine kao ulazni podaci, pri čemu svaki element može biti transformiran na temelju toga zadovoljava li određeni uvjet. R pruža nekoliko funkcija za provođenje uvjetnih transformacija, od kojih su najvažnije `if_else()` i `case_when()`.
+
+Funkcija `if_else()` predstavlja vektoriziranu verziju standardne if-else kontrolne strukture koja omogućava odabir između dvije vrijednosti na temelju logičkog uvjeta. Ova funkcija prima tri argumenta: logički uvjet koji se testira, vrijednost koja se vraća kada je uvjet istinit, i vrijednost koja se vraća kada je uvjet lažan. Za razliku od klasične if naredbe koja radi s pojedinačnim vrijednostima, `if_else()` primjenjuje se na cijele vektore element po element:
+
+```{r}
+# Klasifikacija Pokemona kao "Snažan" ili "Slab" na temelju Attack
+pokemon_dataset$attack_category <- if_else(
+  pokemon_dataset$attack > 100,
+  "Snažan",
+  "Slab"
+)
+
+# Određivanje je li Pokemon brz ili spor
+pokemon_dataset$speed_level <- if_else(
+  pokemon_dataset$speed > 80,
+  "Brz",
+  "Spor"
+)
+
+# Identifikacija Pokemona s visokim HP
+pokemon_dataset$high_hp <- if_else(
+  pokemon_dataset$HP > 90,
+  "Visok HP",
+  "Normalan HP"
+)
+
+# Kreiranje binarne oznake za legendary status
+pokemon_dataset$legendary_label <- if_else(
+  pokemon_dataset$legendary == TRUE,
+  "Legendarni",
+  "Obični"
+)
+
+pokemon_dataset |> select(name, attack, attack_category, speed, speed_level, HP, high_hp, legendary, legendary_label)
+```
+
+Ovi primjeri pokazuju kako `if_else()` omogućava kreiranje novih kategoričkih varijabli koje opisuju karakteristike Pokemona na jednostavniji, razumljiviji način nego originalne numeričke vrijednosti.
+
+Važna karakteristika funkcije `if_else()` je da zahtijeva da obje povratne vrijednosti (za `TRUE` i `FALSE` slučajeve) budu istog tipa podataka. Ovo osigurava konzistentnost rezultirajućeg vektora i sprječava neočekivane konverzije tipova koje bi mogle uzrokovati probleme u daljnjoj analizi. Ako pokušamo kombinirati različite tipove podataka, R će prijaviti grešku:
+
+```{r}
+# Korektna upotreba - oba rezultata su znakovi
+pokemon_dataset$power_status <- if_else(
+  pokemon_dataset$total > 500,
+  "Moćan",
+  "Prosječan"
+)
+
+# Korektna upotreba - oba rezultata su brojevi
+pokemon_dataset$attack_bonus <- if_else(
+  pokemon_dataset$type_1 == "Fighting",
+  10,
+  0
+)
+
+# Kreiranje numeričke oznake za generaciju
+pokemon_dataset$gen_numeric <- if_else(
+  pokemon_dataset$generation <= 3,
+  1,
+  2
+)
+
+pokemon_dataset |> select(name, total, power_status, type_1, attack_bonus, generation, gen_numeric)
+```
+
+Ova ograničenja stvaraju predvidljivost u tipu rezultata i omogućavaju sigurnije programiranje, što je posebno važno pri složenijim transformacijama podataka.
+
+Funkcija `if_else()` također omogućava eksplicitno specificiranje što se događa s nedostajućim vrijednostima putem argumenta missing. Ako logički uvjet vraća `NA`, možemo odrediti koja vrijednost će biti korištena umjesto standardnog `NA`:
+
+```{r}
+# Rukovanje nedostajućim vrijednostima s default vrijednošću
+pokemon_dataset$defense_category <- if_else(
+  pokemon_dataset$defense > 80,
+  "Jaka obrana",
+  "Slaba obrana",
+  missing = "Nepoznato"
+)
+
+# Klasifikacija brzine s rukovanjem NA
+pokemon_dataset$speed_class <- if_else(
+  pokemon_dataset$speed > 100,
+  "Vrlo brz",
+  "Umjereno brz",
+  missing = "Podaci nedostaju"
+)
+
+pokemon_dataset |> select(name, defense, defense_category, speed, speed_class)
+```
+
+Ova funkcionalnost je kritična pri radu s realnim skupovima podataka koji često sadrže nepotpune informacije, omogućavajući analitičarima da eksplicitno definiraju kako će se tretirati nepoznate vrijednosti.
+
+Funkcija `case_when()` proširuje koncept uvjetne transformacije na više od dva moguća ishoda, omogućavajući sekvencu uvjeta koji se provjeravaju redom dok se ne pronađe prvi istinit uvjet. Svaki uvjet specificira se formulom gdje lijeva strana predstavlja logički test, a desna strana vrijednost koja će biti vraćena ako je test istinit:
+
+```{r}
+# Višestruka klasifikacija snage Pokemona
+pokemon_dataset$power_tier <- case_when(
+  pokemon_dataset$total > 600 ~ "S Tier",
+  pokemon_dataset$total > 500 ~ "A Tier",
+  pokemon_dataset$total > 400 ~ "B Tier",
+  pokemon_dataset$total > 300 ~ "C Tier",
+  TRUE ~ "D Tier"
+)
+
+# Kategorizacija Pokemona prema Attack
+pokemon_dataset$attack_class <- case_when(
+  pokemon_dataset$attack > 130 ~ "Vrlo visok",
+  pokemon_dataset$attack > 100 ~ "Visok",
+  pokemon_dataset$attack > 70 ~ "Srednji",
+  pokemon_dataset$attack > 40 ~ "Nizak",
+  TRUE ~ "Vrlo nizak"
+)
+
+# Klasifikacija na temelju Type_1
+pokemon_dataset$type_group <- case_when(
+  pokemon_dataset$type_1 %in% c("Fire", "Water", "Grass") ~ "Početni tipovi",
+  pokemon_dataset$type_1 %in% c("Dragon", "Psychic", "Dark") ~ "Specijalni tipovi",
+  pokemon_dataset$type_1 %in% c("Normal", "Flying") ~ "Česti tipovi",
+  TRUE ~ "Ostali tipovi"
+)
+
+pokemon_dataset |> select(name, total, power_tier, attack, attack_class, type_1, type_group)
+```
+
+U ovim primjerima, uvjeti se evaluiraju sekvencijalno odozgo prema dolje, a čim je jedan uvjet zadovoljen, evaluacija se zaustavlja i vraća se odgovarajuća vrijednost. Korištenje `TRUE` kao posljednjeg uvjeta osigurava da svi slučajevi koji ne zadovoljavaju prethodne uvjete dobiju default vrijednost.
+
+Funkcija `case_when()` posebno je korisna pri kreiranju složenih kategorizacija koje kombiniraju više različitih uvjeta i varijabli. Za razliku od ugniježđenih `if_else()` poziva koji mogu postati teško čitljivi, `case_when()` održava kod čistim i razumljivim:
+
+```{r}
+# Složena kategorizacija na temelju više karakteristika
+pokemon_dataset$battle_role <- case_when(
+  pokemon_dataset$attack > 120 & pokemon_dataset$speed > 100 ~ "Brzi napadač",
+  pokemon_dataset$attack > 120 & pokemon_dataset$speed <= 100 ~ "Spori napadač",
+  pokemon_dataset$defense > 120 & pokemon_dataset$HP > 100 ~ "Tank",
+  pokemon_dataset$speed > 120 ~ "Speedster",
+  pokemon_dataset$HP > 120 ~ "Izdržljiv",
+  TRUE ~ "Balansirani"
+)
+
+# Kategorizacija prema generaciji i snazi
+pokemon_dataset$pokemon_era <- case_when(
+  as.numeric(pokemon_dataset$generation) <= 2 & pokemon_dataset$total > 500 ~ "Stari moćni",
+  as.numeric(pokemon_dataset$generation) <= 2 & pokemon_dataset$total <= 500 ~ "Stari obični",
+  as.numeric(pokemon_dataset$generation) > 2 & pokemon_dataset$total > 500 ~ "Novi moćni",
+  as.numeric(pokemon_dataset$generation) > 2 & pokemon_dataset$total <= 500 ~ "Novi obični",
+  TRUE ~ "Nepoznato"
+)
+
+# Identifikacija specifičnih kombinacija tipova i statistika
+pokemon_dataset$special_category <- case_when(
+  pokemon_dataset$type_1 == "Dragon" & pokemon_dataset$legendary == TRUE ~ "Legendarni Dragon",
+  pokemon_dataset$type_1 == "Psychic" & pokemon_dataset$special_attack > 120 ~ "Moćni Psychic",
+  pokemon_dataset$type_1 == "Fighting" & pokemon_dataset$attack > 130 ~ "Elitni borac",
+  pokemon_dataset$legendary == TRUE ~ "Ostali legendarni",
+  TRUE ~ "Standardni Pokemon"
+)
+```
+
+Ovi složeni primjeri demonstriraju kako `case_when()` omogućava kreiranje sofisticiranih klasifikacijskih shema koje uzimaju u obzir višestruke dimenzije podataka istovremeno.
+
+Redoslijed uvjeta u `case_when()` funkciji je kritičan jer se uvjeti evaluiraju sekvencom, a čim je jedan zadovoljen, preostali se ignoriraju. Stoga je važno staviti specifičnije uvjete prije općenitijih kako bi se osiguralo da svaki element bude pravilno klasificiran:
+
+```{r}
+# POGREŠAN redoslijed - općenitiji uvjet prvo
+pokemon_dataset$wrong_classification <- case_when(
+  pokemon_dataset$total > 300 ~ "Jak",
+  pokemon_dataset$total > 500 ~ "Vrlo jak",
+  TRUE ~ "Slab"
+)
+
+# ISPRAVAN redoslijed - specifičniji uvjeti prvo
+pokemon_dataset$correct_classification <- case_when(
+  pokemon_dataset$total > 500 ~ "Vrlo jak",
+  pokemon_dataset$total > 300 ~ "Jak",
+  TRUE ~ "Slab"
+)
+
+# Demonstration s Attack statistikom
+pokemon_dataset$attack_rating <- case_when(
+  pokemon_dataset$attack >= 150 ~ "Ekspertni napad",
+  pokemon_dataset$attack >= 120 ~ "Odličan napad",
+  pokemon_dataset$attack >= 90 ~ "Dobar napad",
+  pokemon_dataset$attack >= 60 ~ "Pristojan napad",
+  TRUE ~ "Slab napad"
+)
+```
+
+Prvi primjer pokazuje čest propust gdje općenitiji uvjet hvata sve slučajeve prije nego što specifičniji uvjet bude provjeren, dok drugi primjer demonstrira ispravan pristup koji osigurava točnu klasifikaciju.
+
+Funkcije `if_else()` i `case_when()` mogu se kombinirati s drugim transformacijama podataka za kreiranje deriviranih varijabli koje obogaćuju analitičke mogućnosti. Ove nove varijable mogu olakšati vizualizaciju, omogućiti grupiranje za agregirane analize, ili poslužiti kao značajke u modeliranju:
+
+```{r}
+# Kreiranje kompozitne ocjene na temelju više statistika
+pokemon_dataset$offensive_score <- pokemon_dataset$attack + pokemon_dataset$special_attack
+pokemon_dataset$offensive_category <- case_when(
+  pokemon_dataset$offensive_score > 200 ~ "Elitni napadač",
+  pokemon_dataset$offensive_score > 150 ~ "Jak napadač",
+  pokemon_dataset$offensive_score > 100 ~ "Prosječni napadač",
+  TRUE ~ "Slab napadač"
+)
+
+# Balans između napada i obrane
+pokemon_dataset$balance_ratio <- pokemon_dataset$attack / pokemon_dataset$defense
+pokemon_dataset$playstyle <- case_when(
+  pokemon_dataset$balance_ratio > 1.5 ~ "Ofenzivan",
+  pokemon_dataset$balance_ratio < 0.67 ~ "Defenzivan",
+  TRUE ~ "Balansiran"
+)
+
+# Kombinirana kategorizacija legendary statusa i generacije
+pokemon_dataset$pokemon_prestige <- case_when(
+  pokemon_dataset$legendary == TRUE & pokemon_dataset$generation == 1 ~ "Originalni legendarni",
+  pokemon_dataset$legendary == TRUE ~ "Legendarni",
+  pokemon_dataset$generation == 1 & pokemon_dataset$total > 450 ~ "Klasični jako",
+  pokemon_dataset$generation == 1 ~ "Klasični",
+  TRUE ~ "Moderni"
+)
+```
+
+Ovi primjeri ilustriraju kako uvjetne transformacije mogu kreirati nove perspektive na podatke koje nisu izravno vidljive iz originalnih varijabli, omogućavajući bogatiju interpretaciju i analizu.
+
+Uvjetne transformacije također mogu biti korištene za ispravljanje ili normalizaciju podataka, zamjenu outliera, ili popunjavanje nedostajućih vrijednosti na temelju logike domene:
+
+```{r}
+# Korekcija potencijalno pogrešnih vrijednosti
+pokemon_dataset$corrected_speed <- if_else(
+  pokemon_dataset$speed > 200,
+  NA_real_,
+  pokemon_dataset$speed
+)
+
+# Popunjavanje nedostajućih vrijednosti na temelju kategorije
+pokemon_dataset$estimated_attack <- case_when(
+  !is.na(pokemon_dataset$attack) ~ pokemon_dataset$attack,
+  pokemon_dataset$legendary == TRUE ~ 120,
+  pokemon_dataset$type_1 == "Fighting" ~ 100,
+  TRUE ~ 70
+)
+
+# Normalizacija kategorija s različitim zapisima
+pokemon_dataset$standardized_type <- case_when(
+  pokemon_dataset$type_1 %in% c("water", "WATER", "Water") ~ "Water",
+  pokemon_dataset$type_1 %in% c("fire", "FIRE", "Fire") ~ "Fire",
+  TRUE ~ pokemon_dataset$type_1
+)
+```
+
+Ove tehnike čišćenja podataka osiguravaju konzistentnost i kvalitetu skupa podataka, što je preduvjet za pouzdanu analizu i modeliranje.

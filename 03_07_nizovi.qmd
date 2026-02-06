@@ -1,0 +1,483 @@
+---
+title: "Nizovi"
+description: ""
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(stringr)
+library(RKaggle)
+library(forcats)
+library(lubridate)
+library(hms)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+**Nizovi** (*Strings*) predstavljaju temeljnu vrstu podataka koja se sastoji od sekvence znakova. Posebno su važni jer omogućuju pohranu i manipulaciju tekstualnih informacija koje se često nalaze u velikim količinama podataka. U istraživanju i analizi podataka rijetko se susrećemo sa čisto numeričkim podacima. Umjesto toga, podaci često dolaze u obliku koji kombinira brojčane vrijednosti s opisnim informacijama, kategorijskim varijablama, identifikatorima ili metapodacima koji su po svojoj prirodi tekstualni podaci.
+
+Važnost nizova u znanosti o podacima proizlazi iz nekoliko ključnih činjenica. Prvo, podaci iz stvarnog svijeta često dolaze u nestrukturiranom ili polustrukturiranom obliku što znači da sadrže mnoge tekstualne elemente koje je potrebno obraditi prije analize. Drugo, nizovi omogućuju pohranu složenih informacija poput imena, adresa, opisa proizvoda, komentara korisnika ili bilo koje druge tekstualne informacije koja može biti relevantna za analizu.
+
+Rad s nizovima uključuje raznovrsne operacije poput stvaranja nizova, kombiniranja višestrukih nizova u složenije strukture te izdvajanja specifičnih dijelova informacija iz postojećih nizova. Ove operacije su ključne za pripremu podataka, čišćenje podataka i pretvaranje sirovih podataka u oblik pogodan za analizu.
+
+Nizovi služe kao most između sirovih, nestrukturiranih podataka i strukturiranih podatkovnih okvira pogodnih za statističku analizu. Oni omogućuju transformaciju kvalitativnih informacija u kvantitativne mjere kroz različite tehnike poput brojanja pojavljivanja određenih riječi, ekstraktiranja uzoraka ili kategorizacije teksta prema unaprijed definiranim kriterijima. U širem kontekstu znanosti o podacima, nizovi su temelj za naprednije tehnike poput analize prirodnog jezika, rudarenja teksta i semantičke analize.
+
+Najbolji način za rad s nizovima u R-u je pomoću paketa `stringr` koji je dio `tidyverse` ekosustava i predstavlja specijalizirani skup funkcija namijenjen radu s nizovima u R-u. Paket je razvijen s ciljem pružanja konzistentnog i intuitivnog sučelja za sve osnovne operacije nad nizovima. Sve funkcije u `stringr` paketu počinju prefiksom `str_` što omogućuje njegovo jednostavno prepoznavanje i korištenje. Paket je dizajniran prema principima `tidyverse` paketa što znači da poštuje uobičajena `tidyverse` pravila za rukovanje podacima. Ova konzistentnost jednostavnim za kombinaciju s drugim paketima poput `dplyr`, `ggplot2` i `tidyr`.
+
+Nizove možemo stvarati koristeći jednostruke navodnike (`'`) ili dvostruke navodnike (`"`). Nema razlike u ponašanju između ove dvije vrste navodnika. Preporučeno je korištenje korištenje dvostrukih navodnika, osim ako niz ne sadrži više dvostrukih navodnika kao znakove niza pa se, za razlikovanje navodnika koji definiraju niz i navodnika koji su dio samog niza, koriste jednostruki navodnici. Ovakav pristup osigurava konzistentnost u kodiranju i smanjuje mogućnost pogrešaka.
+
+```{r}
+charmander_string <- "Charmander's tail flame shows its emotions"
+charmander_string
+
+pikachu_string_1 <- 'Pikachu is an "Electric" type Pokemon'
+pikachu_string_1
+```
+
+Za uključivanje literalnih jednostrukih ili dvostrukih navodnika u niz, možemo koristiti znak `\`. Ovaj mehanizam omogućuje uključivanje znakova koji inače imaju posebno značenje u R sintaksi.
+
+```{r}
+pikachu_string_2 <- "Pikachu is an \"Electric\" type Pokemon"
+pikachu_string_2
+```
+
+Ispisani prikaz nizova u dosadašnjim ispisima nije isti kao tekstualni niz jer ispisani prikaz prikazuje izlaze kodova, a ne znakove. Kako bi se ispisao sirovi sadržaj niza koristi se funkcija `str_view()`.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija str_view()"}
+Funkcija `str_view()` predstavlja specijalizirani alat za vizualno pregledavanje nizova i uzoraka unutar njih.
+
+| Argument | Objašnjenje |
+|-------------------------------|----------------------------------------|
+| `string` | ulazni vektor koji može biti karakter vektor ili bilo što što se može pretvoriti u karakter vektor |
+| `pattern` | definira uzorak za traženje unutar nizova. Zadana interpretacija je regularni izraz. Funkcija podržava nekoliko različitih načina interpretacije uzorka: regularni izrazi (omogućuju pretraživanje uzoraka), `fixed()` funkcije omogućuje brže pretraživanje točnih znakova bez interpretacije kao regularni izraz, `coll()` funkcija respektira pravila poklapanja znakova za specificiranu lokalizaciju, `boundary()` funkcija za granice znakova, riječi, redaka i rečenica. |
+| `match` | kontrolira koje elemente prikazati kada je pattern specificiran: `TRUE` (zadano) - prikazuje samo elemente koji se poklapaju s uzorkom, `NA` - prikazuje sve elemente bez obzira na poklapanje, `FALSE` - prikazuje samo elemente koji se NE poklapaju s uzorkom |
+| `html` | određuje tip izlaza: `TRUE` - stvara HTML widget koji omogućuje interaktivni prikaz, `FALSE` - koristi ANSI escape sekvence za stiliziranje u konzoli |
+| `use_escapes` | kontrolira prikaz ne-ASCII znakova: `TRUE` - svi ne-ASCII znakovi prikazuju se pomoću Unicode escape sekvenci, `FALSE` - znakovi se prikazuju u svojem prirodnom obliku |
+:::
+
+```{r}
+pokemon_descriptions <- c("Pikachu is \"Electric\" type Pokemon", "Charmander's tail flame shows its emotions", "Bulbasaur can go days without eating thanks to photosynthesis")
+
+pokemon_descriptions
+
+str_view(pokemon_descriptions)
+```
+
+Stvaranje nizova s više navodnika ili obrnutih kosih crta može postati zbunjujuće i može doći do mnogo pogrešaka. Za rješavanje ovog problema, R uvodi koncept **raw nizova** koji obično počinju s `r"(` i završavaju s `)"` znakovima što omogućuje pisanje složenijih nizova bez potrebe za escape sekvencama.
+
+```{r}
+pokemon_raw_strings <- c(
+  r"(Ash's Pokédex entry: "Pikachu - Electric type. Height: 1'04" Weight: 13.2 lbs")",
+  r"(Team Rocket's plan: Find Pikachu -> Capture Pikachu -> Give to Boss -> Get promoted)",
+  r"(File path: C:\Users\Trainer\Documents\Pokemon\Pikachu\battle_stats.txt)"
+)
+
+str_view(pokemon_raw_strings)
+```
+
+Postoji još nekoliko drugih specijalnih znakova koji mogu biti korisni. Najčešći takvi znakovi su `\n` za novi red i `\t` za tabulator. Osim toga, nizovi mogu sadrževati i Unicode escape sekvence koje počinju s `\u` ili `\U` kojima se pišu znakovi poput emotikona.
+
+```{r}
+pokemon_enter <- c(
+  "Pokemon names:\nPikachu\nCharmander\nBulbasaur\nSquirtle",
+  "Ash Ketchum\nis the\nbest trainer\nin Pallet Town",
+  "Team Rocket motto:\nPrepare for trouble!\nAnd make it double!",
+  "Professor Oak said:\n\"A Pokemon trainer's journey\nis never easy,\nbut always rewarding.\""
+)
+
+str_view(pokemon_enter)
+
+pokemon_tabulator <- c(
+  "Pokemon\tType\tLevel\nPikachu\tElectric\t25",
+  "ID\tName\t\tHP\tAttack\n001\tBulbasaur\t45\t49",
+  "Trainer:\tAsh\t\tBadges:\t8\t\tRegion:\tKanto",
+  "Move\t\tType\t\tPower\tAccuracy\nThunderbolt\tElectric\t90\t100"
+)
+
+str_view(pokemon_tabulator)
+
+pokemon_unicode_basic <- c(
+  "Pika pika! \u2661",
+  "Electric attack \u26A1",
+  "Fire type \u1F525",
+  "Poison warning \u2620",
+  "Star rating \u2605\u2605\u2605\u2605\u2605"
+)
+
+str_view(pokemon_unicode_basic)
+```
+
+Sljedeći korak uključuje rad s kompleksnijim scenarijima gdje je potrebno kombinirati postojeće podatke u nove nizove, odnosno postojeće nizove u skup nizova. Ovaj pristup pomaže riješiti čest problem gdje imamo neki tekst koji želimo kombinirati s nizovima iz podatkovnih okvira. Za takvo se kombiniranje može koristiti nekoliko funkcija `stringr` paketa.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija str_c()"}
+Funkcija `str_c()` kombinira više vektora znakova u jedan vektor znakova. Slična je funkciji `paste0()`, ali koristi `tidyverse` princip funkcioniranja i pravila za nedostajajuće vrijednosti.
+
+| Argument | Objašnjenje |
+|-------------------------------|----------------------------------------|
+| `...` | omogućuje proslijedirvanje jednog ili više karakternih vektora koji se trebaju spojiti |
+| `sep` | definira niz koji se umeće između ulaznih vektora tijekom spajanja. Ovaj argument omogućuje kontroliranje kako se elementi kombiniraju. Zadana vrijednost je prazan niz što znači da se elementi spajaju direktno bez dodatnih znakova između njih. |
+| `collapse` | predstavlja opcionalni niz koji se koristi za kombiniranje izlaza u jedan niz. Kada je specificiran, svi rezultirajući elementi se dodatno kombiniraju u jedan konsolidiran niz koristeći zadani separator. |
+:::
+
+```{r}
+pokemon_sentences <- str_c(
+  "Pikachu je \"Electric-type\" Pokemon.",
+  "Charmander's tail flame shows its emotions.",
+  "Bulbasaur can go days without eating thanks to photosynthesis.",
+  "Squirtle withdrawns into its shell when attacked.",
+  sep = " "
+)
+
+str_view(pokemon_sentences)
+
+pokemon_names <- pokemon_dataset$name
+
+head(str_c("Hello ", pokemon_names), 10)
+
+pokemon_names_and_types <- pokemon_names |>
+  as.tibble() |>
+  mutate(
+    name_and_type_1 = str_c("Pokemon called ", pokemon_names, "is ", pokemon_dataset$type_1, "type of Pokemon!"),
+    name_and_type_2 = str_c("Pokemon called ", pokemon_names, "is ", coalesce(pokemon_dataset$type_2, "NO TYPE 2 "), "type of Pokemon!")
+  )
+
+head(pokemon_names_and_types, 10)
+```
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija str_glue()"}
+Funkcija `str_glue()` predstavlja elegantan pristup kombiniranju fiksnog teksta s varijabilnim podacima. `str_glue()` omogućuje specificiranje jednog niza koji ima posebnu značajku unutar vitičastih zagrada. Ova funkcionalnost omogućuje prirodniju sintaksu za kombiniranje različitih podatkovnih elemenata.
+
+| Argumenti | Objašnjenje |
+|---------------------------------|---------------------------------------|
+| `...` | nizovi za formatiranje |
+| `.sep` | definira separator koji se koristi za odvajanje elemenata kada se kombiniraju međusobno (zadana vrijednost je prazan niz) |
+| `.envir` | specificira okruženje u kojem se evaluira svaki izraz (zadana vrijednost je parent.frame() što znači da se varijable traže u okruženju koje je pozvalo funkciju) |
+| `.x` | omogućuje korištenje okruženja, liste ili podatkovnog okvira za traženje vrijednosti |
+| `.na` | kontrolira kako se rukuje nedostajućim vrijednostima - zadana vrijednost je `NA` što znači da se `NA` vrijednosti zamjenjuju stringom "NA", a može biti i specifičan string koji zamjenjuje `NA` vrijednosti zadanim tekstom i `NULL` koji omogućuje propagaciju nedostajućih vrijednosti |
+:::
+
+```{r}
+pokemon_names_glue <- pokemon_names |>
+  as.tibble() |>
+  mutate( name_and_type_1 = str_glue("Pokemon called {pokemon_names} is {pokemon_dataset$type_1} type of Pokemon!"))
+
+head(pokemon_names_glue, 10)
+```
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija str_flatten()"}
+Još jedna funkcija za povezivanje nizova je `str_flatten()` za kombiniranje elemenata karakternog vektora u jedan konsolidiran niz. `str_flatten()` prima karakter vektor i kombinira svaki element vektora u jedan niz što je čini idealnom za situacije gdje trebamo pretvoriti više vrijednosti u jednu tekstualnu reprezentaciju. `str_flatten()` čini pogodnom za rad s `summarize()` jer uvijek vraća jedan niz što je ključno za agregacijske operacije u analizi podataka.
+
+| Argumenti | Objašnjenje |
+|---------------------------------|---------------------------------------|
+| `string` | ulazni vektor koji može biti karakter vektor ili bilo što što se može pretvoriti u karakter vektor |
+| `collapse` | definira niz koji se umeće između svakog dijela tijekom spajanja (zadana vrijednost je "" - prazan niz) |
+| `last` | niz koji se koristi umjesto finalnog separatora - `str_flatten(c("x", "y", "z"), ", ", last = ", i ")` rezultira s "x, y, i z" |
+| `na.rm` | kontrolira kako se rukuje nedostajućim vrijednostima - zadana vrijednost je `FALSE`, što znači da će rezultat biti `NA` ako bilo koji element ulaznog vektora sadrži `NA` |
+:::
+
+```{r}
+str_flatten(
+  c("Pikachu", "Charmander", "Bulbasaur", NA, "Squirtle", "Jigglypuff", "Meowth", "Psyduck", "Machamp"),
+  collapse = ", ",
+  last = " and ",
+  na.rm = TRUE
+)
+```
+
+Nadalje, uobičajeno je da je više varijabli spojenih u jedan niz. U mnogim se situacijama analize podataka susrećemo se s podacima gdje su različite informacije kombinirane u jednom tekstualnom polju što zahtijeva tehnike za razdvajanje i ekstraktiranje relevantnih komponenti. Za njihovo se izdvajanje koriste četiri `tidyr` funkcije: `separate_longer_delim()`, `separate_longer_position()`, `separate_wider_delim()`, `separate_wider_position()`. Pritom logika funkcija slijedi uobičajen uzorak: `separate_`, zatim `longer` ili `wider`, zatim `_`, zatim `delim` ili `position`. Ova logična struktura odražava dva temeljna principa:
+
+| Smjer transformacije podataka | Način razdvajanja |
+|--------------------------------------------|----------------------------|
+| `_longer` funkcije čine podatkovni okvir duljim stvaranjem novih redaka | `delim` dijeli niz s delimitatorom poput `", "` ili `" "` |
+| `_wider funkcije` čine podatkovni širim generiranjem novih stupaca | `position` dijeli na specificiranim širinama, poput `c(3, 5, 2)` |
+
+Razdvajanje niza u redove (`longer` funkcije) obično je najkorisniji kada broj komponenti varira od reda do reda. Ovaj pristup je idealan kada imamo podatke gdje svaki red može sadržavati različit broj elemenata. Najčešći slučaj zahtijeva `separate_longer_delim()` za dijeljenje na temelju delimitatora. Ovaj pristup omogućuje prirodno rukovanje podacima gdje svaki red može sadržavati različit broj vrijednosti odvojen istim separatorom.
+
+```{r}
+pokemon_teams <- tibble(
+  trainer = c("Ash", "Misty", "Brock", "Gary", "Team Rocket"),
+  pokemon_team = c(
+    "Pikachu, Charizard, Bulbasaur, Squirtle, Snorlax, Lapras",
+    "Staryu, Starmie, Psyduck, Goldeen", 
+    "Onix, Graveler, Crobat",
+    "Blastoise, Arcanine, Nidoking, Alakazam, Tyranitar",
+    "Meowth, Arbok, Weezing"
+  )
+)
+
+pokemon_teams
+
+pokemon_teams |>
+  separate_longer_delim(pokemon_team, delim = ", ")
+```
+
+Rjeđe se koristi `separate_longer_position()`, osim kod skupova podataka koji koriste vrlo kompaktan format gdje se svaki znak koristi za bilježenje vrijednosti. Ova funkcija je korisna za rad s nasleđenim formatima podataka ili vrlo kompaktnim kodnim sustavima.
+
+```{r}
+pokemon_stats_compact <- tibble(
+  pokemon = c("Pikachu", "Charmander", "Bulbasaur", "Squirtle"),
+  stats_string = c(
+    "354055409050",
+    "394352605065",
+    "454549654545",
+    "444865504365"
+  )
+)
+
+pokemon_stats_compact
+
+pokemon_stats_compact |>
+  separate_longer_position(stats_string, width = 2) |>
+  group_by(pokemon) |>
+  mutate(
+    stat_name = c("HP", "Attack", "Defense", "Sp_Attack", "Sp_Defense", "Speed"),
+    stat_value = as.numeric(stats_string)
+  ) |>
+  select(-stats_string) |>
+  pivot_wider(
+    values_from = stat_value,
+    names_from = stat_name
+  )
+```
+
+Razdvajanje niza u stupce korisno je kada postoji fiksiran broj komponenti u svakom nizu, a želimo ih proširiti u stupce. Ovaj pristup je idealan za strukturirane podatke s predvidljivim brojem elemenata.
+
+Za korištenje `separate_wider_delim()`, opskrbljujemo delimiter i imena u dva argumenta. Ako određeni dio nije koristan, možete koristiti `NA` ime da ga izostavite iz rezultata.
+
+```{r}
+pokemon_id_codes <- tibble(
+  pokemon_code = c(
+    "025-Pikachu-Electric",
+    "004-Charmander-Fire",
+    "001-Bulbasaur-Grass",
+    "007-Squirtle-Water",
+    "150-Mewtwo-Psychic"
+  )
+)
+
+pokemon_id_codes
+
+pokemon_id_codes |>
+  separate_wider_delim(
+    pokemon_code,
+    delim = "-",
+    names = c(NA, "Name", "Type")
+  )
+```
+
+`separate_wider_delim()` zahtijeva fiksiran i poznat skup stupaca, no neki redovi nemaju očekivani broj dijelova što je čest problem u stvarnim podacima gdje format nije uvijek konzistentan. Postoje dva moguća problema, previše ili premalo dijelova, pa `separate_wider_delim()` pruža dva argumenta za pomoć, `too_few` i `too_many`.
+
+Ako postoji problem premalo dijelova, R uobičajenim načinom rada izbacuje grešku pa je potrebno dodati argument `too_few`. Koristeći `debug` način rada dobivamo tri dodatna stupca:
+
+1.  "x_ok": omogućuje brzo pronalaženje ulaza koji su neuspješni,
+
+2.  "x_pieces": govori koliko je dijelova pronađeno u usporedbi s očekivana 3 (pomaže razumjeti koliko dijelova nedostaje),
+
+3.  "x_remainder": nije koristan kada ima premalo dijelova, ali ćemo ga vidjeti ponovo uskoro.
+
+Osim `debug` moda, u drugim slučajevima bolje je popuniti nedostajuće dijelove s `NA` što je moguće s `align_start` i `align_end` dodacima u argument - razlika je u tome gdje se postavljaju `NA` vrijednosti - na početak ili na kraj rezultujućeg vektora.
+
+```{r}
+pokemon_ids_problematic <- tibble(
+  pokemon_data = c(
+    "025-Pikachu-Electric-Mouse",
+    "004-Charmander-Fire",
+    "001-Bulbasaur",
+    "007-Squirtle-Water-Turtle",
+    "150-Mewtwo-Psychic-Genetic",
+    "052-Meowth",
+    "054-Psyduck-Water",
+    "068"
+  )
+)
+
+pokemon_ids_problematic |>
+  separate_wider_delim(
+    pokemon_data,
+    delim = "-",
+    names = c("id", "name", "type", "species"),
+    too_few = "debug"
+  )
+
+pokemon_ids_problematic |>
+  separate_wider_delim(
+    pokemon_data,
+    delim = "-",
+    names = c("id", "name", "type", "species"),
+    too_few = "align_start"
+  )
+
+pokemon_ids_problematic |>
+  separate_wider_delim(
+    pokemon_data,
+    delim = "-",
+    names = c("id", "name", "type", "species"),
+    too_few = "align_end"
+  )
+```
+
+Isti principi se primjenjuju ako postoji previše dijelova, no koristi se argument `too_many`. Koristeći `debug` dodaje se stupac "x_remainder" koji sada pokazuje što je "ostalo" nakon što su uzeta tri očekivana dijela, omogućujući analizu dodatnog sadržaja. U drugim se slučajevima može koristiti `drop` za uklanjanje suvišnih dijelova ili `merge` za spajanje u zadnji stupac.
+
+```{r}
+pokemon_battles_problematic <- tibble(
+  battle_info = c(
+    "Ash-Pikachu-Victory-Quick",
+    "Misty-Staryu-Defeat-Long-Intense",
+    "Gary-Blastoise-Victory-Medium-Easy-Dominating",
+    "Team-Rocket-Meowth-Defeat-Short-Embarrassing-Public-Humiliating",
+    "Red-Charizard-Victory-Epic-Legendary",
+    "Blue-Venusaur-Draw-Quick-Unexpected",
+    "Lance-Dragonite-Victory-Legendary-Champion-Level-Incredible-Display"
+  )
+)
+
+pokemon_battles_problematic |>
+  separate_wider_delim(
+    battle_info,
+    delim = "-",
+    names = c("trainer", "pokemon", "result", "duration"),
+    too_many = "debug"
+  )
+
+pokemon_battles_problematic |>
+  separate_wider_delim(
+    battle_info,
+    delim = "-",
+    names = c("trainer", "pokemon", "result", "duration"),
+    too_many = "drop"
+  )
+
+pokemon_battles_problematic |>
+  separate_wider_delim(
+    battle_info,
+    delim = "-",
+    names = c("trainer", "pokemon", "result", "extra_info"),
+    too_many = "merge"
+  )
+```
+
+`separate_wider_position()` radi nešto drugačije jer obično želite specificirati širinu svakog stupca. Ova funkcija koristi imenovani cjelobrojni vektor gdje ime označava novi stupac, a vrijednost broj znakova.
+
+```{r}
+pokemon_coordinates <- tibble(
+  position_data = c(
+    "1253456782",  # X:125, Y:345, Z:67, Level:82
+    "0982341154",  # X:098, Y:234, Z:11, Level:54  
+    "1566778893",  # X:156, Y:677, Z:88, Level:93
+    "2013445561",  # X:201, Y:344, Z:55, Level:61
+    "3335557773"   # X:333, Y:555, Z:77, Level:73
+  )
+)
+
+pokemon_coordinates
+
+pokemon_coordinates |>
+  separate_wider_position(
+    position_data,
+    widths = c(X = 3, Y = 3, Z = 2, Level = 2)
+  )
+```
+
+Idući je dio bavljenja nizovima je rad sa slovima. Funkcija `str_length()` govori broj slova u nizu. Ova funkcija predstavlja temeljni alat za analizu tekstualnih podataka jer omogućuje kvantificiranje duljine tekstualnog sadržaja. Funkcija broji znakove u nizu, uključujući slova, brojeve, interpunkcijske znakove i razmake.
+
+```{r}
+pokemon_names <- c("Pikachu", "Charmander", "Bulbasaur", NA, "Squirtle")
+
+pokemon_names
+
+str_length(pokemon_names)
+
+pokemon_descriptions <- c(
+  "Electric mouse Pokemon",
+  "Fire lizard \U0001F525",
+  "Grass/Poison seed",
+  ""
+)
+
+pokemon_descriptions
+
+str_length(pokemon_descriptions)
+```
+
+Možete koristiti ovo s `count()` da pronađete distribuciju duljina imena. Ova tehnika se može primijeniti na bilo koje tekstualne podatke za analizu njihove strukture. Ovakva analiza može otkriti zanimljive uzorke u podacima, poput toga jesu li kraća imena češća za određene tipove Pokemona.
+
+```{r}
+pokemon_data <- tibble(
+  name = c("Pikachu", "Charmander", "Bulbasaur", "Squirtle", "Jigglypuff", "Meowth", "Psyduck", "Machamp", "Alakazam", "Gengar"),
+  type = c("Electric", "Fire", "Grass", "Water", "Normal", "Normal", "Water", "Fighting", "Psychic", "Ghost")
+)
+
+pokemon_data |>
+  count(length = str_length(name)) |>
+  arrange(length)
+```
+
+```{r}
+# Pokemon s imenima duljim od 8 znakova
+long_names <- pokemon_data |>
+  filter(str_length(name) > 8) |>
+  select(name, type)
+
+# Statistike duljine po tipovima
+type_length_stats <- pokemon_data |>
+  group_by(type) |>
+  summarise(
+    avg_name_length = mean(str_length(name)),
+    min_length = min(str_length(name)),
+    max_length = max(str_length(name)),
+    .groups = "drop"
+  )
+
+# Sortiranje Pokemon-a po duljini imena
+pokemon_data |>
+  arrange(str_length(name)) |>
+  mutate(name_length = str_length(name))
+
+# Top 3 najduža imena
+pokemon_data |>
+  arrange(desc(str_length(name))) |>
+  slice_head(n = 3)
+```
