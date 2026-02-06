@@ -15,6 +15,9 @@ book:
       chapters:
         - 02_uvoz_podataka.qmd
         - 03_uredivanje_podataka.qmd
+    - part: "Transformacija podataka"
+      chapters:
+        - 04_manipulacija_podacima.qmd
     - references.qmd
 
 bibliography: references.bib
@@ -23,7 +26,6 @@ format:
   html:
     toc: true
     number-sections: true
-    code-fold: true
     code-tools: true
     css: styles.css
     theme:

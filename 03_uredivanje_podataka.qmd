@@ -1,9 +1,13 @@
 ---
 title: "Uređivanje podataka"
-description: "U ovom poglavlju objašnjava se pojam urednih podataka i njihova uloga u analitičkom procesu. Uredni podaci definirani su kao podaci kod kojih svaka varijabla čini jedan stupac, svako opažanje jedan redak, a svaka pojedina opservacija zasebnu ćeliju. Poglavlje prikazuje kako se sirovi i neuređeni podaci mogu sustavno preoblikovati u analitički prikladan format, čime se omogućuje učinkovitija analiza, modeliranje i interpretacija rezultata."
+description: "U ovom poglavlju objašnjava se pojam urednih podataka i njihova uloga u analitičkom procesu. Uredni podaci definirani su kao podaci kod kojih svaka varijabla čini jedan stupac, svako opažanje jedan redak, a svaka opservacija zasebnu ćeliju. Poglavlje prikazuje kako se sirovi i neuređeni podaci mogu preoblikovati u prikladan format, čime se omogućuje učinkovitija analiza, modeliranje i interpretacija podataka."
 number-sections: true
 title-block-banner: "#8B3A62"
 title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
 ---
 
 ```{r}
@@ -11,7 +15,6 @@ title-block-banner-color: "white"
 
 # Aktiviranje paketa
 library(tidyverse)
-library(DT)
 ```
 
 ```{r}
@@ -217,9 +220,9 @@ director_names_dataset <- tribble(
 ```
 
 ::: {.callout-important icon=false collapse="true" title="Podaci korišteni u poglavlju"}
-U ovom će poglavlju biti demonstrirani principi uređivanja podataka koristeći [IMDb ljestvice 250 najboljih filmova svih vremena](https://www.imdb.com/chart/top/) prikupljenih 07.09.2025. IMDb (*Internet Movie Database*) globalna je internetska baza podataka filmova, televizijskih serija i drugih audiovizualnih sadržaja koju pokreće Amazon. Ova platforma sadrži opsežne informacije o filmovima, uključujući osnovne podatke poput naziva, godine proizvodnje, žanra i trajanja kao i detaljnije informacije o glumcima, redateljima, ocjenama korisnika te različitim ljestvicama popularnosti. IMDb ljestvica 250 najboljih filmova temelji se na ocjenama milijuna korisnika diljem svijeta i predstavlja jedan od najpoznatijih popisa kvalitetnih filmova u kinematografiji. 
+U ovom će poglavlju biti demonstrirani principi uređivanja podataka koristeći [IMDb ljestvicu 250 najboljih filmova svih vremena](https://www.imdb.com/chart/top/) prikupljenu 07.09.2025. IMDb (*Internet Movie Database*) globalna je internetska baza podataka filmova, televizijskih serija i drugih audiovizualnih sadržaja koju pokreće Amazon. Ova platforma sadrži opsežne informacije o filmovima. IMDb ljestvica 250 najboljih filmova temelji se na ocjenama milijuna korisnika diljem svijeta i predstavlja jedan od najpoznatijih popisa kvalitetnih filmova u kinematografiji. 
 
-Za potrebe objašnjavanja različitih segmenata uređivanja podataka koristit će se samo podatci o prvih deset filmova s navedenog popisa, a što omogućuje jasniji prikaz transformacijskih procesa bez nepotrebne složenosti velikih podatkovnih skupova. Navedeni podaci oblikovani su u različite formate podatkovnih okvira kako bi se na njima mogli demonstrirati različiti aspekti uređivanja podataka pomoću `tidyr` paketa. Kroz ove primjere bit će prikazano kako se neuredno organizirani podaci mogu transformirati u uredni format koji slijedi temeljna načela uređenih podataka.
+Za potrebe objašnjavanja različitih segmenata uređivanja podataka korišteni su samo podatci o prvih deset filmova s navedenog popisa što omogućuje jasniji prikaz transformacijskih procesa bez nepotrebne složenosti velikih podatkovnih skupova. Navedeni podaci oblikovani su u različite formate podatkovnih okvira kako bi se na njima mogli demonstrirati različiti aspekti uređivanja podataka pomoću `tidyr` paketa.
 
 U poglavlju je korišteno osam podatkovnih okvira koji prikazuju iste podatke, ali su podaci u podatkovnim okvirima formirani na različite načine:
 
@@ -236,45 +239,15 @@ U poglavlju je korišteno osam podatkovnih okvira koji prikazuju iste podatke, a
 - `imdb_combined_variables` - podatkovni okvir s više vrijednosti u jednoj ćeliji,
 
 - `director_names_dataset` - imena redatelja filmova odvojena u dva stupca.
-
-Podatkovni okviri sadrže do 12 mogućih varijabli koje opisuju ključne karakteristike svakog filma:
-
-- "rank" - rang filma na IMDb top ljestvici (numerička vrijednost od 1 do 10),
-
-- "movie" - naslov filma (tekstualna varijabla),
-
-- "release_year" - godina premijere filma (numerička vrijednost),
-
-- "countries_of_origin" - zemlja ili zemlje podrijetla filma (tekstualna varijabla, može sadržavati više zemalja odvojenih zarezom),
-
-- "director" - ime i prezime redatelja filma (tekstualna varijabla),
-
-- "writers" - imena i prezimena scenarista (tekstualna varijabla, može sadržavati više imena odvojena zarezom),
-
-- "stars" - imena i prezimena glavnih glumaca (tekstualna varijabla s više imena odvojenih zarezom),
-
-- "genres" - žanr ili žanrovi filma (tekstualna varijabla, može sadržavati više žanrova odvojenih zarezom),
-
-- "language" - jezik ili jezici na kojima se govori u filmu (tekstualna varijabla, može sadržavati više jezika odvojena zarezom),
-
-- "runtime" - trajanje filma u minutama (numerička vrijednost),
-
-- "colour" - vrsta snimanja filma (tekstualna varijabla: "Color" za filmove u boji ili "Black & White" za crno-bijele filmove),
-
-- "budget" - proračun filma u američkim dolarima (numerička vrijednost).
 :::
 
 **Uređivanje podataka** (*data tidying*) predstavlja proces transformacije podataka iz oblika u kojem su inicijalno organizirani u konzistentan i standardiziran format koji olakšava analizu i vizualizaciju. Uređivanje podataka zapravo obuhvaća pohranjivanje podataka u konzistentnom obliku koji odgovara semantici skupa podataka s načinom na koji su pohranjeni. Ovaj je proces temeljni korak u cjelokupnom procesu analize podataka jer omogućuje lakši i efikasniji rad s podacima pomoću različitih analitičkih alata.
 
-Uređivanje i transformacija podataka zajedno se kolokvijalno nazivaju **hrvanje s podacima** (*data wrangling*) jer se odnose na dovođenje podataka u oblik koji je prirodan za rad, a koji često nalikuje borbi s podacima. Ova metafora dobro opisuje izazove s kojima se analitičari susreću kada trebaju pripremiti sirove podatke za analizu. Većina stvarnih podataka nije uredna što znači da će većina analiza zahtijevati barem malo uređivanja.
-
-Uređivanje podataka razlikuje se od općeg oblikovanja podataka (*data reshaping*) jer se fokusira na postizanje određenih standarda organizacije podataka. Glavni cilj uređivanja podataka pritom nije stvaranje vizualno privlačnih prikaza podataka, nego uspostavljanje strukture koja omogućuje efikasno korištenje analitičkih alata i funkcija.
+Uređivanje i transformacija podataka zajedno se kolokvijalno nazivaju **hrvanje s podacima** (*data wrangling*) jer se odnose na dovođenje podataka u oblik koji je prirodan za rad, a koji često nalikuje hrvanju s podacima. Većina stvarnih podataka nije uredna u početnoj fazi što znači da većina analiza zahtijevati barem malo uređivanja. Glavni cilj uređivanja podataka pritom nije stvaranje vizualno privlačnih prikaza podataka, nego uspostavljanje strukture koja omogućuje efikasno korištenje analitičkih alata i funkcija.
 
 U procesu bavljenja s podacima, uređivanje predstavlja ključnu kariku između uvoza podataka u R i njihove analize. Drugim riječima, nakon što se podaci uvezu, nužno je njihovo uređivanje jer uređeni podaci omogućuju fokusiranje napora na odgovaranje pitanja o podacima, a ne borbu s dovođenjem podataka u odgovarajući oblik za različite funkcije. Ovaj pristup značajno smanjuje mogućnost grešaka tijekom analize, ali i povećava produktivnost analitičara u bavljenju s podacima.
 
-**Uredni podaci** (*tidy data*) predstavljaju konzistentan način organiziranja podataka koji se koristi kroz cijeli `tidyverse` ekosustav, ali i općenito u R-u. Konkretnije, iste podatke moguće je predstaviti na više načina, ali nisu svi načini jednako jednostavni i praktični za korištenje.
-
-Postoje tri međusobno povezana pravila koja čine skup podataka urednim:
+**Uredni podaci** (*tidy data*) predstavljaju konzistentan način organiziranja podataka. Postoje tri međusobno povezana pravila koja čine skup podataka urednim:
 
 1. **svaka varijabla je stupac, a svaki stupac je varijabla**;
 
@@ -282,50 +255,37 @@ Postoje tri međusobno povezana pravila koja čine skup podataka urednim:
 
 3. **svaka vrijednost je ćelija, a svaka ćelija je jedna vrijednost**.
 
-Segmenti podataka u podatkovnom okviru raspoređeni su kroz varijable, opažanja i pojedine vrijednosti. **Varijabla** predstavlja svojstvo ili karakteristiku koja se mjeri i koja može poprimiti različite vrijednosti. U kontekstu filmskih podataka, varijable mogu biti naziv filma, godina premijere, žanr ili trajanje filma. U urednim podatkovnim okvirima one su raspoređene u stupcima podatkovnih okvira. To znači da svaki stupac u podatkovnom okviru predstavlja jednu vrstu informacije koju želimo pratiti. Primjerice, ako nas zanimaju informacije o nekim filmovima, varijable mogu biti "movie" u kojoj se nalaze nazivi filmova, "realise_year" u kojoj se nalaze godine kada je film premijerno prikazan, "runtime" u kojoj se nalazi trajanje filma, "director" u kojoj se nalazi ime redatelja itd. Svaki od ovih stupaca pritom mora sadržavati samo jedan tip podataka - varijabla "movie" samo nazive filmova, a varijabla "runtime" samo godine. **Opažanje** predstavlja jedan slučaj ili jedinicu analize za koju prikupljamo podatke o različitim varijablama. U urednim podatkovnim okvirima opažanja su pojedini redci u tablici koji pripadaju jednoj jedinici analize (npr. jednom ispitaniku, kućanstvu, državi itd.) i sadrži vrijednosti niza varijabli koje opisuju tu jedinicu. Dok varijable predstavljaju svojstva, opažanja su konkretne realizacije tih svojstava za svaku jedinicu. U primjeru filmova svaki red predstavlja po jedan film koji je po jedno opažanje. **Vrijednost** je sadržaj jedne ćelije na sjecištu određene varijable i opažanja. Ona predstavlja jednu mjeru jedne varijable za jednu jedinicu i ne bi smjela sadržavati više informacija spojenih u istu ćeliju. U tehničkom smislu pojedinačna vrijednost je vrijednost određenog tipa podataka (npr. broj, logička vrijednost, znakovni niz, datum, vrijeme, faktor ili nedostajuća vrijednost). Na primjer, vrijednost koja prikazuje varijablu "realise_year" za opažanje "The Shawshak Redemption" je "1994", a vrijednost koja prikazuje varijablu "director" za opažanje "The Lord of the Rings: The Return of the King" je "Peter Jackson".
+Segmenti podataka u podatkovnom okviru raspoređeni su kroz varijable, opažanja i pojedine vrijednosti. **Varijabla** predstavlja svojstvo ili karakteristiku koja se mjeri i koja može poprimiti različite vrijednosti. U kontekstu filmskih podataka, varijable mogu biti naziv filma, godina premijere, žanr ili trajanje filma. U urednim podatkovnim okvirima one su raspoređene u stupcima podatkovnih okvira. To znači da svaki stupac predstavlja jednu vrstu informacije. Primjerice, varijable mogu biti "movie" u kojoj se nalaze nazivi filmova, "realise_year" u kojoj se nalaze godine kada je film premijerno prikazan, "runtime" u kojoj se nalazi trajanje filma itd. **Opažanje** predstavlja jedan slučaj ili jedinicu analize za koju prikupljamo podatke o različitim varijablama. U urednim podatkovnim okvirima opažanja su pojedini redovi u tablici koji pripadaju jednoj jedinici analize (npr. jednom ispitaniku, kućanstvu, državi itd.) i sadrži vrijednosti niza varijabli koje opisuju tu jedinicu. Dok varijable predstavljaju svojstva, opažanja su konkretne realizacije tih svojstava za svaku jedinicu. U primjeru filmova svaki red predstavlja po jedan film koji je po jedno opažanje. **Vrijednost** je sadržaj jedne ćelije na sjecištu određene varijable i opažanja. Ona predstavlja jednu mjeru jedne varijable za jednu jedinicu i ne bi smjela sadržavati više informacija spojenih u istu ćeliju. U tehničkom smislu pojedinačna vrijednost je vrijednost određenog tipa podataka (npr. broj, logička vrijednost, znakovni niz, datum ili nedostajuća vrijednost). Na primjer, vrijednost koja prikazuje varijablu "realise_year" za opažanje "The Shawshak Redemption" je "1994", a vrijednost koja prikazuje varijablu "director" za opažanje "The Lord of the Rings: The Return of the King" je "Peter Jackson".
 
-Primjer jednog urednog podatkovnog okvira je `imdb_top_10_tidy_dataset` koji prikazuje top 10 filmova prema IMDb ljestvici u kojem je svaki redak jedno je opažanje, odnosno jedan film, a svaki stupac pojedino obilježje filma, odnosno varijabla koja prikazuju naziv, godinu izdanja, glumce, redatelje i ostale informacije o filmovima.
+Primjer jednog urednog podatkovnog okvira je `imdb_top_10_tidy_dataset` u kojem je svaki redak jedno je opažanje, odnosno jedan film, a svaki stupac pojedino obilježje filma, odnosno varijabla koja prikazuje naziv, godinu izdanja, glumce, redatelje i ostale informacije o filmovima.
 
 ```{r}
 #| echo: false
-datatable(imdb_top_10_tidy_dataset)
+imdb_top_10_tidy_dataset
 ```
 
 Uredna struktura podataka je važna jer čini podatke kompatibilnima s R-ovim vektoriziranim pristupom i omogućuje direktnu upotrebu funkcija kao što su `filter()`, `group_by()`, `summarise()` i `ggplot()` bez dodatnih transformacija podataka. Kada su podatci uredni, moguće je direktno filtrirati podatke po bilo kojoj varijabli, grupirati podatke po kategorijama i kreirati vizualizacije bez složenih priprema. Ako su podaci neuredni, onda je provođenje svih ovih postupaka uvelike otežano.
 
 ## Format podataka u R-u
 
-Isti temeljni podaci mogu se organizirati u različite formate, a dva najčešća su dugački (*long*) i široki (*wide*) format. Primjena ova dva formata ključno je za efikasno uređivanje podataka jer različite analize i vizualizacije zahtijevaju različite formate podataka.
+Isti podaci mogu se organizirati u dugački (*long*) i široki (*wide*) format. Primjena ova dva formata ključno je za efikasno uređivanje podataka jer različite analize i vizualizacije zahtijevaju različite formate podataka.
 
-**Dugački format** karakteriziran je time što se sve vrijednosti jedne varijable nalaze u jednom stupcu. Ovaj format rezultira podatkovnim okvirom s više redaka, ali manjim brojem stupaca. Svaki red predstavlja jedno opažanje, a svaki stupac predstavlja jednu varijablu. Dugački format prirodniji je za analizu podataka jer slijedi temeljna načela urednih podataka. U ovom formatu lakše je provoditi grupne operacije, stvarati vizualizacije i primjenjivati statističke funkcije. Koristeći isti primjer filmskih ocjena, dugački format imao bi stupce "movie", "year" i "runtime" gdje bi svaki red predstavljao jednu kombinaciju filma i godine s odgovarajućim vremenom trajanja.
+**Dugački format** karakteriziran je time što se sve vrijednosti jedne varijable nalaze u jednom stupcu. Ovaj format rezultira podatkovnim okvirom s više redaka, ali manjim brojem stupaca. Dugački format prirodniji je za analizu podataka jer slijedi temeljna načela urednih podataka. U ovom formatu lakše je provoditi grupne operacije, stvarati vizualizacije i primjenjivati statističke funkcije.
 
-Primjer jednog takvog podatkovnog okvira je `imdb_top_10_long`. Podaci su organizirani u dugom obliku s četiri stupca: "rank", "movie", "attribute" i "value". Stupci "rank" i "movie" čine identifikator svakog filma, a za svaki film postoji po više redaka, odnosno po jedan redak za svako obilježje koje je zapisano u varijabli "attribute". Naziv obilježja pritom stoji u varijabli "attribute", dok se sama vrijednost obilježja nalazi u varijabli "value". Time jedan film zauzima otprilike deset redaka (jedan po atributu), umjesto jednog širokog retka s mnogo stupaca.
+Primjer jednog takvog podatkovnog okvira je `imdb_top_10_long`. Podaci su organizirani u dugom obliku s četiri stupca: "rank", "movie", "attribute" i "value". Stupci "rank" i "movie" čine identifikator svakog filma, a za svaki film postoji po više redaka, odnosno po jedan redak za svako obilježje koje je zapisano u varijabli "attribute". Naziv obilježja pritom stoji u varijabli "attribute", dok se sama vrijednost obilježja nalazi u varijabli "value". Time jedan film zauzima po jedan red za svaki atribut.
+
+```{r}
+imdb_top_10_long
+```
+
+**Široki format** karakterizira raspored u kojem svaka promatrana jedinica zauzima jedan redak, dok se različite varijable te jedinice nalaze u zasebnim stupcima. Drugim riječima, informacije su raširene po stupcima, a ne grupirane u jedan stupac s pripadajućim identifikatorima. Temeljna karakteristika širokog formata je da svaka kombinacija jedinice i varijable ima vlastiti stupac što često rezultira velikim brojem stupaca, osobito kada se radi o ponovljenim mjerenjima kroz vrijeme, različitim uvjetima ili kategorijama.
+
+Primjer takvog podatkovnog okvira je `imdb_decades` u kojem svaki redak predstavlja po jedan film, svaki stupac pojedino desetljeće, a u ćelijama nalazi godina premijere filma u stupcu desetljeća u kojem je film nastao, odnosno `NA` ako film nije nastao u tom desetljeću.
 
 ```{r}
 #| echo: false
-datatable(imdb_top_10_long)
+imdb_decades
 ```
-
-Ovakav dugački format preferira se za vizualizacije pomoću `ggplot2` paketa, grupne analize i sažimanja podataka, primjenu većine `dplyr` funkcija i modeliranje podataka. Ipak, široki format karakteriziran je time što se vrijednosti jedne varijable protežu kroz više stupaca. U ovom formatu, podatkovni okvir ima manji broj redaka, ali veći broj stupaca. Imena stupaca često sadrže vrijednosti varijabli umjesto naziva varijabli. Široki format često je prirodniji za unos podataka i čovjeku je lakši za čitanje jer se podaci prezentiraju u kompaktnom obliku. Međutim, ovaj format može otežati analizu jer jedna varijabla nije sadržana u jednom stupcu što krši temeljna načela urednih podataka.
-
-Primjer takvog podatkovnog okvira bio bi `imdb_decades`. U tom podatkovnom okviru svaki redak predstavlja po jedan film, svaki stupac pojedino desetljeće, a u ćelijama nalazi godina premijere filma u pojedinom desetljeću u kojem je film nastao, odnosno `NA` ako film nije nastao u tom desetljeću.
-
-```{r}
-#| echo: false
-datatable(imdb_decades)
-```
-
-Ovaj podatkovni okvir je problematičan jer krši načela urednih podataka, odnosno desetljeća koje su vrijednosti postavljene su kao nazivi stupaca umjesto da budu u ćelijama pojedinih varijabli. To rezultira s puno nepotrebnih `NA` vrijednosti i otežava analizu jer nije moguće jednostavno filtrirati filmove po godini ili desetljeću. Umjesto šest stupaca za desetljeća, bolji format podataka bio bi onaj u kojem su dva stupca, jedan za desetljeće i jedan za godinu.
-
-Široki format može biti korisniji za:
-
-- prikazivanje podataka u tablicama za čovjeka,
-
-- određene statističke analize koje zahtijevaju matricijski oblik,
-
-- kreiranje pivot tablica i
-
-- izvoz podataka za druge aplikacije.
 
 ::: {layout-ncol="2"}
 | ID  | A   | B   | C   |
@@ -347,35 +307,16 @@ Ovaj podatkovni okvir je problematičan jer krši načela urednih podataka, odno
 : Dugački format {#tbl-dugacki}
 :::
 
-Pritom je važno naglasiti da nijedan od ova dva formata nije inherentno uredan ili neuredan, nego to ovisi o tome što stupci, retci i ćelije predstavljaju u kontekstu podataka. Dugački format je općenito bolji za analizu podataka jer funkcije poput `dplyr` paketa prirodno rade s jednim stupcem vrijednosti, a `ggplot2` paket je dizajniran za dugački format jer mapira estetike na stupce. Također, u dugačkom je formatu lakše dodavati nova vremenska razdoblja ili kategorije jer se jednostavno dodaju novi redovi umjesto novih stupaca. Široki format je bolji za prezentaciju i izvještaje jer je ljudima prirodnije čitati podatke kada su povezane vrijednosti prikazane horizontalno kao stupci, kao i za matrične operacije poput korelacijske analize ili unos podataka jer odražava način kako ljudi razmišljaju o podacima. Općenito pravilo je koristiti dugački format za analize i vizualizacije, a široki za prikaz rezultata.
+Pritom je važno naglasiti da nijedan od ova dva formata nije inherentno uredan ili neuredan, nego to ovisi o tome što stupci, redovi i ćelije predstavljaju u kontekstu podataka. Dugački format je općenito bolji za analizu podataka jer funkcije poput `dplyr` paketa prirodno rade s jednim stupcem vrijednosti, a `ggplot2` paket je dizajniran za dugački format jer mapira estetike na stupce. Također, u dugačkom je formatu lakše dodavati nova vremenska razdoblja ili kategorije jer se jednostavno dodaju novi redovi umjesto novih stupaca. Široki format je bolji za prezentaciju i izvještaje jer je ljudima prirodnije čitati podatke kada su povezane vrijednosti prikazane horizontalno kao stupci, kao i za matrične operacije poput korelacijske analize ili unos podataka jer odražava način kako ljudi razmišljaju o podacima.
 
 ## Uređivanje neurednih podataka
 
-Kada podaci u podatkovnom okviru ne ispunjavaju tri navedena uvjeta o urednim podacima, onda te podatke nazivamo **neurednim podacima** te je bilo kakav rad na podacima otežan. Postoje različiti mogući oblici neurednih podataka, odnosno različiti načini na koji podaci u podatkovnom okviru mogu biti posloženi, a koji otežavaju daljnji rad na podacima. Pritom uređivanje uključuje produljenje i proširenje podataka. Produljenje podataka uključuje pretvaranje širokih podatkovnih okvira u oblik koji ima više redaka, a manje stupaca. Suprotno, proširenje podataka uključuje pretvaranje dugih tablica u širok oblik koji ima manje redaka i više stupaca.
+Kada podaci u podatkovnom okviru ne ispunjavaju uvjete o urednim podacima, onda podatke takvih podatkovnih okvira nazivamo **neurednim podacima** te je bilo kakav rad na podacima otežan. Postoje različiti mogući oblici neurednih podataka, odnosno različiti načini na koji podaci u podatkovnom okviru mogu biti posloženi, a koji otežavaju daljnji rad na podacima. Pritom uređivanje uključuje produljenje i proširenje podataka. Produljenje podataka uključuje pretvaranje širokih podatkovnih okvira u oblik koji ima više redaka, a manje stupaca. Suprotno, proširenje podataka uključuje pretvaranje dugih tablica u oblik koji ima manje redaka i više stupaca.
 
-Za uređivanje podataka u R-u najčešće se koriste dvije funkcije iz `tidyr` paketa, `pivot_longer()` za produljivanje i `pivot_wider()` za proširivanje. `pivot_longer()` pretvara široku tablicu u dugu, odnosno više stupaca prenosi u dva stupca — jedan s imenom varijable i jedan s vrijednošću. Rezultat je više redaka i manje stupaca. `pivot_wider()` radi suprotno, iz duge tablice (u kojoj postoji stupac s imenima varijabli i stupac s vrijednostima) stvara široku tako da različite vrijednosti iz stupca s imenima postanu novi stupci. Rezultat je manje redaka, a više stupaca. Osim ove dvije funkcije, `tidyr` paket sadrži još neke funkcije koje pomažu uređivanje podataka, a od kojih će neke biti navedene i u nastavku.
-
-### Rješavanje problema neurednih podataka
-
-Može se pojaviti više oblika konstrukcije podataka, odnosno neurednih podatkovnih okvira koje je potrebno urediti, odnosno proširiti ili produžiti.
-
-**1. Nazivi varijabli kao vrijednosti**
-
-Čest problem koji se susreće kod neuredno organiziranih podataka nastaje kada nazivi stupaca ne predstavljaju nazive varijabli, već vrijednosti neke varijable. Ovaj tip neuredno organiziranih podataka krši temeljna načela urednih podataka jer se vrijednosti jedne varijable nalaze u nazivima stupaca umjesto u jednom stupcu. Takav oblik podataka čini ih teškima za analizu jer funkcije u R-u očekuju da se vrijednosti varijabli nalaze u stupcima, a ne u njihovim nazivima.
-
-Primjer takvih neurednih podataka je podatkovni okvir `imdb_decades` u kojem su nazivi stupaca "1950s", "1960s", "1970s", "1980s", "1990s" i "2000s", a koji predstavljaju vrijednosti varijable "decade", a ne nazive varijabli. Stupac "movie" sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno `NA` ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini proizvodnje filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti (`NA`).
-
-```{r}
-# Pregled neurednog oblika podatkovnog okvira
-imdb_decades
-```
-
-Problem se rješava pomoću funkcije `pivot_longer()` koja pretvara široke podatke u dugačke. Funkcija omogućuje specificiranje stupaca koji se trebaju pivotirati pomoću argumenta `cols`, naziv nove varijable koja će sadržavati nazive stupaca pomoću argumenta `names_to` te naziv varijable koja će sadržavati vrijednosti iz ćelija pomoću argumenta `values_to`. Dodatno, argument `values_drop_na = TRUE` može se koristiti za uklanjanje redova s nedostajućim vrijednostima koji ne predstavljaju stvarna opažanja.
+Za uređivanje podataka u R-u najčešće se koriste dvije funkcije iz `tidyr` paketa, `pivot_longer()` za produljivanje i `pivot_wider()` za proširivanje. `pivot_longer()` pretvara široku tablicu u dugu, a rezultat je više redaka i manje stupaca. `pivot_wider()` radi suprotno, iz duge tablice stvara široku, a rezultat je manje redaka i više stupaca. Osim ove dvije funkcije, `tidyr` paket sadrži još neke funkcije koje pomažu uređivanje podataka. Može se pojaviti više oblika neurednih podatkovnih okvira koje je potrebno urediti.
 
 ::: {.callout-tip icon=false collapse="true" title="Funkcija: pivot_longer()"}
-Funkcija `pivot_longer()` dio je `tidyr` paketa koja produžuje podatke povećavajući broj njihovih redaka i smanjujući broj stupaca.
-
-Funkcija može imati slijedeće argumente:
+Funkcija `pivot_longer()` dio je `tidyr` paketa koja produžuje podatke povećavajući broj njihovih redaka i smanjujući broj stupaca. Funkcija može imati slijedeće argumente:
 
 | Argument | Objašnjenje |
 |---|---|
@@ -394,70 +335,6 @@ Funkcija može imati slijedeće argumente:
 | `values_ptypes` | Kao i `names_ptypes`, ali za stupac `values_to`. |
 | `values_transform` | Funkcija ili lista funkcija za transformaciju vrijednosti. |
 :::
-
-```{r}
-# Uređivanje podatkovnog okvira
-imdb_decades_tidy <- imdb_decades |>
-  pivot_longer(
-    cols = starts_with(c("19", "20")),
-    names_to = "decade",
-    values_to = "year",
-    values_drop_na = TRUE
-  )
-```
-
-Nakon primjene `pivot_longer()` funkcije, dobivamo uređeni podatkovni okvir koji sadrži tri stupca: "movie" (naziv filma), "decade" (desetljeće) i "year" (godina premijere). Svaki red predstavlja jedno opažanje - kombinaciju filma i desetljeća s odgovarajućom godinom premijere. Uređeni format omogućuje lakše grupiranje podataka po desetljećima, izračunavanje sažetaka te stvaranje vizualizacija što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu.
-
-```{r}
-# Pregled urednog oblika podatkovnog okvira
-imdb_decades_tidy
-```
-
-
-**2. Više varijabli u nazivima stupaca**
-
-Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Ovaj tip neuredno organiziranih podataka predstavlja naprednu verziju prethodnog problema jer ne sadrži samo jednu varijablu u nazivima stupaca, nego kombinaciju nekoliko varijabli. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.
-
-Primjer takvih podataka je `realise_year_runtime_dataset`. Kod tih podataka nazivi stupaca poput "1994_142", "1972_175", "2008_152" i drugi sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ("Color") ili crno-bijeli ("Black & White"), s `NA` vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i tip fotografije) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.
-
-```{r}
-# Pregled neurednog oblika podatkovnog okvira
-realise_year_runtime_dataset
-```
-
-Problem se rješava pomoću funkcije `pivot_longer()` s dodatnim argumentima za razdvajanje složenih naziva stupaca. Ključni argument `names_to` prima vektor naziva novih varijabli koje će nastati razdvajanjem naziva stupaca, dok argument `names_sep` specificira separator koji razdvaja različite dijelove naziva stupaca. U ovom slučaju, `names_to = c("year", "runtime")` stvara dvije nove varijable, a `names_sep = "_"` specificira da se nazivi stupaca dijele po podvlaci. Argument `values_drop_na = TRUE` uklanja redove s nedostajućim vrijednostima koji predstavljaju umjetno stvorene kombinacije.
-
-```{r}
-# Uređivanje podatkovnog okvira
-realise_year_runtime_dataset_tidy <- realise_year_runtime_dataset |>
-  pivot_longer(
-    cols = -c(rank, movie),
-    names_to = c("year", "runtime"),
-    names_sep = "_",
-    values_to = "value",
-    values_drop_na = TRUE
-  )
-```
-
-Nakon primjene `pivot_longer()` funkcije s odgovarajućim argumentima, dobivamo uređeni podatkovni okvir koji sadrži pet stupaca: "rank" (rang filma), "movie" (naziv filma), "year" (godina proizvodnje), "runtime" (trajanje u minutama) i "value" (tip fotografije). Svaki red predstavlja jedno opažanje - jedan film s njegovim karakteristikama. Uređeni format omogućuje direktno grupiranje po godini ili trajanju filma, izračunavanje statističkih pokazatelja te stvaranje složenih vizualizacija koje analiziraju povezanost između godine proizvodnje, trajanja i tipa fotografije, što bi bilo praktički nemoguće u neuredno organiziranom formatu.
-
-```{r}
-# Pregled urednog oblika podatkovnog okvira
-realise_year_runtime_dataset_tidy
-```
-
-**3. Varijable pohranjene u redovima**
-
-Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva neuredno organiziranih podataka. U ovom obliku neurednih podataka, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.
-
-U primjeru podatkovnog okvira `imdb_top_10_long`, svaki film (opažanje) predstavljen je kroz više redova, pri čemu stupac "attribute" sadrži nazive varijabli poput "release_year", "director", "genres", "runtime" i ostale, dok stupac "value" sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film "The Shawshank Redemption" prikazan je kroz deset redova, po jedan za svaku karakteristiku filma. Ovakav format rezultira podatkovnim okvirom s 100 redova (10 filmova × 10 atributa) umjesto očekivanih 10 redova za 10 filmova.
-
-```{r}
-# Pregled neurednog oblika podatkovnog okvira
-imdb_top_10_long
-```
-
-Problem se rješava pomoću funkcije `pivot_wider()` iz `tidyr` paketa koja pretvara dugačke podatke u široke. Funkcija koristi argument `names_from` za specificiranje stupca koji sadrži nazive budućih varijabli (u ovom slučaju stupac "attribute") te argument `values_from` za specificiranje stupca koji sadrži vrijednosti tih varijabli (stupac "value"). Funkcija `pivot_wider()` automatski grupira podatke prema svim stupcima koji nisu specificirani u `names_from` i `values_from` argumentima što znači da će se podaci grupirati po "rank" i "movie" stupcima.
 
 ::: {.callout-tip icon=false collapse="true" title="Funkcija: pivot_wider()"}
 Funkcija `pivot_wider()` dio je `tidyr` paketa koja produžuje podatke smanjujući njihov broj redaka i povećavajući broj stupaca. Funkcija može imati slijedeće argumente:
@@ -481,16 +358,93 @@ Funkcija `pivot_wider()` dio je `tidyr` paketa koja produžuje podatke smanjuju�
 | `unused_fn` | Funkcija koja određuje što raditi s varijablama koje nisu u `id_cols`, `names_from` ili `values_from`. |
 :::
 
+**1. Nazivi varijabli kao vrijednosti**
+
+Čest problem koji se susreće kod neuredno organiziranih podataka nastaje kada nazivi stupaca ne predstavljaju nazive varijabli, već vrijednosti neke varijable. Ovaj tip neuredno organiziranih podataka krši temeljna načela urednih podataka jer se vrijednosti jedne varijable nalaze u nazivima stupaca umjesto u jednom stupcu. Takav oblik podataka čini ih teškima za analizu jer funkcije u R-u očekuju da se vrijednosti varijabli nalaze u stupcima, a ne u njihovim nazivima.
+
+Primjer takvih neurednih podataka je podatkovni okvir `imdb_decades` u kojem su nazivi stupaca "1950s", "1960s", "1970s", "1980s", "1990s" i "2000s", a koji predstavljaju desetlječa. Varijabla "movie" sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno `NA` ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini premijere filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+imdb_decades
+```
+
+Problem se rješava pomoću funkcije `pivot_longer()`. Funkcija omogućuje specificiranje stupaca koji se trebaju urediti pomoću argumenta `cols`, naziv nove varijable koja će sadržavati nazive stupaca pomoću argumenta `names_to` te naziv varijable koja će sadržavati vrijednosti iz ćelija pomoću argumenta `values_to`. Dodatno, argument `values_drop_na = TRUE` može se koristiti za uklanjanje redova s nedostajućim vrijednostima.
+
+```{r}
+# Uređivanje podatkovnog okvira
+imdb_decades_tidy <- imdb_decades |>
+  pivot_longer(
+    cols = starts_with(c("19", "20")),
+    names_to = "decade",
+    values_to = "year",
+    values_drop_na = TRUE
+  )
+```
+
+Nakon primjene funkcije, dobivamo uređeni podatkovni okvir koji sadrži tri stupca: "movie", "decade" i "year". Svaki red predstavlja jedno opažanje - kombinaciju filma i desetljeća s odgovarajućom godinom premijere. Uredni format omogućuje lakše grupiranje podataka po desetljećima, izračunavanje sažetaka te stvaranje vizualizacija što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+imdb_decades_tidy
+```
+
+
+**2. Više varijabli u nazivima stupaca**
+
+Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.
+
+Primjer takvih podataka je `realise_year_runtime_dataset`. Kod tih podataka nazivi stupaca poput "1994_142" i "1972_175" sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ili crno-bijeli s `NA` vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i boja) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+realise_year_runtime_dataset
+```
+
+Problem se rješava pomoću funkcije `pivot_longer()` s dodatnim argumentima za razdvajanje složenih naziva stupaca. Ključni argument `names_to` prima vektor naziva novih varijabli koje će nastati razdvajanjem naziva stupaca, dok argument `names_sep` specificira separator koji razdvaja različite dijelove naziva stupaca. U ovom slučaju, `names_to = c("year", "runtime")` stvara dvije nove varijable, a `names_sep = "_"` specificira da se nazivi stupaca dijele po podvlaci. Argument `values_drop_na = TRUE` uklanja redove s nedostajućim vrijednostima koji predstavljaju umjetno stvorene kombinacije.
+
+```{r}
+# Uređivanje podatkovnog okvira
+realise_year_runtime_dataset_tidy <- realise_year_runtime_dataset |>
+  pivot_longer(
+    cols = -c(rank, movie),
+    names_to = c("year", "runtime"),
+    names_sep = "_",
+    values_to = "value",
+    values_drop_na = TRUE
+  )
+```
+
+Nakon primjene funkcije dobivamo uredni podatkovni okvir koji sadrži pet stupaca: "rank", "movie", "year", "runtime" i "value". Svaki red predstavlja jedno opažanje - jedan film s njegovim karakteristikama.
+
+```{r}
+# Pregled urednog oblika podatkovnog okvira
+realise_year_runtime_dataset_tidy
+```
+
+**3. Varijable pohranjene u redovima**
+
+Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva. U ovom obliku, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.
+
+U primjeru podatkovnog okvira `imdb_top_10_long`, svaki film predstavljen je kroz više redova, pri čemu stupac "attribute" sadrži nazive varijabli poput "release_year", "director", "genres", "runtime" i ostale, dok stupac "value" sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film "The Shawshank Redemption" prikazan je kroz deset redova, po jedan za svaku karakteristiku filma.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+imdb_top_10_long
+```
+
+Problem se rješava pomoću funkcije `pivot_wider()`. Funkcija koristi argument `names_from` za specificiranje stupca koji sadrži nazive budućih varijabli (u ovom slučaju stupac "attribute") te argument `values_from` za specificiranje stupca koji sadrži vrijednosti tih varijabli (stupac "value"). Funkcija `pivot_wider()` automatski grupira podatke prema svim stupcima koji nisu specificirani u `names_from` i `values_from` argumentima što znači da će se podaci grupirati po "rank" i "movie" stupcima.
+
 ```{r}
 # Uređivanje podatkovnog okvira
 imdb_top_10_wide <- imdb_top_10_long |>
   pivot_wider(
-    names_from  = attribute,
+    names_from = attribute,
     values_from = value
   )
 ```
 
-Nakon primjene `pivot_wider()` funkcije, dobivamo uređeni podatkovni okvir koji sadrži 12 stupaca: identifikacijske varijable "rank" i "movie" te deset novih stupaca koji predstavljaju filmske karakteristike ("release_year", "countries_of_origin", "director", "writers", "stars", "genres", "language", "runtime", "colour" i "budget"). Svaki od 10 redova predstavlja jedan film s njegovim kompletnim karakteristikama. Uređeni format omogućuje direktno usporedbu filmova prema bilo kojoj karakteristici, izračunavanje statističkih pokazatelja te stvaranje vizualizacija koje analiziraju povezanost između različitih varijabli poput godine proizvodnje i budžeta, što bi zahtijevalo složene operacije grupiranja u neuredno organiziranom dugačkom formatu.
+Nakon primjene `pivot_wider()` funkcije, dobivamo uređeni podatkovni okvir koji sadrži 12 stupaca: identifikacijske varijable "rank" i "movie" te deset novih stupaca koji predstavljaju filmske karakteristike. Svaki od 10 redova predstavlja jedan film s njegovim kompletnim karakteristikama.
 
 ```{r}
 # Pregled urednog oblika podatkovnog okvira
@@ -499,30 +453,30 @@ head(imdb_top_10_wide, 3)
 
 **4. Isti tip vrijednosti raspoređen u više stupaca**
 
-Četvrti tipičan oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna logička varijabla (na primjer, spisak scenarista) biva podijeljena u više fizičkih stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima, što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.
+Četvrti oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna varijabla biva podijeljena u više stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.
 
-`writers_dataset` je jedan takav podatkovni okvir. U tom su podatkovnom okviru informacije o scenaristima filmova podijeljene su u tri odvojena stupca: "writer_1", "writer_2" i "writer_3". Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju `NA` vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.
+`writers_dataset` je jedan takav podatkovni okvir. U njemu su informacije o scenaristima filmova podijeljene su u tri odvojena stupca: "writer_1", "writer_2" i "writer_3". Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju `NA` vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.
 
 ```{r}
 # Pregled neurednog oblika podatkovnog okvira
 writers_dataset
 ```
 
-Problem se rješava pomoću funkcije `pivot_longer()` uz dodatne argumente koji olakšavaju rad s nazivima stupaca koji imaju zajednički prefiks. Argument `cols = starts_with("writer_")` specificira da se pivotiraju svi stupci koji počinju s "writer_", dok argument `names_prefix = "writer_"` uklanja prefiks iz naziva stupaca prije pohranjivanja u novu varijablu. Argument `names_to = "writer_id"` stvara novu varijablu koja označava redni broj scenarista, a `values_to = "writer"` stvara varijablu koja sadrži imena scenarista. Argument `values_drop_na = TRUE` uklanja redove s nedostajućim vrijednostima koji nastaju zbog nejednakog broja scenarista po filmovima.
+Problem se rješava pomoću funkcije `pivot_longer()` uz dodatne argumente koji olakšavaju rad s nazivima stupaca koji imaju zajednički prefiks. Argument `cols = starts_with("writer_")` specificira da se produže svi stupci koji počinju s "writer_", dok argument `names_prefix = "writer_"` uklanja prefiks iz naziva stupaca prije pohranjivanja u novu varijablu. Argument `names_to = "writer_id"` stvara novu varijablu koja označava redni broj scenarista, a `values_to = "writer"` stvara varijablu koja sadrži imena scenarista. Argument `values_drop_na = TRUE` uklanja redove s nedostajućim vrijednostima koji nastaju zbog nejednakog broja scenarista po filmovima.
 
 ```{r}
 # Uređivanje podatkovnog okvira
 writers_dataset_tidy <- writers_dataset |>
   pivot_longer(
     cols = starts_with("writer_"),
-    names_to   = "writer_id",
+    names_to = "writer_id",
     names_prefix = "writer_",
-    values_to  = "writer",
+    values_to = "writer",
     values_drop_na = TRUE
   )
 ```
 
-Nakon primjene `pivot_longer()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank" (rang filma), "movie" (naziv filma), "writer_id" (redni broj scenarista) i "writer" (ime scenarista). Svaki red predstavlja kombinaciju film-scenarist što omogućuje jednostavno brojanje filmova po scenaristu, identifikaciju najproduktivnijih scenarista ili analizu suradnji između različitih scenarista. Uređeni format također olakšava spajanje s drugim podacima o scenaristima te stvaranje vizualizacija mreža suradnji, što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu s odvojenim stupcima za svakog scenarista.
+Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie", "writer_id" (redni broj scenarista) i "writer" (ime scenarista). Svaki red predstavlja kombinaciju film-scenarist što omogućuje jednostavno brojanje filmova po scenaristu, identifikaciju najproduktivnijih scenarista ili analizu suradnji između različitih scenarista. Uređeni format također olakšava spajanje s drugim podacima o scenaristima te stvaranje vizualizacija mreža suradnji, što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu s odvojenim stupcima za svakog scenarista.
 
 ```{r}
 # Pregled urednog oblika podatkovnog okvira
@@ -533,14 +487,14 @@ writers_dataset_tidy
 
 Ovaj oblik neurednih podataka predstavlja pojednostavljenu verziju prethodnog problema gdje se u jednoj ćeliji nalaze vrijednosti koje pripadaju različitim varijablama, odvojene određenim separatorom. Problem nastaje kada se dvije logički različite varijable kombiniraju u jednu kolonu radi uštede prostora ili zbog ograničenja u sustavima za pohranu podataka. Ovakva organizacija krši temeljna načela urednih podataka jer svaka ćelija treba sadržavati vrijednost samo jedne varijable. Kombiniranje različitih tipova informacija u istoj ćeliji otežava sve oblike analize jer je potrebno najprije izdvojiti pojedinačne komponente prije bilo kakve obrade podataka.
 
-U primjeru `imdb_combined_variables`, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji. Ovakav format onemogućuje direktno sortiranje filmova prema budžetu ili grupiranje prema redatelju jer su te informacije zakodane u kombiniranoj ćeliji koja zahtijeva dodatnu obradu.
+U primjeru `imdb_combined_variables`, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.
 
 ```{r}
 # Pregled neurednog oblika podatkovnog okvira
 imdb_combined_variables
 ```
 
-Problem se rješava pomoću funkcije `separate()` iz `tidyr` paketa koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument `col = director_budget` za specificiranje stupca koji se želi podijeliti, `into = c("director", "budget")` za definiranje naziva novih stupaca koji će nastati dijeljenjem i `sep = "_"` za navođenje separatora koji razdvaja različite vrijednosti. Funkcija `separate()` automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.
+Problem se rješava pomoću funkcije `separate()` koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument `col = director_budget` za specificiranje stupca koji se želi podijeliti, `into = c("director", "budget")` za definiranje naziva novih stupaca koji će nastati dijeljenjem i `sep = "_"` za navođenje separatora koji razdvaja različite vrijednosti. Funkcija `separate()` automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.
 
 ::: {.callout-tip icon=false collapse="true" title="Funkcija: separate()"}
 `separate()` je ključna funkcija `tidyr` paketa koja se koristi kada imamo više varijabli spremljenih u jednoj ćeliji, a želimo ih razdvojiti u više stupaca. Funkcija može imati slijedeće argumente:
@@ -567,7 +521,7 @@ imdb_combined_variables_tidy <- imdb_combined_variables |>
   )
 ```
 
-Nakon primjene `separate()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank" (rang filma), "movie" (naziv filma), "director" (ime redatelja) i "budget" (budžet filma). Svaki red predstavlja jedan film s jasno odvojenima karakteristikama, pri čemu svaki stupac sadrži samo jedan tip informacije. Uređeni format omogućuje direktne analize poput usporedbe budžeta različitih filmova, identifikacije najskupljih produkcija, grupiranja filmova prema redatelju ili analize povezanosti između budžeta i ranga filma na ljestvici.
+Nakon primjene `separate()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie", "director" i "budget". Svaki red predstavlja jedan film s jasno odvojenima karakteristikama, pri čemu svaki stupac sadrži samo jedan tip informacije.
 
 ```{r}
 # Pregled urednog oblika podatkovnog okvira
@@ -576,19 +530,19 @@ imdb_combined_variables_tidy
 
 **6. Ista varijabla raspodijeljena u sva stupca**
 
-Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable. Ovakav pristup posebno je problematičan za analize koje tretiraju varijablu kao cjelinu.
+Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable.
 
-U priloženom primjeru `director_names_dataset` informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu. Iako oba dijela logički pripadaju istoj varijabli "director_name", oni su tretirani kao zasebne varijable. Ovakav format otežava pretraživanje filmova prema redatelju, sortiranje prema abecednom redu ili usporedbu s drugim izvorima podataka gdje su imena redatelja predstavljena kao jedna cjelina.
+U primjeru `director_names_dataset` informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu.
 
 ```{r}
 # Pregled neurednog oblika podatkovnog okvira
 director_names_dataset
 ```
 
-Problem se rješava pomoću funkcije `unite()` iz `tidyr` paketa koja omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument `col = "director_name"` za specificiranje naziva novog stupca koji će nastati spajanjem, zatim navodi nazive stupaca koji se žele spojiti (director_first_name, director_last_name), te argument sep = " " koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija unite() automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.
+Problem se rješava pomoću funkcije `unite()` omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument `col = "director_name"` za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti ("director_first_name", "director_last_name"), te argument `sep = " "` koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija `unite()` automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.
 
 ::: {.callout-tip icon=false collapse="true" title="Funkcija: unite()"}
-Funkcija `unite()` koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od `separate()` funkcije. Funkcija može imati slijedeće argumente:
+Funkcija `unite()` dio je `tidyr` paketa i koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od `separate()` funkcije. Funkcija može imati slijedeće argumente:
 
 | Argument | Objašnjenje |
 |---|---|
@@ -611,7 +565,7 @@ director_names_dataset_tidy <- director_names_dataset |>
   )
 ```
 
-Nakon primjene `unite()` funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank" (rang filma), "movie" (naziv filma) i novi "director_name" (puno ime redatelja). Svaki red predstavlja jedan film s kompletnim imenom redatelja u jednom stupcu što omogućuje jednostavno sortiranje filmova prema imenima redatelja, filtriranje prema specifičnim redateljima te spajanje s drugim izvorima podataka koji koriste puna imena. Uređeni format također olakšava analize poput identifikacije najproduktivnijih redatelja, usporedbe opusa različitih redatelja ili stvaranja vizualizacija koje prikazuju distribuciju filmova prema redateljima, što bi zahtijevalo složene operacije spajanja stringova u neuredno organiziranom formatu s podijeljenim imenima.
+Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie" i novi "director_name" (puno ime redatelja). Svaki red predstavlja jedan film s kompletnim imenom redatelja u jednom stupcu što omogućuje jednostavno sortiranje filmova prema imenima redatelja, filtriranje prema specifičnim redateljima te spajanje s drugim izvorima podataka koji koriste puna imena.
 
 ```{r}
 # Pregled urednog oblika podatkovnog okvira

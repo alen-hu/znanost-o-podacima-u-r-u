@@ -4,4 +4,8 @@ description: ""
 number-sections: true
 title-block-banner: "#753a97ff"
 title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
 ---

@@ -1,0 +1,11 @@
+---
+title: "Manipulacija podacima"
+description: "U ovom poglavlju objašnjava se pojam urednih podataka i njihova uloga u analitičkom procesu. Uredni podaci definirani su kao podaci kod kojih svaka varijabla čini jedan stupac, svako opažanje jedan redak, a svaka opservacija zasebnu ćeliju. Poglavlje prikazuje kako se sirovi i neuređeni podaci mogu preoblikovati u prikladan format, čime se omogućuje učinkovitija analiza, modeliranje i interpretacija podataka."
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---

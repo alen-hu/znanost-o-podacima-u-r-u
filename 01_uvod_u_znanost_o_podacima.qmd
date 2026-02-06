@@ -1,5 +1,5 @@
 ---
-title: "Uvod u znanost o podacima u R-u"
+title: "Uvod u znanost o podacima"
 description: ""
 number-sections: true
 title-block-banner: "#753a97ff"
