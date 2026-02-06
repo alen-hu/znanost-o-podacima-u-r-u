@@ -1,5 +1,10 @@
-# Preface {.unnumbered}
-
-This is a Quarto book.
-
-To learn more about Quarto books visit <https://quarto.org/docs/books>.
+---
+title: "Uvod"
+number-sections: true
+title-block-banner: "#8B3A62"
+title-block-banner-color: "white"
+lang: hr
+crossref:
+  tbl-title: "Tablica"
+  fig-title: "Slika"
+---
