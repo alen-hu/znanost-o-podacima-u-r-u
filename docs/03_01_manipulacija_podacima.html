@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Ovo poglavlje uvodi temeljne postupke manipulacije podacima u programskom jeziku R, s naglaskom na rad s podatkovnim okvirima pomoću tidyverse ekosustava, osobito paketa dplyr. Prikazuje se kako se sirovi podaci sustavno pripremaju za analizu kroz filtriranje opažanja i varijabli, sortiranje podataka, promjenu i kreiranje novih varijabli te agregiranje i grupiranje podataka. Posebna se pažnja posvećuje logici rada s glagolima koji omogućuju čitljiv, dosljedan i reproducibilan analitički tok. Cilj poglavlja je razviti razumijevanje manipulacije podacima kao ključne faze između prikupljanja podataka i njihove statističke analize.">
 
 <title>4&nbsp; Manipulacija podacima – Znanost o podacima u R-u</title>
 <style>
@@ -150,7 +151,12 @@ background: #8B3A62;
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./03_01_manipulacija_podacima.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Manipulacija podacima</span></a></li></ol></nav>
       <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Manipulacija podacima</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-                      </div>
+                  <div>
+        <div class="description">
+          Ovo poglavlje uvodi temeljne postupke manipulacije podacima u programskom jeziku R, s naglaskom na rad s podatkovnim okvirima pomoću <code>tidyverse</code> ekosustava, osobito paketa <code>dplyr</code>. Prikazuje se kako se sirovi podaci sustavno pripremaju za analizu kroz filtriranje opažanja i varijabli, sortiranje podataka, promjenu i kreiranje novih varijabli te agregiranje i grupiranje podataka. Posebna se pažnja posvećuje logici rada s glagolima koji omogućuju čitljiv, dosljedan i reproducibilan analitički tok. Cilj poglavlja je razviti razumijevanje manipulacije podacima kao ključne faze između prikupljanja podataka i njihove statističke analize.
+        </div>
+      </div>
+                </div>
   </div>
     
   
@@ -302,9 +308,9 @@ background: #8B3A62;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#manipulacija-podacima-u-užem-smislu" id="toc-manipulacija-podacima-u-užem-smislu" class="nav-link active" data-scroll-target="#manipulacija-podacima-u-užem-smislu"><span class="header-section-number">0.1</span> Manipulacija podacima u užem smislu</a></li>
-  <li><a href="#glagoli-za-objedinjavanje-podataka" id="toc-glagoli-za-objedinjavanje-podataka" class="nav-link" data-scroll-target="#glagoli-za-objedinjavanje-podataka"><span class="header-section-number">0.2</span> Glagoli za objedinjavanje podataka</a></li>
-  <li><a href="#glagoli-za-mijenjanje-varijabli" id="toc-glagoli-za-mijenjanje-varijabli" class="nav-link" data-scroll-target="#glagoli-za-mijenjanje-varijabli"><span class="header-section-number">0.3</span> Glagoli za mijenjanje varijabli</a></li>
+  <li><a href="#manipulacija-podacima-u-užem-smislu" id="toc-manipulacija-podacima-u-užem-smislu" class="nav-link active" data-scroll-target="#manipulacija-podacima-u-užem-smislu"><span class="header-section-number">1</span> Manipulacija podacima u užem smislu</a></li>
+  <li><a href="#glagoli-za-objedinjavanje-podataka" id="toc-glagoli-za-objedinjavanje-podataka" class="nav-link" data-scroll-target="#glagoli-za-objedinjavanje-podataka"><span class="header-section-number">2</span> Glagoli za objedinjavanje podataka</a></li>
+  <li><a href="#glagoli-za-mijenjanje-varijabli" id="toc-glagoli-za-mijenjanje-varijabli" class="nav-link" data-scroll-target="#glagoli-za-mijenjanje-varijabli"><span class="header-section-number">3</span> Glagoli za mijenjanje varijabli</a></li>
   </ul>
 </nav>
     </div>
@@ -315,20 +321,19 @@ background: #8B3A62;
 
 
 
-<p><strong>Manipulacija podataka</strong> (eng. <em>data manipulation</em>) predstavlja skup operacija koje pomažu u rješavanju najčešćih izazova pri radu s podacima. Obuhvaća različite aktivnosti poput kreiranja novih varijabli ili sažetaka kako bi se odgovorilo na pitanja postavljena nad podacima, preimenovalo varijable ili promijenilo redoslijed opažanja kako bi se podaci učinili lakšima za rad.</p>
+<p><strong>Manipulacija podataka</strong> (<em>data manipulation</em>) predstavlja skup operacija koje pomažu u rješavanju najčešćih izazova pri radu s podacima. Obuhvaća različite aktivnosti poput kreiranja novih varijabli ili sažetaka kako bi se odgovorilo na pitanja postavljena nad podacima, preimenovalo varijable ili promijenio redoslijed opažanja kako bi se podaci učinili lakšima za rad.</p>
 <p>U kontekstu <code>dplyr</code> paketa, manipulacija podataka provodi se kroz dosljedno organiziran skup glagola koji omogućavaju izvođenje specifičnih operacija nad podacima. Ove operacije uključuju rad s retcima i stupcima podatkovnog okvira kao i mogućnost rada s grupama podataka.</p>
 <p>Manipulacija zapravo predstavlja proces preoblikovanja sirovih podataka u oblik koji je prikladan za analizu što može uključivati filtriranje nepotrebnih podataka, sortiranje, izračunavanje novih varijabli, agregiranje vrijednosti po grupama, spajanje podataka iz različitih izvora i slične operacije.</p>
-<p>Glagoli <code>dplyr</code> paketa mogu se podijeliti u nekoliko skupina s obzirom na ulogu glagola u transformaciji podacima:</p>
-<ul>
+<p>Glagoli <code>dplyr</code> paketa mogu se podijeliti u nekoliko skupina s obzirom na ulogu glagola u transformaciji:</p>
+<ol type="1">
 <li><p><strong>Glagoli za manipulaciju podataka u užem smislu:</strong> <code>select()</code>, <code>filter()</code>, <code>arrange()</code> i <code>mutate()</code>;</p></li>
 <li><p><strong>Glagoli za objedinjavanje podataka:</strong> <code>count()</code>, <code>summarize()</code> i <code>group_by()</code>/ <code>ungroup()</code>;</p></li>
 <li><p><strong>Glagoli za mijenjanje varijabli:</strong> <code>select()</code>, <code>rename()</code>, <code>mutate()</code> i <code>relocate()</code>.</p></li>
-</ul>
-<section id="manipulacija-podacima-u-užem-smislu" class="level3" data-number="0.1">
-<h3 data-number="0.1" class="anchored" data-anchor-id="manipulacija-podacima-u-užem-smislu"><span class="header-section-number">0.1</span> Manipulacija podacima u užem smislu</h3>
-<section id="filtriranje-specifičnih-varijabli" class="level4" data-number="0.1.1">
-<h4 data-number="0.1.1" class="anchored" data-anchor-id="filtriranje-specifičnih-varijabli"><span class="header-section-number">0.1.1</span> Filtriranje specifičnih varijabli</h4>
-<p>Jedan od ključnih koraka u manipulaciji podataka odnosi se na odabir određenih varijabli iz podataka. U različitim situacijama pojedine varijable podatkovnog okvira mogu biti nepotrebne i ometajuće, a podatkovni okviri mogu sadržavati brojne varijable od kojih nisu sve potrebne u svakoj analizi. Takvo se filtriranje koristi kada želimo raditi isključivo s podskupom varijabli iz originalnog podatkovnog okvira zbog jednostavnije analize, smanjenja memorijske potrošnje ili boljeg pregleda. Za filtriranje specifičnih varijabli podatkovnog okvira koristi se glagol <code>select()</code>.</p>
+</ol>
+<section id="manipulacija-podacima-u-užem-smislu" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="manipulacija-podacima-u-užem-smislu"><span class="header-section-number">1</span> Manipulacija podacima u užem smislu</h2>
+<p><strong>Filtriranje specifičnih varijabli</strong></p>
+<p>Jedan od ključnih koraka u manipulaciji podataka odnosi se na odabir određenih varijabli iz podataka. U različitim situacijama pojedine varijable podatkovnog okvira mogu biti nepotrebne i ometajuće. Takvo se filtriranje koristi kada želimo raditi isključivo s podskupom varijabli iz originalnog podatkovnog okvira zbog jednostavnije analize, smanjenja memorijske potrošnje ili boljeg pregleda.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol select()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -342,7 +347,7 @@ background: #8B3A62;
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Glagol <code>select()</code> odabire određene varijable u podatkovnom okviru koristeći koncizan jezik koji olakšava pozivanje varijabli na temelju njihovog imena (npr. <code>name:type_1</code> čime se odabiru svi stupci od “name” do “type_1”) ili tipa (npr. <code>where(is.numeric)</code> koji odabire odabire sve numeričke stupce).</p>
-<p>Na glagol <code>select()</code> mogu se nadovezivati neki podglagoli:</p>
+<p>Na glagol <code>select()</code> mogu se nadovezivati druge funkcije:</p>
 <ul>
 <li><p><code>contains()</code> - ispisuje samo varijable koje sadrže određene znakove,</p></li>
 <li><p><code>starts_with()</code> - ispisuje samo varijable koje počinju nekom riječju,</p></li>
@@ -350,7 +355,7 @@ background: #8B3A62;
 <li><p><code>last_col()</code> - ispisuje samo zadnji stupac i</p></li>
 <li><p><code>matches()</code> - odabire stupce koji imaju određeni uzorak.</p></li>
 </ul>
-<p>Koristan dodatak glagolu <code>select()</code> je znak <code>-</code> (minus) kojim se može izbrisati određena varijabla. U slučaju da želimo filtrirati ispis samo pojedinih varijabli, a ako je njihov broj veći, jednostavnije je samo izbrisati neku varijablu nego ju neimenovati unutar glagola.</p>
+<p>Koristan dodatak glagolu <code>select()</code> je znak <code>-</code> (minus) kojim se može izolirati određena varijabla. U slučaju da želimo filtrirati ispis samo pojedinih varijabli, a ako je njihov broj veći, jednostavnije je samo izbrisati neku varijablu nego ju neimenovati unutar glagola.</p>
 </div>
 </div>
 </div>
@@ -388,7 +393,7 @@ background: #8B3A62;
 # ℹ 790 more rows</code></pre>
 </div>
 </div>
-<p>U drugom slučaju, recimo da možemo varijablu “name” eksplicitno imenovati, varijable “type_1” i “type_2” odabrati funkcijom <code>starts_with()</code> kojom se odabire ispis svih varijabli čiji naziv počinje s riječju “type”, a funkcija <code>last_col()</code> odabire posljednji stupac u podatkovnom okviru bez obzira na naziv te varijable.</p>
+<p>U drugom slučaju, recimo da možemo varijablu “name” eksplicitno imenovati, varijable “type_1” i “type_2” odabrati funkcijom <code>starts_with("type")</code> kojom se odabire ispis svih varijabli čiji naziv počinje s riječju “type”, a funkcija <code>last_col()</code> odabire posljednji stupac u podatkovnom okviru bez obzira na naziv te varijable.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih varijabli podatkovnog okvira</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">select</span>(name, <span class="fu">starts_with</span>(<span class="st">"type"</span>), <span class="fu">last_col</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -412,10 +417,8 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-</section>
-<section id="filtriranje-specifičnih-opažanja" class="level4" data-number="0.1.2">
-<h4 data-number="0.1.2" class="anchored" data-anchor-id="filtriranje-specifičnih-opažanja"><span class="header-section-number">0.1.2</span> Filtriranje specifičnih opažanja</h4>
-<p>Analiza podataka često zahtijeva fokusiranje na određeni podniz opažanja koji zadovoljavaju specifične uvjete. Iduća transformacija zato ima ulogu filtriranja pojedinih opažanja podatkovnog okvira na temelju određenih uvjeta. Ovaj pristup omogućuje usredotočavanje na relevantne podatke, uklanjanje outliera ili analizu određenih kategorija podataka. Filtriranje redova ključno je za ciljanu analizu specifičnih skupina ili uvjeta unutar većeg skupa podataka.</p>
+<p><strong>Filtriranje specifičnih opažanja</strong></p>
+<p>Analiza podataka često zahtijeva fokusiranje na određeni podniz opažanja koji zadovoljavaju specifične uvjete. Iduća manipulacija zato ima ulogu filtriranja pojedinih opažanja podatkovnog okvira na temelju određenih uvjeta. Ovaj pristup omogućuje usredotočavanje na relevantne podatke, uklanjanje outliera ili analizu određenih kategorija podataka. Filtriranje redova ključno je za ciljanu analizu specifičnih skupina ili uvjeta unutar većeg skupa podataka.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol filter()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -428,7 +431,7 @@ background: #8B3A62;
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Glagol <code>filter()</code> koristi se za odabir opažanja podatkovnog okvira podataka zadržavajući retke koji zadovoljavaju postavljene uvjete. Prvi argument funkcije je podatkovni okvir, a sljedeći argumenti su logički uvjeti koji se evaluiraju na bilo kojim uključenim stupcima. Mogu se koristiti operatori <code>&gt;</code> (veće od), <code>&gt;=</code> (veće ili jednako), <code>&lt;</code> (manje od), <code>&lt;=</code> (manje ili jednako), <code>==</code> (jednako) i <code>!=</code> (nije jednako). Također se mogu kombinirati uvjeti s <code>&amp;</code> za označavanje “<em>i</em>” ili s <code>|</code> za označavanje “<em>ili</em>”. Kako bi se zadržao, redak mora dati vrijednost <code>TRUE</code> za sve postavljene uvjete.</p>
+<p>Glagol <code>filter()</code> koristi se za odabir opažanja podatkovnog okvira podataka zadržavajući redove koji zadovoljavaju postavljene uvjete. Prvi argument funkcije je podatkovni okvir, a sljedeći argumenti su logički uvjeti koji se evaluiraju na bilo kojim uključenim stupcima. Mogu se koristiti operatori: <code>&gt;</code> (veće od), <code>&gt;=</code> (veće ili jednako), <code>&lt;</code> (manje od), <code>&lt;=</code> (manje ili jednako), <code>==</code> (jednako) i <code>!=</code> (nije jednako). Također se mogu kombinirati uvjeti s <code>&amp;</code> za označavanje “<em>i</em>” ili s <code>|</code> za označavanje “<em>ili</em>”. Kako bi se zadržao, redak mora dati vrijednost <code>TRUE</code> za sve postavljene uvjete.</p>
 </div>
 </div>
 </div>
@@ -462,7 +465,7 @@ background: #8B3A62;
 #   legendary &lt;lgl&gt;</code></pre>
 </div>
 </div>
-<p>Osim toga, mogu nas zanimati samo vatreni Pokemoni koji imaju više od 100 životnih bodova te samo pojedine varijable tih Pokemona. Za tu je potrebu moguće kombinirati dva glagola, <code>filter()</code> za filtriranje opažanja i <code>select()</code> za filtriranje varijabli kako bismo dobili podatkovni okvir u kojem se nalaze samo potrebni segmenti polaznog podatkovnog okvira.</p>
+<p>Osim toga, mogu nas zanimati samo vatreni Pokemoni koji imaju više od 100 životnih bodova te samo pojedine varijable tih Pokemona. Za to je potrebno kombinirati dva glagola, <code>filter()</code> za filtriranje opažanja i <code>select()</code> za filtriranje varijabli kako bismo dobili podatkovni okvir u kojem se nalaze samo potrebni segmenti polaznog podatkovnog okvira.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kombinacija izdvajanja varijabli i opažanja</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
@@ -495,10 +498,8 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-</section>
-<section id="sortitanje-opažanja" class="level4" data-number="0.1.3">
-<h4 data-number="0.1.3" class="anchored" data-anchor-id="sortitanje-opažanja"><span class="header-section-number">0.1.3</span> Sortitanje opažanja</h4>
-<p>Sortiranje podatkovnog okvira s obzirom na neke karakteristike još je jedan od segmenata manipulacije podacima. U većini slučajeva koristi se u sortiranju numeričkih vrijednosti koje se redaju ili od najmanje do najveće ili od najveće do najmanje karakteristike. Osim toga, ono može uključivati i redanje podataka abecednim redom ako se radi o opažanjima pisanima slovima.</p>
+<p><strong>Sortitanje opažanja</strong></p>
+<p>Sortiranje podatkovnog okvira s obzirom na neke karakteristike još je jedan od segmenata manipulacije podacima. U većini slučajeva koristi se u sortiranju numeričkih vrijednosti koje se redaju ili od najmanje do najveće ili od najveće do najmanje karakteristike. Osim toga, ono može uključivati i redanje podataka abecednim redom ako se radi o tekstualnim podacima.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol arrange()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -511,7 +512,7 @@ background: #8B3A62;
 </div>
 <div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Glagol <code>arrange()</code> sortira opažanja podatkovnog okvira prema vrijednostima odabranih stupaca. <code>dplyr</code> automatski reda podatke od najmanjih do najvećih, a želimo li da se podaci redaju od najvećih do najmanjih, u glagol treba dodati funkciju <code>desc()</code>. U slučaju kada se redaju kvalitativni podaci, oni se redaju abecednim redom od A do Z ili uz korištenje <code>desc()</code> od Z do A.</p>
+<p>Glagol <code>arrange()</code> sortira opažanja podatkovnog okvira prema vrijednostima odabranih stupaca. <code>dplyr</code> automatski reda podatke od najmanjih do najvećih, a želimo li da se podaci redaju od najvećih do najmanjih, u glagol treba dodati funkciju <code>desc()</code>. U slučaju kada se redaju kvalitativni podaci, oni se redaju abecednim redom od A do Z ili uz korištenje funkcije <code>desc()</code> od Z do A.</p>
 <p>Za razliku od drugih <code>dplyr</code> glagola, <code>arrange()</code> uglavnom ignorira grupiranje pa je potrebno eksplicitno spomenuti varijable koje se grupiraju ili koristiti <code>.by_group = TRUE</code> da bi se varijable grupirale po njima.</p>
 </div>
 </div>
@@ -555,10 +556,8 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-</section>
-<section id="promjena-kreiranje-i-brisanje-varijabli" class="level4" data-number="0.1.4">
-<h4 data-number="0.1.4" class="anchored" data-anchor-id="promjena-kreiranje-i-brisanje-varijabli"><span class="header-section-number">0.1.4</span> Promjena, kreiranje i brisanje varijabli</h4>
-<p>Posljednji segment transformacije podacima u užem smislu je rad na sadržaju varijabli podatkovnog okvira. Konkretnije, to uključuje mijenjanje sadržaja pojedinih varijabli i dodavanje nove varijable sa specifičnim sadržajem. Rad na pojedinim varijablama uglavnom se svodi na rad s numeričkim varijablama, a uključuje modificiranje brojčanih sadržaja jedna varijable (npr. promjene valute pojedine varijable) ili stvaranje novih varijabli na temelju drugih (npr. dodavanje specifičnih varijabli s različitim drugim varijablama).</p>
+<p><strong>Promjena, kreiranje i brisanje varijabli</strong></p>
+<p>Posljednji segment manipulacije podacima u užem smislu je rad na sadržaju varijabli podatkovnog okvira. Konkretnije, to uključuje mijenjanje sadržaja pojedinih varijabli i dodavanje nove varijable sa specifičnim sadržajem. Rad na pojedinim varijablama uglavnom se svodi na rad s numeričkim varijablama, a uključuje modificiranje brojčanih sadržaja jedna varijable (npr. promjene valute pojedine varijable) ili stvaranje novih varijabli na temelju drugih (npr. dodavanje specifičnih varijabli s različitim drugim varijablama).</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol mutate()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -577,7 +576,7 @@ background: #8B3A62;
 <li><p>kada želimo dodati novu varijablu ili</p></li>
 <li><p>kada želimo brisati stupce.</p></li>
 </ol>
-<p>Mutiranje se izvodi s obzirom na slučaj za koji koristimo glagol, no pravilo zajedničko za sva tri slučaja je da se u glagolu prvo navodi naziv varijable, znak jednakosti i pravilo za promjenu ili stvaranje nove varijable. R prema nazivu automatski prepoznaje je li potrebno ažurirati postojeću varijablu ako je ime jednako već postoječoj varijabli ili stvoriti novu ako je naziv varijable drugačiji od bilo koje postojeće varijable. S obzirom da se <code>mutate()</code> najčešće koristi s numeričkim podacima, pravila za modificiranje ili stvaranje nove varijable uglavnom se sastoje od matematičkih operacija ili drugim funkcijama koje formiraju varijablu od interesa. Ako želimo obrisati neku varijablu, onda iza znaka jednakosti koristimo <code>NULL</code>.</p>
+<p>Mutiranje se izvodi s obzirom na slučaj za koji koristimo glagol, no pravilo zajedničko za sva tri slučaja je da se u glagolu prvo navodi naziv varijable, znak jednakosti i pravilo za promjenu ili stvaranje nove varijable. R prema nazivu automatski prepoznaje je li potrebno ažurirati postojeću varijablu ako je ime jednako već postoječoj varijabli ili stvoriti novu ako je naziv varijable drugačiji od bilo koje postojeće varijable. S obzirom da se <code>mutate()</code> najčešće koristi s numeričkim podacima, pravila za modificiranje ili stvaranje nove varijable uglavnom se sastoje od matematičkih operacija ili drugih funkcija koje formiraju varijablu od interesa. Ako želimo obrisati neku varijablu, onda iza znaka jednakosti koristimo <code>NULL</code>.</p>
 </div>
 </div>
 </div>
@@ -684,11 +683,9 @@ background: #8B3A62;
 </div>
 </div>
 </section>
-</section>
-<section id="glagoli-za-objedinjavanje-podataka" class="level3" data-number="0.2">
-<h3 data-number="0.2" class="anchored" data-anchor-id="glagoli-za-objedinjavanje-podataka"><span class="header-section-number">0.2</span> Glagoli za objedinjavanje podataka</h3>
-<section id="brojanje-pojavljivanja" class="level4" data-number="0.2.1">
-<h4 data-number="0.2.1" class="anchored" data-anchor-id="brojanje-pojavljivanja"><span class="header-section-number">0.2.1</span> Brojanje pojavljivanja</h4>
+<section id="glagoli-za-objedinjavanje-podataka" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="glagoli-za-objedinjavanje-podataka"><span class="header-section-number">2</span> Glagoli za objedinjavanje podataka</h2>
+<p><strong>Brojanje pojavljivanja</strong></p>
 <p>Kvantifikacija učestalosti različitih kategorija ili kombinacija varijabli temeljna je za razumijevanje distribucije podataka. Zato brojanje omogućuje brzu identifikaciju najčešćih vrijednosti, analizu kategorijskih podataka i osnovnu deskriptivnu statistiku.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol count()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
@@ -721,8 +718,7 @@ background: #8B3A62;
 <p>Primjer korištenja glagola <code>count()</code> bio bi kada bismo htjeli prebrojiti broj legendarnih i nelegendarnih Pokemona iz svakog tipa pokemona prema varijabli “type_1”. Konačni ispis prikazat će svaki tip Pokemona u prvom stupcu i <code>TRUE</code> ili <code>FALSE</code> vrijednosti u drugom stupcu koji potvrđuje je li Pokemon ili nije legendarni. Posljednji stupac definira koliko je legendarnih ili nelegendarnih Pokemona toga tipa podataka.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje pokemona prema tipu 1 i legendarnosti</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(type_1, legendary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">count</span>(type_1, legendary)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 33 × 3
    type_1  legendary     n
@@ -743,9 +739,7 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-</section>
-<section id="sažimanje-podataka" class="level4" data-number="0.2.2">
-<h4 data-number="0.2.2" class="anchored" data-anchor-id="sažimanje-podataka"><span class="header-section-number">0.2.2</span> Sažimanje podataka</h4>
+<p><strong>Sažimanje podataka</strong></p>
 <p>Bitan segment manipulacije podacima je i iskazivanje agregiranih informacija o podacima. Time manipulacija podacima ulazi i u područje statističke analize podataka. Agregacija podataka u sažete statistike omogućuje izvlačenje ključnih uvida iz velikih količina podataka. Najvažnija grupirana operacija je sažetak koji, ako se koristi za izračun jedne sažete statistike, reducira podatkovni okvir na jedan red za svaku grupu. Takvo sažimanje transformira detaljne podatke u korisne mjere centralne tendencije, varijabilnosti i drugih statističkih karakteristika.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol summarise()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
@@ -805,9 +799,7 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-</section>
-<section id="grupiranje-podataka" class="level4" data-number="0.2.3">
-<h4 data-number="0.2.3" class="anchored" data-anchor-id="grupiranje-podataka"><span class="header-section-number">0.2.3</span> Grupiranje podataka</h4>
+<p><strong>Grupiranje podataka</strong></p>
 <p>Analiza podataka često zahtijeva usporedbu različitih skupina ili kategorija unutar skupa podataka. Zato je u brojnim slučajevima potrebno grupirati podatke u pojedine skupine s obzirom na određeno konkretno obilježje podataka i tek onda provoditi zasebne manipulacije, statističke obrade ili vizualizacije unutar odabranih grupa.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol group_by()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
@@ -983,11 +975,9 @@ background: #8B3A62;
 </div>
 </div>
 </section>
-</section>
-<section id="glagoli-za-mijenjanje-varijabli" class="level3" data-number="0.3">
-<h3 data-number="0.3" class="anchored" data-anchor-id="glagoli-za-mijenjanje-varijabli"><span class="header-section-number">0.3</span> Glagoli za mijenjanje varijabli</h3>
-<section id="preimenovanje-varijabli" class="level4" data-number="0.3.1">
-<h4 data-number="0.3.1" class="anchored" data-anchor-id="preimenovanje-varijabli"><span class="header-section-number">0.3.1</span> Preimenovanje varijabli</h4>
+<section id="glagoli-za-mijenjanje-varijabli" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="glagoli-za-mijenjanje-varijabli"><span class="header-section-number">3</span> Glagoli za mijenjanje varijabli</h2>
+<p><strong>Preimenovanje varijabli</strong></p>
 <p>Jasni i deskriptivni nazivi varijabli ključni su za razumljivost i održivost koda. Sirovi podaci često dolaze s nepraktičnim nazivima stupaca, kraticama ili nazivima koji nisu intuitivni za analizu. Zato preimenovanje omogućuje standardizaciju naziva, uklanjanje nejasnoća i poboljšanje čitljivosti podataka bez mijenjanja sadržaja ili strukture podatkovnog okvira.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol ungroup()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
@@ -1046,9 +1036,7 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-</section>
-<section id="premještanje-varijabli" class="level4" data-number="0.3.2">
-<h4 data-number="0.3.2" class="anchored" data-anchor-id="premještanje-varijabli"><span class="header-section-number">0.3.2</span> Premještanje varijabli</h4>
+<p><strong>Premještanje varijabli</strong></p>
 <p>Konačno, logičko organiziranje redoslijeda stupaca u podatkovnom okviru poboljšava preglednost i olakšava analizu podataka. Redoslijed varijabli može značajno utjecati na efikasnost rada s podacima, osobito kada se radi s velikim brojem stupaca. Premještanje omogućuje stvaranje logičke strukture podataka koja prati tok analize i grupira povezane informacije.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol relocate()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
@@ -1109,7 +1097,6 @@ background: #8B3A62;
 
 <!-- -->
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1578,7 +1565,7 @@ background: #8B3A62;
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Manipulacija podacima"</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> ""</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Ovo poglavlje uvodi temeljne postupke manipulacije podacima u programskom jeziku R, s naglaskom na rad s podatkovnim okvirima pomoću `tidyverse` ekosustava, osobito paketa `dplyr`. Prikazuje se kako se sirovi podaci sustavno pripremaju za analizu kroz filtriranje opažanja i varijabli, sortiranje podataka, promjenu i kreiranje novih varijabli te agregiranje i grupiranje podataka. Posebna se pažnja posvećuje logici rada s glagolima koji omogućuju čitljiv, dosljedan i reproducibilan analitički tok. Cilj poglavlja je razviti razumijevanje manipulacije podacima kao ključne faze između prikupljanja podataka i njihove statističke analize."</span></span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> "#8B3A62"</span></span>
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner-color:</span><span class="co"> "white"</span></span>
@@ -1593,379 +1580,374 @@ background: #8B3A62;
 <span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Aktiviranje paketa</span></span>
 <span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RKaggle)</span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hms)</span>
-<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Učitavanje podataka</span></span>
-<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>poke_raw <span class="ot">&lt;-</span> <span class="fu">get_dataset</span>(<span class="st">"abcsds/pokemon"</span>)</span>
-<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Prilagodba podatkovnog okvira</span></span>
-<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="ot">&lt;-</span> poke_raw <span class="sc">|&gt;</span></span>
-<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">`</span><span class="at">#</span><span class="st">`</span>,</span>
-<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">`</span><span class="at">Name</span><span class="st">`</span>,</span>
-<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="st">`</span><span class="at">Type 1</span><span class="st">`</span>,</span>
-<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_2 =</span> <span class="st">`</span><span class="at">Type 2</span><span class="st">`</span>,</span>
-<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
-<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack =</span> <span class="st">`</span><span class="at">Attack</span><span class="st">`</span>,</span>
-<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">defense =</span> <span class="st">`</span><span class="at">Defense</span><span class="st">`</span>,</span>
-<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_attack =</span> <span class="st">`</span><span class="at">Sp. Atk</span><span class="st">`</span>,</span>
-<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_defense =</span> <span class="st">`</span><span class="at">Sp. Def</span><span class="st">`</span>,</span>
-<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">speed =</span> <span class="st">`</span><span class="at">Speed</span><span class="st">`</span>,</span>
-<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="st">`</span><span class="at">Generation</span><span class="st">`</span>,</span>
-<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">legendary =</span> <span class="st">`</span><span class="at">Legendary</span><span class="st">`</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RKaggle)</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Učitavanje podataka</span></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>poke_raw <span class="ot">&lt;-</span> <span class="fu">get_dataset</span>(<span class="st">"abcsds/pokemon"</span>)</span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Prilagodba podatkovnog okvira</span></span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="ot">&lt;-</span> poke_raw <span class="sc">|&gt;</span></span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">`</span><span class="at">#</span><span class="st">`</span>,</span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">`</span><span class="at">Name</span><span class="st">`</span>,</span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="st">`</span><span class="at">Type 1</span><span class="st">`</span>,</span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_2 =</span> <span class="st">`</span><span class="at">Type 2</span><span class="st">`</span>,</span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack =</span> <span class="st">`</span><span class="at">Attack</span><span class="st">`</span>,</span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">defense =</span> <span class="st">`</span><span class="at">Defense</span><span class="st">`</span>,</span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_attack =</span> <span class="st">`</span><span class="at">Sp. Atk</span><span class="st">`</span>,</span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_defense =</span> <span class="st">`</span><span class="at">Sp. Def</span><span class="st">`</span>,</span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">speed =</span> <span class="st">`</span><span class="at">Speed</span><span class="st">`</span>,</span>
+<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="st">`</span><span class="at">Generation</span><span class="st">`</span>,</span>
+<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">legendary =</span> <span class="st">`</span><span class="at">Legendary</span><span class="st">`</span></span>
+<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>, <span class="st">`</span><span class="at">type_2</span><span class="st">`</span>, generation), as.character),</span>
+<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(legendary, as.logical),</span>
 <span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb36-53"><a href="#cb36-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>, <span class="st">`</span><span class="at">type_2</span><span class="st">`</span>, generation), as.character),</span>
-<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(legendary, as.logical),</span>
-<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb36-56"><a href="#cb36-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">str_to_lower</span>(.x))) <span class="sc">|&gt;</span></span>
-<span id="cb36-57"><a href="#cb36-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb36-58"><a href="#cb36-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_1</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>),</span>
-<span id="cb36-59"><a href="#cb36-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_2</span><span class="st">`</span>),</span>
-<span id="cb36-60"><a href="#cb36-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">generation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">generation</span><span class="st">`</span>)</span>
-<span id="cb36-61"><a href="#cb36-61" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-62"><a href="#cb36-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">str_to_lower</span>(.x))) <span class="sc">|&gt;</span></span>
+<span id="cb36-53"><a href="#cb36-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_1</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>),</span>
+<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_2</span><span class="st">`</span>),</span>
+<span id="cb36-56"><a href="#cb36-56" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">generation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">generation</span><span class="st">`</span>)</span>
+<span id="cb36-57"><a href="#cb36-57" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-58"><a href="#cb36-58" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-59"><a href="#cb36-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-60"><a href="#cb36-60" aria-hidden="true" tabindex="-1"></a>**Manipulacija podataka** (*data manipulation*) predstavlja skup operacija koje pomažu u rješavanju najčešćih izazova pri radu s podacima. Obuhvaća različite aktivnosti poput kreiranja novih varijabli ili sažetaka kako bi se odgovorilo na pitanja postavljena nad podacima, preimenovalo varijable ili promijenio redoslijed opažanja kako bi se podaci učinili lakšima za rad.</span>
+<span id="cb36-61"><a href="#cb36-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-62"><a href="#cb36-62" aria-hidden="true" tabindex="-1"></a>U kontekstu <span class="in">`dplyr`</span> paketa, manipulacija podataka provodi se kroz dosljedno organiziran skup glagola koji omogućavaju izvođenje specifičnih operacija nad podacima. Ove operacije uključuju rad s retcima i stupcima podatkovnog okvira kao i mogućnost rada s grupama podataka.</span>
 <span id="cb36-63"><a href="#cb36-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-64"><a href="#cb36-64" aria-hidden="true" tabindex="-1"></a>**Manipulacija podataka** (eng. *data manipulation*) predstavlja skup operacija koje pomažu u rješavanju najčešćih izazova pri radu s podacima. Obuhvaća različite aktivnosti poput kreiranja novih varijabli ili sažetaka kako bi se odgovorilo na pitanja postavljena nad podacima, preimenovalo varijable ili promijenilo redoslijed opažanja kako bi se podaci učinili lakšima za rad.</span>
+<span id="cb36-64"><a href="#cb36-64" aria-hidden="true" tabindex="-1"></a>Manipulacija zapravo predstavlja proces preoblikovanja sirovih podataka u oblik koji je prikladan za analizu što može uključivati filtriranje nepotrebnih podataka, sortiranje, izračunavanje novih varijabli, agregiranje vrijednosti po grupama, spajanje podataka iz različitih izvora i slične operacije.</span>
 <span id="cb36-65"><a href="#cb36-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-66"><a href="#cb36-66" aria-hidden="true" tabindex="-1"></a>U kontekstu <span class="in">`dplyr`</span> paketa, manipulacija podataka provodi se kroz dosljedno organiziran skup glagola koji omogućavaju izvođenje specifičnih operacija nad podacima. Ove operacije uključuju rad s retcima i stupcima podatkovnog okvira kao i mogućnost rada s grupama podataka.</span>
+<span id="cb36-66"><a href="#cb36-66" aria-hidden="true" tabindex="-1"></a>Glagoli <span class="in">`dplyr`</span> paketa mogu se podijeliti u nekoliko skupina s obzirom na ulogu glagola u transformaciji:</span>
 <span id="cb36-67"><a href="#cb36-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-68"><a href="#cb36-68" aria-hidden="true" tabindex="-1"></a>Manipulacija zapravo predstavlja proces preoblikovanja sirovih podataka u oblik koji je prikladan za analizu što može uključivati filtriranje nepotrebnih podataka, sortiranje, izračunavanje novih varijabli, agregiranje vrijednosti po grupama, spajanje podataka iz različitih izvora i slične operacije.</span>
+<span id="cb36-68"><a href="#cb36-68" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Glagoli za manipulaciju podataka u užem smislu:** <span class="in">`select()`</span>, <span class="in">`filter()`</span>, <span class="in">`arrange()`</span> i <span class="in">`mutate()`</span>;</span>
 <span id="cb36-69"><a href="#cb36-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-70"><a href="#cb36-70" aria-hidden="true" tabindex="-1"></a>Glagoli <span class="in">`dplyr`</span> paketa mogu se podijeliti u nekoliko skupina s obzirom na ulogu glagola u transformaciji podacima:</span>
+<span id="cb36-70"><a href="#cb36-70" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Glagoli za objedinjavanje podataka:** <span class="in">`count()`</span>, <span class="in">`summarize()`</span> i <span class="in">`group_by()`</span>/ <span class="in">`ungroup()`</span>;</span>
 <span id="cb36-71"><a href="#cb36-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-72"><a href="#cb36-72" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Glagoli za manipulaciju podataka u užem smislu:** <span class="in">`select()`</span>, <span class="in">`filter()`</span>, <span class="in">`arrange()`</span> i <span class="in">`mutate()`</span>;</span>
+<span id="cb36-72"><a href="#cb36-72" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Glagoli za mijenjanje varijabli:** <span class="in">`select()`</span>, <span class="in">`rename()`</span>, <span class="in">`mutate()`</span> i <span class="in">`relocate()`</span>.</span>
 <span id="cb36-73"><a href="#cb36-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-74"><a href="#cb36-74" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Glagoli za objedinjavanje podataka:** <span class="in">`count()`</span>, <span class="in">`summarize()`</span> i <span class="in">`group_by()`</span>/ <span class="in">`ungroup()`</span>;</span>
+<span id="cb36-74"><a href="#cb36-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## Manipulacija podacima u užem smislu</span></span>
 <span id="cb36-75"><a href="#cb36-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-76"><a href="#cb36-76" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Glagoli za mijenjanje varijabli:** <span class="in">`select()`</span>, <span class="in">`rename()`</span>, <span class="in">`mutate()`</span> i <span class="in">`relocate()`</span>.</span>
+<span id="cb36-76"><a href="#cb36-76" aria-hidden="true" tabindex="-1"></a>**Filtriranje specifičnih varijabli**</span>
 <span id="cb36-77"><a href="#cb36-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-78"><a href="#cb36-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Manipulacija podacima u užem smislu</span></span>
+<span id="cb36-78"><a href="#cb36-78" aria-hidden="true" tabindex="-1"></a>Jedan od ključnih koraka u manipulaciji podataka odnosi se na odabir određenih varijabli iz podataka. U različitim situacijama pojedine varijable podatkovnog okvira mogu biti nepotrebne i ometajuće. Takvo se filtriranje koristi kada želimo raditi isključivo s podskupom varijabli iz originalnog podatkovnog okvira zbog jednostavnije analize, smanjenja memorijske potrošnje ili boljeg pregleda.</span>
 <span id="cb36-79"><a href="#cb36-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-80"><a href="#cb36-80" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Filtriranje specifičnih varijabli</span></span>
-<span id="cb36-81"><a href="#cb36-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-82"><a href="#cb36-82" aria-hidden="true" tabindex="-1"></a>Jedan od ključnih koraka u manipulaciji podataka odnosi se na odabir određenih varijabli iz podataka. U različitim situacijama pojedine varijable podatkovnog okvira mogu biti nepotrebne i ometajuće, a podatkovni okviri mogu sadržavati brojne varijable od kojih nisu sve potrebne u svakoj analizi. Takvo se filtriranje koristi kada želimo raditi isključivo s podskupom varijabli iz originalnog podatkovnog okvira zbog jednostavnije analize, smanjenja memorijske potrošnje ili boljeg pregleda. Za filtriranje specifičnih varijabli podatkovnog okvira koristi se glagol <span class="in">`select()`</span>.</span>
-<span id="cb36-83"><a href="#cb36-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-84"><a href="#cb36-84" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol select()"}</span>
-<span id="cb36-85"><a href="#cb36-85" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`select()`</span> odabire određene varijable u podatkovnom okviru koristeći koncizan jezik koji olakšava pozivanje varijabli na temelju njihovog imena (npr. <span class="in">`name:type_1`</span> čime se odabiru svi stupci od "name" do "type_1") ili tipa (npr. <span class="in">`where(is.numeric)`</span> koji odabire odabire sve numeričke stupce).</span>
+<span id="cb36-80"><a href="#cb36-80" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol select()"}</span>
+<span id="cb36-81"><a href="#cb36-81" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`select()`</span> odabire određene varijable u podatkovnom okviru koristeći koncizan jezik koji olakšava pozivanje varijabli na temelju njihovog imena (npr. <span class="in">`name:type_1`</span> čime se odabiru svi stupci od "name" do "type_1") ili tipa (npr. <span class="in">`where(is.numeric)`</span> koji odabire odabire sve numeričke stupce).</span>
+<span id="cb36-82"><a href="#cb36-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-83"><a href="#cb36-83" aria-hidden="true" tabindex="-1"></a>Na glagol <span class="in">`select()`</span> mogu se nadovezivati druge funkcije:</span>
+<span id="cb36-84"><a href="#cb36-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-85"><a href="#cb36-85" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`contains()`</span> - ispisuje samo varijable koje sadrže određene znakove,</span>
 <span id="cb36-86"><a href="#cb36-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-87"><a href="#cb36-87" aria-hidden="true" tabindex="-1"></a>Na glagol <span class="in">`select()`</span> mogu se nadovezivati neki podglagoli:</span>
+<span id="cb36-87"><a href="#cb36-87" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`starts_with()`</span> - ispisuje samo varijable koje počinju nekom riječju,</span>
 <span id="cb36-88"><a href="#cb36-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-89"><a href="#cb36-89" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`contains()`</span> - ispisuje samo varijable koje sadrže određene znakove,</span>
+<span id="cb36-89"><a href="#cb36-89" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`ends_with()`</span> - ispisuje samo varijable koje završavaju nekom riječju,</span>
 <span id="cb36-90"><a href="#cb36-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-91"><a href="#cb36-91" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`starts_with()`</span> - ispisuje samo varijable koje počinju nekom riječju,</span>
+<span id="cb36-91"><a href="#cb36-91" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`last_col()`</span> - ispisuje samo zadnji stupac i</span>
 <span id="cb36-92"><a href="#cb36-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-93"><a href="#cb36-93" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`ends_with()`</span> - ispisuje samo varijable koje završavaju nekom riječju,</span>
+<span id="cb36-93"><a href="#cb36-93" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`matches()`</span> - odabire stupce koji imaju određeni uzorak.</span>
 <span id="cb36-94"><a href="#cb36-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-95"><a href="#cb36-95" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`last_col()`</span> - ispisuje samo zadnji stupac i</span>
-<span id="cb36-96"><a href="#cb36-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-97"><a href="#cb36-97" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`matches()`</span> - odabire stupce koji imaju određeni uzorak.</span>
-<span id="cb36-98"><a href="#cb36-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-99"><a href="#cb36-99" aria-hidden="true" tabindex="-1"></a>Koristan dodatak glagolu <span class="in">`select()`</span> je znak <span class="in">`-`</span> (minus) kojim se može izbrisati određena varijabla. U slučaju da želimo filtrirati ispis samo pojedinih varijabli, a ako je njihov broj veći, jednostavnije je samo izbrisati neku varijablu nego ju neimenovati unutar glagola.</span>
-<span id="cb36-100"><a href="#cb36-100" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-101"><a href="#cb36-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-102"><a href="#cb36-102" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-103"><a href="#cb36-103" aria-hidden="true" tabindex="-1"></a>Recimo da nam su nam u analizi potrebne samo varijable "name", "type_1", "type_2", "generation" i "legendary". Te varijable možemo filtrirati glagolom <span class="in">`select()`</span> na različite načine.</span>
-<span id="cb36-104"><a href="#cb36-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-105"><a href="#cb36-105" aria-hidden="true" tabindex="-1"></a>Prvi je način izrazom <span class="in">`name:type_2`</span> koji odabire sve stupce između varijable "name" i "type_2" uključivo. Uz to, za stupce "generation" i "legendary" potrebno je eksplicitno dodati naziv varijable.</span>
-<span id="cb36-106"><a href="#cb36-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-109"><a href="#cb36-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-110"><a href="#cb36-110" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih varijabli podatkovnog okvira</span></span>
-<span id="cb36-111"><a href="#cb36-111" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">select</span>(name<span class="sc">:</span>type_2, generation, legendary)</span>
-<span id="cb36-112"><a href="#cb36-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-113"><a href="#cb36-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-114"><a href="#cb36-114" aria-hidden="true" tabindex="-1"></a>U drugom slučaju, recimo da možemo varijablu "name" eksplicitno imenovati, varijable "type_1" i "type_2" odabrati funkcijom <span class="in">`starts_with()`</span> kojom se odabire ispis svih varijabli čiji naziv počinje s riječju "type", a funkcija <span class="in">`last_col()`</span> odabire posljednji stupac u podatkovnom okviru bez obzira na naziv te varijable.</span>
-<span id="cb36-115"><a href="#cb36-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-118"><a href="#cb36-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-119"><a href="#cb36-119" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih varijabli podatkovnog okvira</span></span>
-<span id="cb36-120"><a href="#cb36-120" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">select</span>(name, <span class="fu">starts_with</span>(<span class="st">"type"</span>), <span class="fu">last_col</span>())</span>
-<span id="cb36-121"><a href="#cb36-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-122"><a href="#cb36-122" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-95"><a href="#cb36-95" aria-hidden="true" tabindex="-1"></a>Koristan dodatak glagolu <span class="in">`select()`</span> je znak <span class="in">`-`</span> (minus) kojim se može izolirati određena varijabla. U slučaju da želimo filtrirati ispis samo pojedinih varijabli, a ako je njihov broj veći, jednostavnije je samo izbrisati neku varijablu nego ju neimenovati unutar glagola.</span>
+<span id="cb36-96"><a href="#cb36-96" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-97"><a href="#cb36-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-98"><a href="#cb36-98" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-99"><a href="#cb36-99" aria-hidden="true" tabindex="-1"></a>Recimo da nam su nam u analizi potrebne samo varijable "name", "type_1", "type_2", "generation" i "legendary". Te varijable možemo filtrirati glagolom <span class="in">`select()`</span> na različite načine.</span>
+<span id="cb36-100"><a href="#cb36-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-101"><a href="#cb36-101" aria-hidden="true" tabindex="-1"></a>Prvi je način izrazom <span class="in">`name:type_2`</span> koji odabire sve stupce između varijable "name" i "type_2" uključivo. Uz to, za stupce "generation" i "legendary" potrebno je eksplicitno dodati naziv varijable.</span>
+<span id="cb36-102"><a href="#cb36-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-105"><a href="#cb36-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-106"><a href="#cb36-106" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih varijabli podatkovnog okvira</span></span>
+<span id="cb36-107"><a href="#cb36-107" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">select</span>(name<span class="sc">:</span>type_2, generation, legendary)</span>
+<span id="cb36-108"><a href="#cb36-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-109"><a href="#cb36-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-110"><a href="#cb36-110" aria-hidden="true" tabindex="-1"></a>U drugom slučaju, recimo da možemo varijablu "name" eksplicitno imenovati, varijable "type_1" i "type_2" odabrati funkcijom <span class="in">`starts_with("type")`</span> kojom se odabire ispis svih varijabli čiji naziv počinje s riječju "type", a funkcija <span class="in">`last_col()`</span> odabire posljednji stupac u podatkovnom okviru bez obzira na naziv te varijable.</span>
+<span id="cb36-111"><a href="#cb36-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-114"><a href="#cb36-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-115"><a href="#cb36-115" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih varijabli podatkovnog okvira</span></span>
+<span id="cb36-116"><a href="#cb36-116" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">select</span>(name, <span class="fu">starts_with</span>(<span class="st">"type"</span>), <span class="fu">last_col</span>())</span>
+<span id="cb36-117"><a href="#cb36-117" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-118"><a href="#cb36-118" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-119"><a href="#cb36-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-120"><a href="#cb36-120" aria-hidden="true" tabindex="-1"></a>**Filtriranje specifičnih opažanja**</span>
+<span id="cb36-121"><a href="#cb36-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-122"><a href="#cb36-122" aria-hidden="true" tabindex="-1"></a>Analiza podataka često zahtijeva fokusiranje na određeni podniz opažanja koji zadovoljavaju specifične uvjete. Iduća manipulacija zato ima ulogu filtriranja pojedinih opažanja podatkovnog okvira na temelju određenih uvjeta. Ovaj pristup omogućuje usredotočavanje na relevantne podatke, uklanjanje outliera ili analizu određenih kategorija podataka. Filtriranje redova ključno je za ciljanu analizu specifičnih skupina ili uvjeta unutar većeg skupa podataka.</span>
 <span id="cb36-123"><a href="#cb36-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-124"><a href="#cb36-124" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Filtriranje specifičnih opažanja</span></span>
-<span id="cb36-125"><a href="#cb36-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-126"><a href="#cb36-126" aria-hidden="true" tabindex="-1"></a>Analiza podataka često zahtijeva fokusiranje na određeni podniz opažanja koji zadovoljavaju specifične uvjete. Iduća transformacija zato ima ulogu filtriranja pojedinih opažanja podatkovnog okvira na temelju određenih uvjeta. Ovaj pristup omogućuje usredotočavanje na relevantne podatke, uklanjanje outliera ili analizu određenih kategorija podataka. Filtriranje redova ključno je za ciljanu analizu specifičnih skupina ili uvjeta unutar većeg skupa podataka.</span>
+<span id="cb36-124"><a href="#cb36-124" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol filter()"}</span>
+<span id="cb36-125"><a href="#cb36-125" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`filter()`</span> koristi se za odabir opažanja podatkovnog okvira podataka zadržavajući redove koji zadovoljavaju postavljene uvjete. Prvi argument funkcije je podatkovni okvir, a sljedeći argumenti su logički uvjeti koji se evaluiraju na bilo kojim uključenim stupcima. Mogu se koristiti operatori: <span class="in">`&gt;`</span> (veće od), <span class="in">`&gt;=`</span> (veće ili jednako), <span class="in">`&lt;`</span> (manje od), <span class="in">`&lt;=`</span> (manje ili jednako), <span class="in">`==`</span> (jednako) i <span class="in">`!=`</span> (nije jednako). Također se mogu kombinirati uvjeti s <span class="in">`&amp;`</span> za označavanje "*i*" ili s `|` za označavanje "*ili*". Kako bi se zadržao, redak mora dati vrijednost <span class="in">`TRUE`</span> za sve postavljene uvjete.</span>
+<span id="cb36-126"><a href="#cb36-126" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb36-127"><a href="#cb36-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-128"><a href="#cb36-128" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol filter()"}</span>
-<span id="cb36-129"><a href="#cb36-129" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`filter()`</span> koristi se za odabir opažanja podatkovnog okvira podataka zadržavajući retke koji zadovoljavaju postavljene uvjete. Prvi argument funkcije je podatkovni okvir, a sljedeći argumenti su logički uvjeti koji se evaluiraju na bilo kojim uključenim stupcima. Mogu se koristiti operatori <span class="in">`&gt;`</span> (veće od), <span class="in">`&gt;=`</span> (veće ili jednako), <span class="in">`&lt;`</span> (manje od), <span class="in">`&lt;=`</span> (manje ili jednako), <span class="in">`==`</span> (jednako) i <span class="in">`!=`</span> (nije jednako). Također se mogu kombinirati uvjeti s <span class="in">`&amp;`</span> za označavanje "*i*" ili s `|` za označavanje "*ili*". Kako bi se zadržao, redak mora dati vrijednost <span class="in">`TRUE`</span> za sve postavljene uvjete.</span>
-<span id="cb36-130"><a href="#cb36-130" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-131"><a href="#cb36-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-132"><a href="#cb36-132" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-133"><a href="#cb36-133" aria-hidden="true" tabindex="-1"></a>Recimo da se želimo fokusirati samo na određeni dio populacije Pokemona. Pritom nas zanimaju samo legendarni Pokemoni prve generacije. Takve je Pokemone moguće odabrati glagolom <span class="in">`filter()`</span> u kojem su specifični kriteriji za odabir Pokemona formulirani logičkim operatorima.</span>
-<span id="cb36-134"><a href="#cb36-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-137"><a href="#cb36-137" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-138"><a href="#cb36-138" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih opažanja</span></span>
-<span id="cb36-139"><a href="#cb36-139" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">filter</span>(generation <span class="sc">==</span> <span class="dv">1</span>, legendary <span class="sc">!=</span> <span class="cn">FALSE</span>)</span>
-<span id="cb36-140"><a href="#cb36-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-141"><a href="#cb36-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-142"><a href="#cb36-142" aria-hidden="true" tabindex="-1"></a>Osim toga, mogu nas zanimati samo vatreni Pokemoni koji imaju više od 100 životnih bodova te samo pojedine varijable tih Pokemona. Za tu je potrebu moguće kombinirati dva glagola, <span class="in">`filter()`</span> za filtriranje opažanja i <span class="in">`select()`</span> za filtriranje varijabli kako bismo dobili podatkovni okvir u kojem se nalaze samo potrebni segmenti polaznog podatkovnog okvira.</span>
-<span id="cb36-143"><a href="#cb36-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-146"><a href="#cb36-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-147"><a href="#cb36-147" aria-hidden="true" tabindex="-1"></a><span class="co"># Kombinacija izdvajanja varijabli i opažanja</span></span>
-<span id="cb36-148"><a href="#cb36-148" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-149"><a href="#cb36-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(HP <span class="sc">&gt;=</span> <span class="dv">100</span>, type_1 <span class="sc">==</span> <span class="st">"water"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb36-150"><a href="#cb36-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, <span class="fu">starts_with</span>(<span class="st">"type"</span>), HP)</span>
-<span id="cb36-151"><a href="#cb36-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-152"><a href="#cb36-152" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-128"><a href="#cb36-128" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-129"><a href="#cb36-129" aria-hidden="true" tabindex="-1"></a>Recimo da se želimo fokusirati samo na određeni dio populacije Pokemona. Pritom nas zanimaju samo legendarni Pokemoni prve generacije. Takve je Pokemone moguće odabrati glagolom <span class="in">`filter()`</span> u kojem su specifični kriteriji za odabir Pokemona formulirani logičkim operatorima.</span>
+<span id="cb36-130"><a href="#cb36-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-133"><a href="#cb36-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-134"><a href="#cb36-134" aria-hidden="true" tabindex="-1"></a><span class="co"># Izdvajanje pojedinih opažanja</span></span>
+<span id="cb36-135"><a href="#cb36-135" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">filter</span>(generation <span class="sc">==</span> <span class="dv">1</span>, legendary <span class="sc">!=</span> <span class="cn">FALSE</span>)</span>
+<span id="cb36-136"><a href="#cb36-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-137"><a href="#cb36-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-138"><a href="#cb36-138" aria-hidden="true" tabindex="-1"></a>Osim toga, mogu nas zanimati samo vatreni Pokemoni koji imaju više od 100 životnih bodova te samo pojedine varijable tih Pokemona. Za to je potrebno kombinirati dva glagola, <span class="in">`filter()`</span> za filtriranje opažanja i <span class="in">`select()`</span> za filtriranje varijabli kako bismo dobili podatkovni okvir u kojem se nalaze samo potrebni segmenti polaznog podatkovnog okvira.</span>
+<span id="cb36-139"><a href="#cb36-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-142"><a href="#cb36-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-143"><a href="#cb36-143" aria-hidden="true" tabindex="-1"></a><span class="co"># Kombinacija izdvajanja varijabli i opažanja</span></span>
+<span id="cb36-144"><a href="#cb36-144" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-145"><a href="#cb36-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(HP <span class="sc">&gt;=</span> <span class="dv">100</span>, type_1 <span class="sc">==</span> <span class="st">"water"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-146"><a href="#cb36-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, <span class="fu">starts_with</span>(<span class="st">"type"</span>), HP)</span>
+<span id="cb36-147"><a href="#cb36-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-148"><a href="#cb36-148" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-149"><a href="#cb36-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-150"><a href="#cb36-150" aria-hidden="true" tabindex="-1"></a>**Sortitanje opažanja**</span>
+<span id="cb36-151"><a href="#cb36-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-152"><a href="#cb36-152" aria-hidden="true" tabindex="-1"></a>Sortiranje podatkovnog okvira s obzirom na neke karakteristike još je jedan od segmenata manipulacije podacima. U većini slučajeva koristi se u sortiranju numeričkih vrijednosti koje se redaju ili od najmanje do najveće ili od najveće do najmanje karakteristike. Osim toga, ono može uključivati i redanje podataka abecednim redom ako se radi o tekstualnim podacima.</span>
 <span id="cb36-153"><a href="#cb36-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-154"><a href="#cb36-154" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Sortitanje opažanja</span></span>
-<span id="cb36-155"><a href="#cb36-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-156"><a href="#cb36-156" aria-hidden="true" tabindex="-1"></a>Sortiranje podatkovnog okvira s obzirom na neke karakteristike još je jedan od segmenata manipulacije podacima. U većini slučajeva koristi se u sortiranju numeričkih vrijednosti koje se redaju ili od najmanje do najveće ili od najveće do najmanje karakteristike. Osim toga, ono može uključivati i redanje podataka abecednim redom ako se radi o opažanjima pisanima slovima.</span>
-<span id="cb36-157"><a href="#cb36-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-158"><a href="#cb36-158" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol arrange()"}</span>
-<span id="cb36-159"><a href="#cb36-159" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`arrange()`</span> sortira opažanja podatkovnog okvira prema vrijednostima odabranih stupaca. <span class="in">`dplyr`</span> automatski reda podatke od najmanjih do najvećih, a želimo li da se podaci redaju od najvećih do najmanjih, u glagol treba dodati funkciju <span class="in">`desc()`</span>. U slučaju kada se redaju kvalitativni podaci, oni se redaju abecednim redom od A do Z ili uz korištenje <span class="in">`desc()`</span> od Z do A.</span>
-<span id="cb36-160"><a href="#cb36-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-161"><a href="#cb36-161" aria-hidden="true" tabindex="-1"></a>Za razliku od drugih <span class="in">`dplyr`</span> glagola, <span class="in">`arrange()`</span> uglavnom ignorira grupiranje pa je potrebno eksplicitno spomenuti varijable koje se grupiraju ili koristiti <span class="in">`.by_group = TRUE`</span> da bi se varijable grupirale po njima.</span>
-<span id="cb36-162"><a href="#cb36-162" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-163"><a href="#cb36-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-164"><a href="#cb36-164" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-165"><a href="#cb36-165" aria-hidden="true" tabindex="-1"></a>Recimo da nas zanima top 10 vodenih pokemona prema ukupnom zbroj svih osnovnih statistika Pokemona. Za takvu manipulaciju koristimo nekoliko glagola. Prvi je <span class="in">`filter()`</span> kojim odabiremo samo vodene Pokemone iz podatkovnog okvira, a zatim koristimo <span class="in">`arrange()`</span> s funkcijom <span class="in">`desc()`</span> kako bismo filtrirane Pokemone poredali od onih koji imaju najveći ukupan zbroj statistika do onih s najmanjim. Konačno, možemo koristiti glagol <span class="in">`select()`</span> za odabir samo relevantnih varijabli.</span>
-<span id="cb36-166"><a href="#cb36-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-169"><a href="#cb36-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-170"><a href="#cb36-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtriranje vodenih pokemona i redanje ukupne statistike sposobnosti pokemona od najvećih do najnižih</span></span>
-<span id="cb36-171"><a href="#cb36-171" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-172"><a href="#cb36-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(type_1 <span class="sc">==</span> <span class="st">"water"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb36-173"><a href="#cb36-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total)) <span class="sc">|&gt;</span></span>
-<span id="cb36-174"><a href="#cb36-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, total)</span>
-<span id="cb36-175"><a href="#cb36-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-176"><a href="#cb36-176" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-154"><a href="#cb36-154" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol arrange()"}</span>
+<span id="cb36-155"><a href="#cb36-155" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`arrange()`</span> sortira opažanja podatkovnog okvira prema vrijednostima odabranih stupaca. <span class="in">`dplyr`</span> automatski reda podatke od najmanjih do najvećih, a želimo li da se podaci redaju od najvećih do najmanjih, u glagol treba dodati funkciju <span class="in">`desc()`</span>. U slučaju kada se redaju kvalitativni podaci, oni se redaju abecednim redom od A do Z ili uz korištenje funkcije <span class="in">`desc()`</span> od Z do A.</span>
+<span id="cb36-156"><a href="#cb36-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-157"><a href="#cb36-157" aria-hidden="true" tabindex="-1"></a>Za razliku od drugih <span class="in">`dplyr`</span> glagola, <span class="in">`arrange()`</span> uglavnom ignorira grupiranje pa je potrebno eksplicitno spomenuti varijable koje se grupiraju ili koristiti <span class="in">`.by_group = TRUE`</span> da bi se varijable grupirale po njima.</span>
+<span id="cb36-158"><a href="#cb36-158" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-159"><a href="#cb36-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-160"><a href="#cb36-160" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-161"><a href="#cb36-161" aria-hidden="true" tabindex="-1"></a>Recimo da nas zanima top 10 vodenih pokemona prema ukupnom zbroj svih osnovnih statistika Pokemona. Za takvu manipulaciju koristimo nekoliko glagola. Prvi je <span class="in">`filter()`</span> kojim odabiremo samo vodene Pokemone iz podatkovnog okvira, a zatim koristimo <span class="in">`arrange()`</span> s funkcijom <span class="in">`desc()`</span> kako bismo filtrirane Pokemone poredali od onih koji imaju najveći ukupan zbroj statistika do onih s najmanjim. Konačno, možemo koristiti glagol <span class="in">`select()`</span> za odabir samo relevantnih varijabli.</span>
+<span id="cb36-162"><a href="#cb36-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-165"><a href="#cb36-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-166"><a href="#cb36-166" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtriranje vodenih pokemona i redanje ukupne statistike sposobnosti pokemona od najvećih do najnižih</span></span>
+<span id="cb36-167"><a href="#cb36-167" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-168"><a href="#cb36-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(type_1 <span class="sc">==</span> <span class="st">"water"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-169"><a href="#cb36-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total)) <span class="sc">|&gt;</span></span>
+<span id="cb36-170"><a href="#cb36-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, total)</span>
+<span id="cb36-171"><a href="#cb36-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-172"><a href="#cb36-172" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-173"><a href="#cb36-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-174"><a href="#cb36-174" aria-hidden="true" tabindex="-1"></a>**Promjena, kreiranje i brisanje varijabli**</span>
+<span id="cb36-175"><a href="#cb36-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-176"><a href="#cb36-176" aria-hidden="true" tabindex="-1"></a>Posljednji segment manipulacije podacima u užem smislu je rad na sadržaju varijabli podatkovnog okvira. Konkretnije, to uključuje mijenjanje sadržaja pojedinih varijabli i dodavanje nove varijable sa specifičnim sadržajem. Rad na pojedinim varijablama uglavnom se svodi na rad s numeričkim varijablama, a uključuje modificiranje brojčanih sadržaja jedna varijable (npr. promjene valute pojedine varijable) ili stvaranje novih varijabli na temelju drugih (npr. dodavanje specifičnih varijabli s različitim drugim varijablama).</span>
 <span id="cb36-177"><a href="#cb36-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-178"><a href="#cb36-178" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Promjena, kreiranje i brisanje varijabli</span></span>
-<span id="cb36-179"><a href="#cb36-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-180"><a href="#cb36-180" aria-hidden="true" tabindex="-1"></a>Posljednji segment transformacije podacima u užem smislu je rad na sadržaju varijabli podatkovnog okvira. Konkretnije, to uključuje mijenjanje sadržaja pojedinih varijabli i dodavanje nove varijable sa specifičnim sadržajem. Rad na pojedinim varijablama uglavnom se svodi na rad s numeričkim varijablama, a uključuje modificiranje brojčanih sadržaja jedna varijable (npr. promjene valute pojedine varijable) ili stvaranje novih varijabli na temelju drugih (npr. dodavanje specifičnih varijabli s različitim drugim varijablama).</span>
-<span id="cb36-181"><a href="#cb36-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-182"><a href="#cb36-182" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol mutate()"}</span>
-<span id="cb36-183"><a href="#cb36-183" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`mutate()`</span> koristi se u tri slučaja:</span>
+<span id="cb36-178"><a href="#cb36-178" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol mutate()"}</span>
+<span id="cb36-179"><a href="#cb36-179" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`mutate()`</span> koristi se u tri slučaja:</span>
+<span id="cb36-180"><a href="#cb36-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-181"><a href="#cb36-181" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>kada želimo promijeniti jednu od varijabli u skupu varijabli,</span>
+<span id="cb36-182"><a href="#cb36-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-183"><a href="#cb36-183" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>kada želimo dodati novu varijablu ili</span>
 <span id="cb36-184"><a href="#cb36-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-185"><a href="#cb36-185" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>kada želimo promijeniti jednu od varijabli u skupu varijabli,</span>
+<span id="cb36-185"><a href="#cb36-185" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>kada želimo brisati stupce.</span>
 <span id="cb36-186"><a href="#cb36-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-187"><a href="#cb36-187" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>kada želimo dodati novu varijablu ili</span>
-<span id="cb36-188"><a href="#cb36-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-189"><a href="#cb36-189" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>kada želimo brisati stupce.</span>
-<span id="cb36-190"><a href="#cb36-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-191"><a href="#cb36-191" aria-hidden="true" tabindex="-1"></a>Mutiranje se izvodi s obzirom na slučaj za koji koristimo glagol, no pravilo zajedničko za sva tri slučaja je da se u glagolu prvo navodi naziv varijable, znak jednakosti i pravilo za promjenu ili stvaranje nove varijable. R prema nazivu automatski prepoznaje je li potrebno ažurirati postojeću varijablu ako je ime jednako već postoječoj varijabli ili stvoriti novu ako je naziv varijable drugačiji od bilo koje postojeće varijable. S obzirom da se <span class="in">`mutate()`</span> najčešće koristi s numeričkim podacima, pravila za modificiranje ili stvaranje nove varijable uglavnom se sastoje od matematičkih operacija ili drugim funkcijama koje formiraju varijablu od interesa. Ako želimo obrisati neku varijablu, onda iza znaka jednakosti koristimo <span class="in">`NULL`</span>.</span>
-<span id="cb36-192"><a href="#cb36-192" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-193"><a href="#cb36-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-194"><a href="#cb36-194" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-195"><a href="#cb36-195" aria-hidden="true" tabindex="-1"></a>Recimo da želimo ažurirati postojeću varijablu "generation" u podatkovnom okviru <span class="in">`pokemon_dataset`</span>. Konkretnije, umjesto da je generacija Pokemona izražena brojčanom vrijednošću, želimo da tekstualno piše kojoj generaciji Pokemona pripada svaki pojedini Pokemon. To možemo napraviti glagolom <span class="in">`mutate()`</span> u koju se umeće funkcija <span class="in">`case_when()`</span> kojom je moguće modificirati sadržaj varijable.</span>
-<span id="cb36-196"><a href="#cb36-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-199"><a href="#cb36-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-200"><a href="#cb36-200" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-201"><a href="#cb36-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb36-202"><a href="#cb36-202" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="fu">case_when</span>(</span>
-<span id="cb36-203"><a href="#cb36-203" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Prva generacija"</span>,</span>
-<span id="cb36-204"><a href="#cb36-204" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Druga generacija"</span>,</span>
-<span id="cb36-205"><a href="#cb36-205" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Treća generacija"</span>,</span>
-<span id="cb36-206"><a href="#cb36-206" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Četvrta generacija"</span>,</span>
-<span id="cb36-207"><a href="#cb36-207" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Peta generacija"</span>,</span>
-<span id="cb36-208"><a href="#cb36-208" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Šesta generacija"</span>,</span>
-<span id="cb36-209"><a href="#cb36-209" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="st">"Sedma generacija"</span>,</span>
-<span id="cb36-210"><a href="#cb36-210" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">"Osma generacija"</span>,</span>
-<span id="cb36-211"><a href="#cb36-211" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(generation)</span>
-<span id="cb36-212"><a href="#cb36-212" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb36-213"><a href="#cb36-213" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb36-214"><a href="#cb36-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, generation)</span>
-<span id="cb36-215"><a href="#cb36-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-216"><a href="#cb36-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-217"><a href="#cb36-217" aria-hidden="true" tabindex="-1"></a>U drugom slučaju podatkovnom okviru želimo dodati nove varijable. Prva je "total_stats" u kojoj će biti zbrojene sve statističke vrijednosti o Pokemonima u podatkovnom okviru. Takva se varijabla može kreirati jednostavnim zbrajanjem vrijednosti drugih varijabli. Druga varijabla koju želimo dodati je "attack_defense_ratio" u kojoj će biti naveden omjer između napadačke i obrambene vrijednosti. Posljednja varijabla koju možemo dodati je "hp_category" u kojem će biti navedena kategorija HP vrijednosti svakog Pokemona funkcijom <span class="in">`case_when()`</span> u koju se unose pravila kategoriziranja Pokemona s obzirom na HP vrijednosti.</span>
-<span id="cb36-218"><a href="#cb36-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-221"><a href="#cb36-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-222"><a href="#cb36-222" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-223"><a href="#cb36-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb36-224"><a href="#cb36-224" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Izračun ukupne statistike</span></span>
-<span id="cb36-225"><a href="#cb36-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_stats =</span> attack <span class="sc">+</span> defense <span class="sc">+</span> HP <span class="sc">+</span> speed <span class="sc">+</span> special_attack <span class="sc">+</span> special_defense,</span>
-<span id="cb36-226"><a href="#cb36-226" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Omjer napada i obrane</span></span>
-<span id="cb36-227"><a href="#cb36-227" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack_defense_ratio =</span> attack <span class="sc">/</span> defense,</span>
-<span id="cb36-228"><a href="#cb36-228" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Kategorija na temelju HP-a</span></span>
-<span id="cb36-229"><a href="#cb36-229" aria-hidden="true" tabindex="-1"></a>    <span class="at">hp_category =</span> <span class="fu">case_when</span>(</span>
-<span id="cb36-230"><a href="#cb36-230" aria-hidden="true" tabindex="-1"></a>      HP <span class="sc">&lt;</span> <span class="dv">50</span> <span class="sc">~</span> <span class="st">"Low HP"</span>,</span>
-<span id="cb36-231"><a href="#cb36-231" aria-hidden="true" tabindex="-1"></a>      HP <span class="sc">&lt;</span> <span class="dv">80</span> <span class="sc">~</span> <span class="st">"Medium HP"</span>,</span>
-<span id="cb36-232"><a href="#cb36-232" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"High HP"</span></span>
-<span id="cb36-233"><a href="#cb36-233" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb36-234"><a href="#cb36-234" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb36-235"><a href="#cb36-235" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, total_stats, attack_defense_ratio, hp_category)</span>
-<span id="cb36-236"><a href="#cb36-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-237"><a href="#cb36-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-238"><a href="#cb36-238" aria-hidden="true" tabindex="-1"></a>Konačno, u posljednjem slučaju želimo trajno izbrisati sve varijable osim "id", "name", "type_1" i "total". To se može postići funkcijom <span class="in">`across()`</span> i logičkim operatorima kojima se definiralo koje varijable želimo izbrisati.</span>
-<span id="cb36-239"><a href="#cb36-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-242"><a href="#cb36-242" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-243"><a href="#cb36-243" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(type_2 <span class="sc">|</span> HP<span class="sc">:</span>legendary, <span class="sc">~</span><span class="cn">NULL</span>))</span>
-<span id="cb36-244"><a href="#cb36-244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-245"><a href="#cb36-245" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-187"><a href="#cb36-187" aria-hidden="true" tabindex="-1"></a>Mutiranje se izvodi s obzirom na slučaj za koji koristimo glagol, no pravilo zajedničko za sva tri slučaja je da se u glagolu prvo navodi naziv varijable, znak jednakosti i pravilo za promjenu ili stvaranje nove varijable. R prema nazivu automatski prepoznaje je li potrebno ažurirati postojeću varijablu ako je ime jednako već postoječoj varijabli ili stvoriti novu ako je naziv varijable drugačiji od bilo koje postojeće varijable. S obzirom da se <span class="in">`mutate()`</span> najčešće koristi s numeričkim podacima, pravila za modificiranje ili stvaranje nove varijable uglavnom se sastoje od matematičkih operacija ili drugih funkcija koje formiraju varijablu od interesa. Ako želimo obrisati neku varijablu, onda iza znaka jednakosti koristimo <span class="in">`NULL`</span>.</span>
+<span id="cb36-188"><a href="#cb36-188" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-189"><a href="#cb36-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-190"><a href="#cb36-190" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-191"><a href="#cb36-191" aria-hidden="true" tabindex="-1"></a>Recimo da želimo ažurirati postojeću varijablu "generation" u podatkovnom okviru <span class="in">`pokemon_dataset`</span>. Konkretnije, umjesto da je generacija Pokemona izražena brojčanom vrijednošću, želimo da tekstualno piše kojoj generaciji Pokemona pripada svaki pojedini Pokemon. To možemo napraviti glagolom <span class="in">`mutate()`</span> u koju se umeće funkcija <span class="in">`case_when()`</span> kojom je moguće modificirati sadržaj varijable.</span>
+<span id="cb36-192"><a href="#cb36-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-195"><a href="#cb36-195" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-196"><a href="#cb36-196" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-197"><a href="#cb36-197" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb36-198"><a href="#cb36-198" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="fu">case_when</span>(</span>
+<span id="cb36-199"><a href="#cb36-199" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Prva generacija"</span>,</span>
+<span id="cb36-200"><a href="#cb36-200" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Druga generacija"</span>,</span>
+<span id="cb36-201"><a href="#cb36-201" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Treća generacija"</span>,</span>
+<span id="cb36-202"><a href="#cb36-202" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Četvrta generacija"</span>,</span>
+<span id="cb36-203"><a href="#cb36-203" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Peta generacija"</span>,</span>
+<span id="cb36-204"><a href="#cb36-204" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Šesta generacija"</span>,</span>
+<span id="cb36-205"><a href="#cb36-205" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="st">"Sedma generacija"</span>,</span>
+<span id="cb36-206"><a href="#cb36-206" aria-hidden="true" tabindex="-1"></a>      generation <span class="sc">==</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">"Osma generacija"</span>,</span>
+<span id="cb36-207"><a href="#cb36-207" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.character</span>(generation)</span>
+<span id="cb36-208"><a href="#cb36-208" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-209"><a href="#cb36-209" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb36-210"><a href="#cb36-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, generation)</span>
+<span id="cb36-211"><a href="#cb36-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-212"><a href="#cb36-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-213"><a href="#cb36-213" aria-hidden="true" tabindex="-1"></a>U drugom slučaju podatkovnom okviru želimo dodati nove varijable. Prva je "total_stats" u kojoj će biti zbrojene sve statističke vrijednosti o Pokemonima u podatkovnom okviru. Takva se varijabla može kreirati jednostavnim zbrajanjem vrijednosti drugih varijabli. Druga varijabla koju želimo dodati je "attack_defense_ratio" u kojoj će biti naveden omjer između napadačke i obrambene vrijednosti. Posljednja varijabla koju možemo dodati je "hp_category" u kojem će biti navedena kategorija HP vrijednosti svakog Pokemona funkcijom <span class="in">`case_when()`</span> u koju se unose pravila kategoriziranja Pokemona s obzirom na HP vrijednosti.</span>
+<span id="cb36-214"><a href="#cb36-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-217"><a href="#cb36-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-218"><a href="#cb36-218" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-219"><a href="#cb36-219" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb36-220"><a href="#cb36-220" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Izračun ukupne statistike</span></span>
+<span id="cb36-221"><a href="#cb36-221" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_stats =</span> attack <span class="sc">+</span> defense <span class="sc">+</span> HP <span class="sc">+</span> speed <span class="sc">+</span> special_attack <span class="sc">+</span> special_defense,</span>
+<span id="cb36-222"><a href="#cb36-222" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Omjer napada i obrane</span></span>
+<span id="cb36-223"><a href="#cb36-223" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack_defense_ratio =</span> attack <span class="sc">/</span> defense,</span>
+<span id="cb36-224"><a href="#cb36-224" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Kategorija na temelju HP-a</span></span>
+<span id="cb36-225"><a href="#cb36-225" aria-hidden="true" tabindex="-1"></a>    <span class="at">hp_category =</span> <span class="fu">case_when</span>(</span>
+<span id="cb36-226"><a href="#cb36-226" aria-hidden="true" tabindex="-1"></a>      HP <span class="sc">&lt;</span> <span class="dv">50</span> <span class="sc">~</span> <span class="st">"Low HP"</span>,</span>
+<span id="cb36-227"><a href="#cb36-227" aria-hidden="true" tabindex="-1"></a>      HP <span class="sc">&lt;</span> <span class="dv">80</span> <span class="sc">~</span> <span class="st">"Medium HP"</span>,</span>
+<span id="cb36-228"><a href="#cb36-228" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"High HP"</span></span>
+<span id="cb36-229"><a href="#cb36-229" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb36-230"><a href="#cb36-230" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb36-231"><a href="#cb36-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, total_stats, attack_defense_ratio, hp_category)</span>
+<span id="cb36-232"><a href="#cb36-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-233"><a href="#cb36-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-234"><a href="#cb36-234" aria-hidden="true" tabindex="-1"></a>Konačno, u posljednjem slučaju želimo trajno izbrisati sve varijable osim "id", "name", "type_1" i "total". To se može postići funkcijom <span class="in">`across()`</span> i logičkim operatorima kojima se definiralo koje varijable želimo izbrisati.</span>
+<span id="cb36-235"><a href="#cb36-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-238"><a href="#cb36-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-239"><a href="#cb36-239" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="fu">across</span>(type_2 <span class="sc">|</span> HP<span class="sc">:</span>legendary, <span class="sc">~</span><span class="cn">NULL</span>))</span>
+<span id="cb36-240"><a href="#cb36-240" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-241"><a href="#cb36-241" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-242"><a href="#cb36-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-243"><a href="#cb36-243" aria-hidden="true" tabindex="-1"></a><span class="fu">## Glagoli za objedinjavanje podataka</span></span>
+<span id="cb36-244"><a href="#cb36-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-245"><a href="#cb36-245" aria-hidden="true" tabindex="-1"></a>**Brojanje pojavljivanja**</span>
 <span id="cb36-246"><a href="#cb36-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-247"><a href="#cb36-247" aria-hidden="true" tabindex="-1"></a><span class="fu">### Glagoli za objedinjavanje podataka</span></span>
+<span id="cb36-247"><a href="#cb36-247" aria-hidden="true" tabindex="-1"></a>Kvantifikacija učestalosti različitih kategorija ili kombinacija varijabli temeljna je za razumijevanje distribucije podataka. Zato brojanje omogućuje brzu identifikaciju najčešćih vrijednosti, analizu kategorijskih podataka i osnovnu deskriptivnu statistiku.</span>
 <span id="cb36-248"><a href="#cb36-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-249"><a href="#cb36-249" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Brojanje pojavljivanja</span></span>
-<span id="cb36-250"><a href="#cb36-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-251"><a href="#cb36-251" aria-hidden="true" tabindex="-1"></a>Kvantifikacija učestalosti različitih kategorija ili kombinacija varijabli temeljna je za razumijevanje distribucije podataka. Zato brojanje omogućuje brzu identifikaciju najčešćih vrijednosti, analizu kategorijskih podataka i osnovnu deskriptivnu statistiku.</span>
+<span id="cb36-249"><a href="#cb36-249" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol count()"}</span>
+<span id="cb36-250"><a href="#cb36-250" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`count()`</span> broji ukupan broj opservacija koje zadovoljavaju određene uvjete ili su grupirani prema određenim vrijednostima. On pojednostavljuje izračunavanje učestalosti pojavljivanja različitih vrijednosti unutar jednog ili više stupaca. S argumentom <span class="in">`sort = TRUE`</span> mogu se poredati u silaznom redoslijed broja pojavljivanja.</span>
+<span id="cb36-251"><a href="#cb36-251" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb36-252"><a href="#cb36-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-253"><a href="#cb36-253" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol count()"}</span>
-<span id="cb36-254"><a href="#cb36-254" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`count()`</span> broji ukupan broj opservacija koje zadovoljavaju određene uvjete ili su grupirani prema određenim vrijednostima. On pojednostavljuje izračunavanje učestalosti pojavljivanja različitih vrijednosti unutar jednog ili više stupaca. S argumentom <span class="in">`sort = TRUE`</span> mogu se poredati u silaznom redoslijed broja pojavljivanja.</span>
-<span id="cb36-255"><a href="#cb36-255" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-256"><a href="#cb36-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-257"><a href="#cb36-257" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-258"><a href="#cb36-258" aria-hidden="true" tabindex="-1"></a>Primjer korištenja glagola <span class="in">`count()`</span> bio bi kada bismo htjeli prebrojiti broj legendarnih i nelegendarnih Pokemona iz svakog tipa pokemona prema varijabli "type_1". Konačni ispis prikazat će svaki tip Pokemona u prvom stupcu i <span class="in">`TRUE`</span> ili <span class="in">`FALSE`</span> vrijednosti u drugom stupcu koji potvrđuje je li Pokemon ili nije legendarni. Posljednji stupac definira koliko je legendarnih ili nelegendarnih Pokemona toga tipa podataka.</span>
-<span id="cb36-259"><a href="#cb36-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-262"><a href="#cb36-262" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-263"><a href="#cb36-263" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje pokemona prema tipu 1 i legendarnosti</span></span>
-<span id="cb36-264"><a href="#cb36-264" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-265"><a href="#cb36-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(type_1, legendary)</span>
-<span id="cb36-266"><a href="#cb36-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-267"><a href="#cb36-267" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-268"><a href="#cb36-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-269"><a href="#cb36-269" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Sažimanje podataka</span></span>
+<span id="cb36-253"><a href="#cb36-253" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-254"><a href="#cb36-254" aria-hidden="true" tabindex="-1"></a>Primjer korištenja glagola <span class="in">`count()`</span> bio bi kada bismo htjeli prebrojiti broj legendarnih i nelegendarnih Pokemona iz svakog tipa pokemona prema varijabli "type_1". Konačni ispis prikazat će svaki tip Pokemona u prvom stupcu i <span class="in">`TRUE`</span> ili <span class="in">`FALSE`</span> vrijednosti u drugom stupcu koji potvrđuje je li Pokemon ili nije legendarni. Posljednji stupac definira koliko je legendarnih ili nelegendarnih Pokemona toga tipa podataka.</span>
+<span id="cb36-255"><a href="#cb36-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-258"><a href="#cb36-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-259"><a href="#cb36-259" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje pokemona prema tipu 1 i legendarnosti</span></span>
+<span id="cb36-260"><a href="#cb36-260" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">count</span>(type_1, legendary)</span>
+<span id="cb36-261"><a href="#cb36-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-262"><a href="#cb36-262" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-263"><a href="#cb36-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-264"><a href="#cb36-264" aria-hidden="true" tabindex="-1"></a>**Sažimanje podataka**</span>
+<span id="cb36-265"><a href="#cb36-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-266"><a href="#cb36-266" aria-hidden="true" tabindex="-1"></a>Bitan segment manipulacije podacima je i iskazivanje agregiranih informacija o podacima. Time manipulacija podacima ulazi i u područje statističke analize podataka. Agregacija podataka u sažete statistike omogućuje izvlačenje ključnih uvida iz velikih količina podataka. Najvažnija grupirana operacija je sažetak koji, ako se koristi za izračun jedne sažete statistike, reducira podatkovni okvir na jedan red za svaku grupu. Takvo sažimanje transformira detaljne podatke u korisne mjere centralne tendencije, varijabilnosti i drugih statističkih karakteristika.</span>
+<span id="cb36-267"><a href="#cb36-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-268"><a href="#cb36-268" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol summarise()"}</span>
+<span id="cb36-269"><a href="#cb36-269" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`summarise()`</span> koristi se za sažimanje vrijednosti u jednu željenu kategoriju. Kada se koristi sam, glagol sažima podatkovni okvir u jedan red koji prikazuje jedan oblik sumiranja. Pritom su za taj glagol važne neke funkcije elementarnog R-a za sažimanje vrijednosti kao što su:</span>
 <span id="cb36-270"><a href="#cb36-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-271"><a href="#cb36-271" aria-hidden="true" tabindex="-1"></a>Bitan segment manipulacije podacima je i iskazivanje agregiranih informacija o podacima. Time manipulacija podacima ulazi i u područje statističke analize podataka. Agregacija podataka u sažete statistike omogućuje izvlačenje ključnih uvida iz velikih količina podataka. Najvažnija grupirana operacija je sažetak koji, ako se koristi za izračun jedne sažete statistike, reducira podatkovni okvir na jedan red za svaku grupu. Takvo sažimanje transformira detaljne podatke u korisne mjere centralne tendencije, varijabilnosti i drugih statističkih karakteristika.</span>
+<span id="cb36-271"><a href="#cb36-271" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`mean()`</span> - računa aritmetičku sredinu,</span>
 <span id="cb36-272"><a href="#cb36-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-273"><a href="#cb36-273" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol summarise()"}</span>
-<span id="cb36-274"><a href="#cb36-274" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`summarise()`</span> koristi se za sažimanje vrijednosti u jednu željenu kategoriju. Kada se koristi sam, glagol sažima podatkovni okvir u jedan red koji prikazuje jedan oblik sumiranja. Pritom su za taj glagol važne neke funkcije elementarnog R-a za sažimanje vrijednosti kao što su:</span>
-<span id="cb36-275"><a href="#cb36-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-276"><a href="#cb36-276" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`mean()`</span> - računa aritmetičku sredinu,</span>
-<span id="cb36-277"><a href="#cb36-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-278"><a href="#cb36-278" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`median()`</span> - računa medijalnu vrijednosti,</span>
-<span id="cb36-279"><a href="#cb36-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-280"><a href="#cb36-280" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`sum()`</span> - zbraja vrijednosti,</span>
-<span id="cb36-281"><a href="#cb36-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-282"><a href="#cb36-282" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`max()`</span> - izražava najveću vrijednost u nizu,</span>
-<span id="cb36-283"><a href="#cb36-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-284"><a href="#cb36-284" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`min()`</span> - izražava najmanju vrijednost u nizu i</span>
+<span id="cb36-273"><a href="#cb36-273" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`median()`</span> - računa medijalnu vrijednosti,</span>
+<span id="cb36-274"><a href="#cb36-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-275"><a href="#cb36-275" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`sum()`</span> - zbraja vrijednosti,</span>
+<span id="cb36-276"><a href="#cb36-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-277"><a href="#cb36-277" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`max()`</span> - izražava najveću vrijednost u nizu,</span>
+<span id="cb36-278"><a href="#cb36-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-279"><a href="#cb36-279" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`min()`</span> - izražava najmanju vrijednost u nizu i</span>
+<span id="cb36-280"><a href="#cb36-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-281"><a href="#cb36-281" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`n()`</span> - izražava veličinu grupe.</span>
+<span id="cb36-282"><a href="#cb36-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-283"><a href="#cb36-283" aria-hidden="true" tabindex="-1"></a>Glagol se koristi slično kao i <span class="in">`mutate`</span> pri čemu se ispred znaka jednakosti definira naziv sumirajuće varijable, a nakon znaka jednakosti funkcija sumiranja. Razlika je samo u ispisu - <span class="in">`mutate()`</span> primjenjuje modificirane vrijednosti na sva opažanja stvarajući u podatkovnom okviru izmjenjenu ili novu varijablu čime se svakom opažanju dodaje izmjenjena ili nova vrijednost, a <span class="in">`summarise()`</span> ispisuje samo jedno opažanje i to je ono sumirajuće.</span>
+<span id="cb36-284"><a href="#cb36-284" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb36-285"><a href="#cb36-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-286"><a href="#cb36-286" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span><span class="in">`n()`</span> - izražava veličinu grupe.</span>
-<span id="cb36-287"><a href="#cb36-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-288"><a href="#cb36-288" aria-hidden="true" tabindex="-1"></a>Glagol se koristi slično kao i <span class="in">`mutate`</span> pri čemu se ispred znaka jednakosti definira naziv sumirajuće varijable, a nakon znaka jednakosti funkcija sumiranja. Razlika je samo u ispisu - <span class="in">`mutate()`</span> primjenjuje modificirane vrijednosti na sva opažanja stvarajući u podatkovnom okviru izmjenjenu ili novu varijablu čime se svakom opažanju dodaje izmjenjena ili nova vrijednost, a <span class="in">`summarise()`</span> ispisuje samo jedno opažanje i to je ono sumirajuće.</span>
-<span id="cb36-289"><a href="#cb36-289" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-290"><a href="#cb36-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-291"><a href="#cb36-291" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-292"><a href="#cb36-292" aria-hidden="true" tabindex="-1"></a>Recimo da nas zanimaju vrijednosti deskriptivne statistike varijable "HP" za opažanja svih Pokemona <span class="in">`pokemon_dataset`</span> podatkovnog okvira.</span>
-<span id="cb36-293"><a href="#cb36-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-296"><a href="#cb36-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-297"><a href="#cb36-297" aria-hidden="true" tabindex="-1"></a><span class="co"># Izračun aritmetičke sredine i medinana HP-a pokemona, ispis najvećeg i najmanjeg HP-a te zbroj svih HP-ova pokemona</span></span>
-<span id="cb36-298"><a href="#cb36-298" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-299"><a href="#cb36-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb36-300"><a href="#cb36-300" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_HP =</span> <span class="fu">mean</span>(HP),</span>
-<span id="cb36-301"><a href="#cb36-301" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_HP =</span> <span class="fu">median</span>(HP),</span>
-<span id="cb36-302"><a href="#cb36-302" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_HP =</span> <span class="fu">max</span>(HP),</span>
-<span id="cb36-303"><a href="#cb36-303" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_HP =</span> <span class="fu">min</span>(HP),</span>
-<span id="cb36-304"><a href="#cb36-304" aria-hidden="true" tabindex="-1"></a>    <span class="at">sum_HP =</span> <span class="fu">sum</span>(HP)</span>
-<span id="cb36-305"><a href="#cb36-305" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-306"><a href="#cb36-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-307"><a href="#cb36-307" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-308"><a href="#cb36-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-309"><a href="#cb36-309" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Grupiranje podataka</span></span>
+<span id="cb36-286"><a href="#cb36-286" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-287"><a href="#cb36-287" aria-hidden="true" tabindex="-1"></a>Recimo da nas zanimaju vrijednosti deskriptivne statistike varijable "HP" za opažanja svih Pokemona <span class="in">`pokemon_dataset`</span> podatkovnog okvira.</span>
+<span id="cb36-288"><a href="#cb36-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-291"><a href="#cb36-291" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-292"><a href="#cb36-292" aria-hidden="true" tabindex="-1"></a><span class="co"># Izračun aritmetičke sredine i medinana HP-a pokemona, ispis najvećeg i najmanjeg HP-a te zbroj svih HP-ova pokemona</span></span>
+<span id="cb36-293"><a href="#cb36-293" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-294"><a href="#cb36-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb36-295"><a href="#cb36-295" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_HP =</span> <span class="fu">mean</span>(HP),</span>
+<span id="cb36-296"><a href="#cb36-296" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_HP =</span> <span class="fu">median</span>(HP),</span>
+<span id="cb36-297"><a href="#cb36-297" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_HP =</span> <span class="fu">max</span>(HP),</span>
+<span id="cb36-298"><a href="#cb36-298" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_HP =</span> <span class="fu">min</span>(HP),</span>
+<span id="cb36-299"><a href="#cb36-299" aria-hidden="true" tabindex="-1"></a>    <span class="at">sum_HP =</span> <span class="fu">sum</span>(HP)</span>
+<span id="cb36-300"><a href="#cb36-300" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-301"><a href="#cb36-301" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-302"><a href="#cb36-302" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-303"><a href="#cb36-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-304"><a href="#cb36-304" aria-hidden="true" tabindex="-1"></a>**Grupiranje podataka**</span>
+<span id="cb36-305"><a href="#cb36-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-306"><a href="#cb36-306" aria-hidden="true" tabindex="-1"></a>Analiza podataka često zahtijeva usporedbu različitih skupina ili kategorija unutar skupa podataka. Zato je u brojnim slučajevima potrebno grupirati podatke u pojedine skupine s obzirom na određeno konkretno obilježje podataka i tek onda provoditi zasebne manipulacije, statističke obrade ili vizualizacije unutar odabranih grupa.</span>
+<span id="cb36-307"><a href="#cb36-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-308"><a href="#cb36-308" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol group_by()"}</span>
+<span id="cb36-309"><a href="#cb36-309" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`group_by()`</span> pomiče opseg svake funkcije s operiranja na cijelom podatkovnom skupu na operiranje grupu po grupu. To znači da se sve naknadne operacije primjenjuju zasebno na svaku definiranu grupu umjesto na cijeli skup podataka odjednom. Kada se primijeni <span class="in">`group_by()`</span> na podatkovni okvir, ta funkcija dodaje metapodatke koji označavaju kako su redovi podijeljeni u određene grupe. Vizualno, podaci izgledaju isto, ali interno su organizirani tako da R zna da svaka sljedeća operacija treba biti izvršena odvojeno za svaku grupu.</span>
 <span id="cb36-310"><a href="#cb36-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-311"><a href="#cb36-311" aria-hidden="true" tabindex="-1"></a>Analiza podataka često zahtijeva usporedbu različitih skupina ili kategorija unutar skupa podataka. Zato je u brojnim slučajevima potrebno grupirati podatke u pojedine skupine s obzirom na određeno konkretno obilježje podataka i tek onda provoditi zasebne manipulacije, statističke obrade ili vizualizacije unutar odabranih grupa.</span>
-<span id="cb36-312"><a href="#cb36-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-313"><a href="#cb36-313" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol group_by()"}</span>
-<span id="cb36-314"><a href="#cb36-314" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`group_by()`</span> pomiče opseg svake funkcije s operiranja na cijelom podatkovnom skupu na operiranje grupu po grupu. To znači da se sve naknadne operacije primjenjuju zasebno na svaku definiranu grupu umjesto na cijeli skup podataka odjednom. Kada se primijeni <span class="in">`group_by()`</span> na podatkovni okvir, ta funkcija dodaje metapodatke koji označavaju kako su redovi podijeljeni u određene grupe. Vizualno, podaci izgledaju isto, ali interno su organizirani tako da R zna da svaka sljedeća operacija treba biti izvršena odvojeno za svaku grupu.</span>
-<span id="cb36-315"><a href="#cb36-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-316"><a href="#cb36-316" aria-hidden="true" tabindex="-1"></a>Ovaj pristup omogućuje provođenje istih analitičkih operacija na različitim podskupovima podataka simultano bez potrebe za ručnim iteriranjem kroz svaku grupu. Grupiranje omogućava primjenu drugih glagola ili funkcija na svaku grupu zasebno čime se olakšava složenije analize podataka, odnosno provođenje istih analiza na različitim podskupovima podataka simultano što je ključno za komparativnu analizu.</span>
-<span id="cb36-317"><a href="#cb36-317" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-318"><a href="#cb36-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-319"><a href="#cb36-319" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-320"><a href="#cb36-320" aria-hidden="true" tabindex="-1"></a>Kako bismo otkrili koliko Pokemona pripada pojedinom tipu podataka, odnosno prebrojali sve Pokemone koji pripadaju tipu 1, koristi se glagol <span class="in">`n()`</span> nakon što se Pokemoni grupiraju prema varijabli <span class="in">`type_1`</span> unutar glagola <span class="in">`group_by()`</span>.</span>
-<span id="cb36-321"><a href="#cb36-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-324"><a href="#cb36-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-325"><a href="#cb36-325" aria-hidden="true" tabindex="-1"></a><span class="co"># Izračun prosječnog HP-a prema tipu 1</span></span>
-<span id="cb36-326"><a href="#cb36-326" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-327"><a href="#cb36-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1) <span class="sc">|&gt;</span></span>
-<span id="cb36-328"><a href="#cb36-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">number_per_type_1 =</span> <span class="fu">n</span>())</span>
-<span id="cb36-329"><a href="#cb36-329" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-330"><a href="#cb36-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-331"><a href="#cb36-331" aria-hidden="true" tabindex="-1"></a>Osim toga, mogu nas zanimati prosječne napadačke i obrambene sposobnosti Pokemona s obzirom na tip pokemona i legendarnost. U tu svrhu, možemo grupirati podatkovni okvir prema dvije varijable, <span class="in">`type_1`</span> i <span class="in">`legendary`</span>, čime ćemo dobiti podatkovni skup s informacijama o prosječnim napadačkim i obrambenim vrijednostima svake skupine.</span>
-<span id="cb36-332"><a href="#cb36-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-335"><a href="#cb36-335" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-336"><a href="#cb36-336" aria-hidden="true" tabindex="-1"></a><span class="co"># Prikaz minimalnih i maksimalnih obrambenih bodova s obzirom na tip 1 i legendarnost pokemona</span></span>
-<span id="cb36-337"><a href="#cb36-337" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-338"><a href="#cb36-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1, legendary) <span class="sc">|&gt;</span></span>
-<span id="cb36-339"><a href="#cb36-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb36-340"><a href="#cb36-340" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_attack =</span> <span class="fu">mean</span>(attack),</span>
-<span id="cb36-341"><a href="#cb36-341" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_defense =</span> <span class="fu">mean</span>(defense)</span>
-<span id="cb36-342"><a href="#cb36-342" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-343"><a href="#cb36-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-344"><a href="#cb36-344" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-345"><a href="#cb36-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-346"><a href="#cb36-346" aria-hidden="true" tabindex="-1"></a>Nakon što se završi s operacijama na grupiranim podacima, može biti korisno ukloniti grupiranje kako bi se izbjegli neželjeni efekti u daljnjim operacijama. Drugim riječima, nakon što su podaci grupirani pomoću <span class="in">`group_by()`</span> glagola, sve sljedeće operacije automatski se primjenjuju na svaku grupu zasebno umjesto na cijeli skup podataka. Kada se sažme podatkovni okvir grupiran po više od jedne varijable, svaki sažetak "oguljuje" zadnju grupu. U nekim situacijama potrebno je eksplicitno ukloniti grupiranje kako bi se vratilo na rad s cijelim skupom podataka kao jednom cjelinom.</span>
-<span id="cb36-347"><a href="#cb36-347" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-348"><a href="#cb36-348" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol ungroup()"}</span>
-<span id="cb36-349"><a href="#cb36-349" aria-hidden="true" tabindex="-1"></a>Razgrupiranje podatkovnih okvira može se postići glagolom <span class="in">`ungroup()`</span>. Ovaj glagol omogućuje uklanjanje svih grupiranja iz podatkovnog okvira i vraća ga u negrupiran oblik gdje se sve operacije ponovno primjenjuju na cijeli skup podataka. Glagolom se zapravo postiže to da se prema sumiranim podacima glagolom <span class="in">`summarise()`</span> možemo ponašati kao prema pojedinim opažanjima (redovima) u podatkovnom okviru, a ne sumiranjima.</span>
-<span id="cb36-350"><a href="#cb36-350" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-351"><a href="#cb36-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-352"><a href="#cb36-352" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-353"><a href="#cb36-353" aria-hidden="true" tabindex="-1"></a>Recimo da nas nakon grupiranja podataka prema varijablama <span class="in">`type_1`</span> i <span class="in">`legendary`</span> i sumiranja grupa na temelju prosječne HP vrijednosti Pokemona zanimaju detaljnije karakteristike tih grupa. Kako bismo primijenili dodatne funkcije na sumirani grupni podatkovni okvir potrebno je razgrupirati ga glagolom <span class="in">`ungroup()`</span>. Time možemo vršiti dodatne manipulacije podatkovnog okvira, primjerice izdvojiti samo grupe koje imaju prosječnu HP vrijednost veću od 90 i poradati grupe po veličini ili pak grupirati već postojeće grupe prema novoj varijabli i ponovno izvršiti sumiranja.</span>
-<span id="cb36-354"><a href="#cb36-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-357"><a href="#cb36-357" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-358"><a href="#cb36-358" aria-hidden="true" tabindex="-1"></a><span class="co"># Grupiraj po primarnom tipu, izračunaj prosjeke, pa ukloni grupiranje</span></span>
-<span id="cb36-359"><a href="#cb36-359" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-360"><a href="#cb36-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1, legendary) <span class="sc">|&gt;</span></span>
-<span id="cb36-361"><a href="#cb36-361" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_HP =</span> <span class="fu">mean</span>(HP)) <span class="sc">|&gt;</span></span>
-<span id="cb36-362"><a href="#cb36-362" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb36-363"><a href="#cb36-363" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(mean_HP <span class="sc">&gt;=</span> <span class="dv">90</span>) <span class="sc">|&gt;</span></span>
-<span id="cb36-364"><a href="#cb36-364" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_HP))</span>
-<span id="cb36-365"><a href="#cb36-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-366"><a href="#cb36-366" aria-hidden="true" tabindex="-1"></a><span class="co"># Grupiraj po primarnom tipu, izračunaj prosjeke, pa ukloni grupiranje</span></span>
-<span id="cb36-367"><a href="#cb36-367" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-368"><a href="#cb36-368" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1, legendary) <span class="sc">|&gt;</span></span>
-<span id="cb36-369"><a href="#cb36-369" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_HP =</span> <span class="fu">mean</span>(HP)) <span class="sc">|&gt;</span></span>
-<span id="cb36-370"><a href="#cb36-370" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb36-371"><a href="#cb36-371" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(legendary) <span class="sc">|&gt;</span></span>
-<span id="cb36-372"><a href="#cb36-372" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_of_mean_HP =</span> <span class="fu">mean</span>(mean_HP)) <span class="sc">|&gt;</span></span>
-<span id="cb36-373"><a href="#cb36-373" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_of_mean_HP))</span>
-<span id="cb36-374"><a href="#cb36-374" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-375"><a href="#cb36-375" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-376"><a href="#cb36-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-377"><a href="#cb36-377" aria-hidden="true" tabindex="-1"></a><span class="fu">### Glagoli za mijenjanje varijabli</span></span>
-<span id="cb36-378"><a href="#cb36-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-379"><a href="#cb36-379" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Preimenovanje varijabli</span></span>
-<span id="cb36-380"><a href="#cb36-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-381"><a href="#cb36-381" aria-hidden="true" tabindex="-1"></a>Jasni i deskriptivni nazivi varijabli ključni su za razumljivost i održivost koda. Sirovi podaci često dolaze s nepraktičnim nazivima stupaca, kraticama ili nazivima koji nisu intuitivni za analizu. Zato preimenovanje omogućuje standardizaciju naziva, uklanjanje nejasnoća i poboljšanje čitljivosti podataka bez mijenjanja sadržaja ili strukture podatkovnog okvira.</span>
-<span id="cb36-382"><a href="#cb36-382" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-383"><a href="#cb36-383" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol ungroup()"}</span>
-<span id="cb36-384"><a href="#cb36-384" aria-hidden="true" tabindex="-1"></a>Za promjenu imena varijable koristi se glagol <span class="in">`rename()`</span> u kojem se imenuje novi naziv varijable i stari naziv odjeljen znakom <span class="in">`=`</span>. Prije znaka jednakosti pritom se piše novi naziv, a nakon znaka jednakosti stari naziv varijabli podatkovnog okvira. Ime varijable može se promijeniti i koristeći samo glagol <span class="in">`select()`</span>, no u tom se slučaju moraju navoditi sve varijable koje želimo imati u podatkovnom okviru, a ne samo preimenovane varijable.</span>
-<span id="cb36-385"><a href="#cb36-385" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-386"><a href="#cb36-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-387"><a href="#cb36-387" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-388"><a href="#cb36-388" aria-hidden="true" tabindex="-1"></a>Recimo da želimo kreirati podatkovni okvir u kojem će biti samo tri varijable kojima će nazivi biti zapisani velikim slovima. Najjednostavniji način za postizanje toga je koristiti glagol <span class="in">`rename()`</span> u koji se unose novi i stari nazivi varijabli koje želimo preimenovati.</span>
-<span id="cb36-389"><a href="#cb36-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-392"><a href="#cb36-392" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-393"><a href="#cb36-393" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-394"><a href="#cb36-394" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, type_1, type_2, legendary) <span class="sc">|&gt;</span></span>
-<span id="cb36-395"><a href="#cb36-395" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
-<span id="cb36-396"><a href="#cb36-396" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME =</span> name,</span>
-<span id="cb36-397"><a href="#cb36-397" aria-hidden="true" tabindex="-1"></a>    <span class="at">TYPE1 =</span> type_1,</span>
-<span id="cb36-398"><a href="#cb36-398" aria-hidden="true" tabindex="-1"></a>    <span class="at">TYPE2 =</span> type_2</span>
-<span id="cb36-399"><a href="#cb36-399" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb36-400"><a href="#cb36-400" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-401"><a href="#cb36-401" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-402"><a href="#cb36-402" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-403"><a href="#cb36-403" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Premještanje varijabli</span></span>
+<span id="cb36-311"><a href="#cb36-311" aria-hidden="true" tabindex="-1"></a>Ovaj pristup omogućuje provođenje istih analitičkih operacija na različitim podskupovima podataka simultano bez potrebe za ručnim iteriranjem kroz svaku grupu. Grupiranje omogućava primjenu drugih glagola ili funkcija na svaku grupu zasebno čime se olakšava složenije analize podataka, odnosno provođenje istih analiza na različitim podskupovima podataka simultano što je ključno za komparativnu analizu.</span>
+<span id="cb36-312"><a href="#cb36-312" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-313"><a href="#cb36-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-314"><a href="#cb36-314" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-315"><a href="#cb36-315" aria-hidden="true" tabindex="-1"></a>Kako bismo otkrili koliko Pokemona pripada pojedinom tipu podataka, odnosno prebrojali sve Pokemone koji pripadaju tipu 1, koristi se glagol <span class="in">`n()`</span> nakon što se Pokemoni grupiraju prema varijabli <span class="in">`type_1`</span> unutar glagola <span class="in">`group_by()`</span>.</span>
+<span id="cb36-316"><a href="#cb36-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-319"><a href="#cb36-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-320"><a href="#cb36-320" aria-hidden="true" tabindex="-1"></a><span class="co"># Izračun prosječnog HP-a prema tipu 1</span></span>
+<span id="cb36-321"><a href="#cb36-321" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-322"><a href="#cb36-322" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1) <span class="sc">|&gt;</span></span>
+<span id="cb36-323"><a href="#cb36-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">number_per_type_1 =</span> <span class="fu">n</span>())</span>
+<span id="cb36-324"><a href="#cb36-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-325"><a href="#cb36-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-326"><a href="#cb36-326" aria-hidden="true" tabindex="-1"></a>Osim toga, mogu nas zanimati prosječne napadačke i obrambene sposobnosti Pokemona s obzirom na tip pokemona i legendarnost. U tu svrhu, možemo grupirati podatkovni okvir prema dvije varijable, <span class="in">`type_1`</span> i <span class="in">`legendary`</span>, čime ćemo dobiti podatkovni skup s informacijama o prosječnim napadačkim i obrambenim vrijednostima svake skupine.</span>
+<span id="cb36-327"><a href="#cb36-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-330"><a href="#cb36-330" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-331"><a href="#cb36-331" aria-hidden="true" tabindex="-1"></a><span class="co"># Prikaz minimalnih i maksimalnih obrambenih bodova s obzirom na tip 1 i legendarnost pokemona</span></span>
+<span id="cb36-332"><a href="#cb36-332" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-333"><a href="#cb36-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1, legendary) <span class="sc">|&gt;</span></span>
+<span id="cb36-334"><a href="#cb36-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb36-335"><a href="#cb36-335" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_attack =</span> <span class="fu">mean</span>(attack),</span>
+<span id="cb36-336"><a href="#cb36-336" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_defense =</span> <span class="fu">mean</span>(defense)</span>
+<span id="cb36-337"><a href="#cb36-337" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-338"><a href="#cb36-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-339"><a href="#cb36-339" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-340"><a href="#cb36-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-341"><a href="#cb36-341" aria-hidden="true" tabindex="-1"></a>Nakon što se završi s operacijama na grupiranim podacima, može biti korisno ukloniti grupiranje kako bi se izbjegli neželjeni efekti u daljnjim operacijama. Drugim riječima, nakon što su podaci grupirani pomoću <span class="in">`group_by()`</span> glagola, sve sljedeće operacije automatski se primjenjuju na svaku grupu zasebno umjesto na cijeli skup podataka. Kada se sažme podatkovni okvir grupiran po više od jedne varijable, svaki sažetak "oguljuje" zadnju grupu. U nekim situacijama potrebno je eksplicitno ukloniti grupiranje kako bi se vratilo na rad s cijelim skupom podataka kao jednom cjelinom.</span>
+<span id="cb36-342"><a href="#cb36-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-343"><a href="#cb36-343" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol ungroup()"}</span>
+<span id="cb36-344"><a href="#cb36-344" aria-hidden="true" tabindex="-1"></a>Razgrupiranje podatkovnih okvira može se postići glagolom <span class="in">`ungroup()`</span>. Ovaj glagol omogućuje uklanjanje svih grupiranja iz podatkovnog okvira i vraća ga u negrupiran oblik gdje se sve operacije ponovno primjenjuju na cijeli skup podataka. Glagolom se zapravo postiže to da se prema sumiranim podacima glagolom <span class="in">`summarise()`</span> možemo ponašati kao prema pojedinim opažanjima (redovima) u podatkovnom okviru, a ne sumiranjima.</span>
+<span id="cb36-345"><a href="#cb36-345" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-346"><a href="#cb36-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-347"><a href="#cb36-347" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-348"><a href="#cb36-348" aria-hidden="true" tabindex="-1"></a>Recimo da nas nakon grupiranja podataka prema varijablama <span class="in">`type_1`</span> i <span class="in">`legendary`</span> i sumiranja grupa na temelju prosječne HP vrijednosti Pokemona zanimaju detaljnije karakteristike tih grupa. Kako bismo primijenili dodatne funkcije na sumirani grupni podatkovni okvir potrebno je razgrupirati ga glagolom <span class="in">`ungroup()`</span>. Time možemo vršiti dodatne manipulacije podatkovnog okvira, primjerice izdvojiti samo grupe koje imaju prosječnu HP vrijednost veću od 90 i poradati grupe po veličini ili pak grupirati već postojeće grupe prema novoj varijabli i ponovno izvršiti sumiranja.</span>
+<span id="cb36-349"><a href="#cb36-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-352"><a href="#cb36-352" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-353"><a href="#cb36-353" aria-hidden="true" tabindex="-1"></a><span class="co"># Grupiraj po primarnom tipu, izračunaj prosjeke, pa ukloni grupiranje</span></span>
+<span id="cb36-354"><a href="#cb36-354" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-355"><a href="#cb36-355" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1, legendary) <span class="sc">|&gt;</span></span>
+<span id="cb36-356"><a href="#cb36-356" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_HP =</span> <span class="fu">mean</span>(HP)) <span class="sc">|&gt;</span></span>
+<span id="cb36-357"><a href="#cb36-357" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb36-358"><a href="#cb36-358" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(mean_HP <span class="sc">&gt;=</span> <span class="dv">90</span>) <span class="sc">|&gt;</span></span>
+<span id="cb36-359"><a href="#cb36-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_HP))</span>
+<span id="cb36-360"><a href="#cb36-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-361"><a href="#cb36-361" aria-hidden="true" tabindex="-1"></a><span class="co"># Grupiraj po primarnom tipu, izračunaj prosjeke, pa ukloni grupiranje</span></span>
+<span id="cb36-362"><a href="#cb36-362" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-363"><a href="#cb36-363" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_1, legendary) <span class="sc">|&gt;</span></span>
+<span id="cb36-364"><a href="#cb36-364" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_HP =</span> <span class="fu">mean</span>(HP)) <span class="sc">|&gt;</span></span>
+<span id="cb36-365"><a href="#cb36-365" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb36-366"><a href="#cb36-366" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(legendary) <span class="sc">|&gt;</span></span>
+<span id="cb36-367"><a href="#cb36-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_of_mean_HP =</span> <span class="fu">mean</span>(mean_HP)) <span class="sc">|&gt;</span></span>
+<span id="cb36-368"><a href="#cb36-368" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(mean_of_mean_HP))</span>
+<span id="cb36-369"><a href="#cb36-369" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-370"><a href="#cb36-370" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-371"><a href="#cb36-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-372"><a href="#cb36-372" aria-hidden="true" tabindex="-1"></a><span class="fu">## Glagoli za mijenjanje varijabli</span></span>
+<span id="cb36-373"><a href="#cb36-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-374"><a href="#cb36-374" aria-hidden="true" tabindex="-1"></a>**Preimenovanje varijabli**</span>
+<span id="cb36-375"><a href="#cb36-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-376"><a href="#cb36-376" aria-hidden="true" tabindex="-1"></a>Jasni i deskriptivni nazivi varijabli ključni su za razumljivost i održivost koda. Sirovi podaci često dolaze s nepraktičnim nazivima stupaca, kraticama ili nazivima koji nisu intuitivni za analizu. Zato preimenovanje omogućuje standardizaciju naziva, uklanjanje nejasnoća i poboljšanje čitljivosti podataka bez mijenjanja sadržaja ili strukture podatkovnog okvira.</span>
+<span id="cb36-377"><a href="#cb36-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-378"><a href="#cb36-378" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol ungroup()"}</span>
+<span id="cb36-379"><a href="#cb36-379" aria-hidden="true" tabindex="-1"></a>Za promjenu imena varijable koristi se glagol <span class="in">`rename()`</span> u kojem se imenuje novi naziv varijable i stari naziv odjeljen znakom <span class="in">`=`</span>. Prije znaka jednakosti pritom se piše novi naziv, a nakon znaka jednakosti stari naziv varijabli podatkovnog okvira. Ime varijable može se promijeniti i koristeći samo glagol <span class="in">`select()`</span>, no u tom se slučaju moraju navoditi sve varijable koje želimo imati u podatkovnom okviru, a ne samo preimenovane varijable.</span>
+<span id="cb36-380"><a href="#cb36-380" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-381"><a href="#cb36-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-382"><a href="#cb36-382" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-383"><a href="#cb36-383" aria-hidden="true" tabindex="-1"></a>Recimo da želimo kreirati podatkovni okvir u kojem će biti samo tri varijable kojima će nazivi biti zapisani velikim slovima. Najjednostavniji način za postizanje toga je koristiti glagol <span class="in">`rename()`</span> u koji se unose novi i stari nazivi varijabli koje želimo preimenovati.</span>
+<span id="cb36-384"><a href="#cb36-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-387"><a href="#cb36-387" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-388"><a href="#cb36-388" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-389"><a href="#cb36-389" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, type_1, type_2, legendary) <span class="sc">|&gt;</span></span>
+<span id="cb36-390"><a href="#cb36-390" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb36-391"><a href="#cb36-391" aria-hidden="true" tabindex="-1"></a>    <span class="at">NAME =</span> name,</span>
+<span id="cb36-392"><a href="#cb36-392" aria-hidden="true" tabindex="-1"></a>    <span class="at">TYPE1 =</span> type_1,</span>
+<span id="cb36-393"><a href="#cb36-393" aria-hidden="true" tabindex="-1"></a>    <span class="at">TYPE2 =</span> type_2</span>
+<span id="cb36-394"><a href="#cb36-394" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-395"><a href="#cb36-395" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-396"><a href="#cb36-396" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-397"><a href="#cb36-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-398"><a href="#cb36-398" aria-hidden="true" tabindex="-1"></a>**Premještanje varijabli**</span>
+<span id="cb36-399"><a href="#cb36-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-400"><a href="#cb36-400" aria-hidden="true" tabindex="-1"></a>Konačno, logičko organiziranje redoslijeda stupaca u podatkovnom okviru poboljšava preglednost i olakšava analizu podataka. Redoslijed varijabli može značajno utjecati na efikasnost rada s podacima, osobito kada se radi s velikim brojem stupaca. Premještanje omogućuje stvaranje logičke strukture podataka koja prati tok analize i grupira povezane informacije.</span>
+<span id="cb36-401"><a href="#cb36-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-402"><a href="#cb36-402" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol relocate()"}</span>
+<span id="cb36-403"><a href="#cb36-403" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`relocate()`</span> koristi se za promjenu redoslijeda varijabli u nizu varijabli. <span class="in">`relocate()`</span> se koristi uz argumente <span class="in">`.before`</span> koji označava da se određena varijabla treba ispisati ispred neke druge i <span class="in">`.after`</span> koja označava da se određena varijabla treba ispisati iza neke druge.</span>
 <span id="cb36-404"><a href="#cb36-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-405"><a href="#cb36-405" aria-hidden="true" tabindex="-1"></a>Konačno, logičko organiziranje redoslijeda stupaca u podatkovnom okviru poboljšava preglednost i olakšava analizu podataka. Redoslijed varijabli može značajno utjecati na efikasnost rada s podacima, osobito kada se radi s velikim brojem stupaca. Premještanje omogućuje stvaranje logičke strukture podataka koja prati tok analize i grupira povezane informacije.</span>
-<span id="cb36-406"><a href="#cb36-406" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-407"><a href="#cb36-407" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon="false" collapse="true" title="Glagol relocate()"}</span>
-<span id="cb36-408"><a href="#cb36-408" aria-hidden="true" tabindex="-1"></a>Glagol <span class="in">`relocate()`</span> koristi se za promjenu redoslijeda varijabli u nizu varijabli. <span class="in">`relocate()`</span> se koristi uz argumente <span class="in">`.before`</span> koji označava da se određena varijabla treba ispisati ispred neke druge i <span class="in">`.after`</span> koja označava da se određena varijabla treba ispisati iza neke druge.</span>
-<span id="cb36-409"><a href="#cb36-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-410"><a href="#cb36-410" aria-hidden="true" tabindex="-1"></a>Redoslijed varijabli može se promijeniti i koristeći glagol <span class="in">`select()`</span>, no u tom se slučaju moraju navoditi sve varijable.</span>
-<span id="cb36-411"><a href="#cb36-411" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb36-412"><a href="#cb36-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-413"><a href="#cb36-413" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb36-414"><a href="#cb36-414" aria-hidden="true" tabindex="-1"></a>Recimo da se u daljnjoj analizi želimo usmjeriti samo na varijable "id", "name", "type_1" i "type_2", no želimo da im redoslijed bude slijedeći: 1. "type_2", 2. "name", 3. "type_1" i 4. "id".</span>
-<span id="cb36-415"><a href="#cb36-415" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-418"><a href="#cb36-418" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb36-419"><a href="#cb36-419" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb36-420"><a href="#cb36-420" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_1, type_2) <span class="sc">|&gt;</span></span>
-<span id="cb36-421"><a href="#cb36-421" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(id, <span class="at">.after =</span> type_1) <span class="sc">|&gt;</span></span>
-<span id="cb36-422"><a href="#cb36-422" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(type_2, <span class="at">.before =</span> name)</span>
-<span id="cb36-423"><a href="#cb36-423" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb36-424"><a href="#cb36-424" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-405"><a href="#cb36-405" aria-hidden="true" tabindex="-1"></a>Redoslijed varijabli može se promijeniti i koristeći glagol <span class="in">`select()`</span>, no u tom se slučaju moraju navoditi sve varijable.</span>
+<span id="cb36-406"><a href="#cb36-406" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb36-407"><a href="#cb36-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-408"><a href="#cb36-408" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb36-409"><a href="#cb36-409" aria-hidden="true" tabindex="-1"></a>Recimo da se u daljnjoj analizi želimo usmjeriti samo na varijable "id", "name", "type_1" i "type_2", no želimo da im redoslijed bude slijedeći: 1. "type_2", 2. "name", 3. "type_1" i 4. "id".</span>
+<span id="cb36-410"><a href="#cb36-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-413"><a href="#cb36-413" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb36-414"><a href="#cb36-414" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb36-415"><a href="#cb36-415" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_1, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb36-416"><a href="#cb36-416" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(id, <span class="at">.after =</span> type_1) <span class="sc">|&gt;</span></span>
+<span id="cb36-417"><a href="#cb36-417" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(type_2, <span class="at">.before =</span> name)</span>
+<span id="cb36-418"><a href="#cb36-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb36-419"><a href="#cb36-419" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

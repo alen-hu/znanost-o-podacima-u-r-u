@@ -1,6 +1,6 @@
 ---
 title: "Manipulacija podacima"
-description: ""
+description: "Ovo poglavlje uvodi temeljne postupke manipulacije podacima u programskom jeziku R, s naglaskom na rad s podatkovnim okvirima pomoću `tidyverse` ekosustava, osobito paketa `dplyr`. Prikazuje se kako se sirovi podaci sustavno pripremaju za analizu kroz filtriranje opažanja i varijabli, sortiranje podataka, promjenu i kreiranje novih varijabli te agregiranje i grupiranje podataka. Posebna se pažnja posvećuje logici rada s glagolima koji omogućuju čitljiv, dosljedan i reproducibilan analitički tok. Cilj poglavlja je razviti razumijevanje manipulacije podacima kao ključne faze između prikupljanja podataka i njihove statističke analize."
 number-sections: true
 title-block-banner: "#8B3A62"
 title-block-banner-color: "white"
@@ -15,11 +15,7 @@ crossref:
 
 # Aktiviranje paketa
 library(tidyverse)
-library(stringr)
 library(RKaggle)
-library(forcats)
-library(lubridate)
-library(hms)
 ```
 
 ```{r}
@@ -57,30 +53,30 @@ pokemon_dataset <- poke_raw |>
   )
 ```
 
-**Manipulacija podataka** (eng. *data manipulation*) predstavlja skup operacija koje pomažu u rješavanju najčešćih izazova pri radu s podacima. Obuhvaća različite aktivnosti poput kreiranja novih varijabli ili sažetaka kako bi se odgovorilo na pitanja postavljena nad podacima, preimenovalo varijable ili promijenilo redoslijed opažanja kako bi se podaci učinili lakšima za rad.
+**Manipulacija podataka** (*data manipulation*) predstavlja skup operacija koje pomažu u rješavanju najčešćih izazova pri radu s podacima. Obuhvaća različite aktivnosti poput kreiranja novih varijabli ili sažetaka kako bi se odgovorilo na pitanja postavljena nad podacima, preimenovalo varijable ili promijenio redoslijed opažanja kako bi se podaci učinili lakšima za rad.
 
 U kontekstu `dplyr` paketa, manipulacija podataka provodi se kroz dosljedno organiziran skup glagola koji omogućavaju izvođenje specifičnih operacija nad podacima. Ove operacije uključuju rad s retcima i stupcima podatkovnog okvira kao i mogućnost rada s grupama podataka.
 
 Manipulacija zapravo predstavlja proces preoblikovanja sirovih podataka u oblik koji je prikladan za analizu što može uključivati filtriranje nepotrebnih podataka, sortiranje, izračunavanje novih varijabli, agregiranje vrijednosti po grupama, spajanje podataka iz različitih izvora i slične operacije.
 
-Glagoli `dplyr` paketa mogu se podijeliti u nekoliko skupina s obzirom na ulogu glagola u transformaciji podacima:
+Glagoli `dplyr` paketa mogu se podijeliti u nekoliko skupina s obzirom na ulogu glagola u transformaciji:
 
--   **Glagoli za manipulaciju podataka u užem smislu:** `select()`, `filter()`, `arrange()` i `mutate()`;
+1. **Glagoli za manipulaciju podataka u užem smislu:** `select()`, `filter()`, `arrange()` i `mutate()`;
 
--   **Glagoli za objedinjavanje podataka:** `count()`, `summarize()` i `group_by()`/ `ungroup()`;
+2. **Glagoli za objedinjavanje podataka:** `count()`, `summarize()` i `group_by()`/ `ungroup()`;
 
--   **Glagoli za mijenjanje varijabli:** `select()`, `rename()`, `mutate()` i `relocate()`.
+3. **Glagoli za mijenjanje varijabli:** `select()`, `rename()`, `mutate()` i `relocate()`.
 
-### Manipulacija podacima u užem smislu
+## Manipulacija podacima u užem smislu
 
-#### Filtriranje specifičnih varijabli
+**Filtriranje specifičnih varijabli**
 
-Jedan od ključnih koraka u manipulaciji podataka odnosi se na odabir određenih varijabli iz podataka. U različitim situacijama pojedine varijable podatkovnog okvira mogu biti nepotrebne i ometajuće, a podatkovni okviri mogu sadržavati brojne varijable od kojih nisu sve potrebne u svakoj analizi. Takvo se filtriranje koristi kada želimo raditi isključivo s podskupom varijabli iz originalnog podatkovnog okvira zbog jednostavnije analize, smanjenja memorijske potrošnje ili boljeg pregleda. Za filtriranje specifičnih varijabli podatkovnog okvira koristi se glagol `select()`.
+Jedan od ključnih koraka u manipulaciji podataka odnosi se na odabir određenih varijabli iz podataka. U različitim situacijama pojedine varijable podatkovnog okvira mogu biti nepotrebne i ometajuće. Takvo se filtriranje koristi kada želimo raditi isključivo s podskupom varijabli iz originalnog podatkovnog okvira zbog jednostavnije analize, smanjenja memorijske potrošnje ili boljeg pregleda.
 
 ::: {.callout-tip icon="false" collapse="true" title="Glagol select()"}
 Glagol `select()` odabire određene varijable u podatkovnom okviru koristeći koncizan jezik koji olakšava pozivanje varijabli na temelju njihovog imena (npr. `name:type_1` čime se odabiru svi stupci od "name" do "type_1") ili tipa (npr. `where(is.numeric)` koji odabire odabire sve numeričke stupce).
 
-Na glagol `select()` mogu se nadovezivati neki podglagoli:
+Na glagol `select()` mogu se nadovezivati druge funkcije:
 
 -   `contains()` - ispisuje samo varijable koje sadrže određene znakove,
 
@@ -92,7 +88,7 @@ Na glagol `select()` mogu se nadovezivati neki podglagoli:
 
 -   `matches()` - odabire stupce koji imaju određeni uzorak.
 
-Koristan dodatak glagolu `select()` je znak `-` (minus) kojim se može izbrisati određena varijabla. U slučaju da želimo filtrirati ispis samo pojedinih varijabli, a ako je njihov broj veći, jednostavnije je samo izbrisati neku varijablu nego ju neimenovati unutar glagola.
+Koristan dodatak glagolu `select()` je znak `-` (minus) kojim se može izolirati određena varijabla. U slučaju da želimo filtrirati ispis samo pojedinih varijabli, a ako je njihov broj veći, jednostavnije je samo izbrisati neku varijablu nego ju neimenovati unutar glagola.
 :::
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
@@ -105,7 +101,7 @@ Prvi je način izrazom `name:type_2` koji odabire sve stupce između varijable "
 pokemon_dataset |> select(name:type_2, generation, legendary)
 ```
 
-U drugom slučaju, recimo da možemo varijablu "name" eksplicitno imenovati, varijable "type_1" i "type_2" odabrati funkcijom `starts_with()` kojom se odabire ispis svih varijabli čiji naziv počinje s riječju "type", a funkcija `last_col()` odabire posljednji stupac u podatkovnom okviru bez obzira na naziv te varijable.
+U drugom slučaju, recimo da možemo varijablu "name" eksplicitno imenovati, varijable "type_1" i "type_2" odabrati funkcijom `starts_with("type")` kojom se odabire ispis svih varijabli čiji naziv počinje s riječju "type", a funkcija `last_col()` odabire posljednji stupac u podatkovnom okviru bez obzira na naziv te varijable.
 
 ```{r}
 # Izdvajanje pojedinih varijabli podatkovnog okvira
@@ -113,12 +109,12 @@ pokemon_dataset |> select(name, starts_with("type"), last_col())
 ```
 :::
 
-#### Filtriranje specifičnih opažanja
+**Filtriranje specifičnih opažanja**
 
-Analiza podataka često zahtijeva fokusiranje na određeni podniz opažanja koji zadovoljavaju specifične uvjete. Iduća transformacija zato ima ulogu filtriranja pojedinih opažanja podatkovnog okvira na temelju određenih uvjeta. Ovaj pristup omogućuje usredotočavanje na relevantne podatke, uklanjanje outliera ili analizu određenih kategorija podataka. Filtriranje redova ključno je za ciljanu analizu specifičnih skupina ili uvjeta unutar većeg skupa podataka.
+Analiza podataka često zahtijeva fokusiranje na određeni podniz opažanja koji zadovoljavaju specifične uvjete. Iduća manipulacija zato ima ulogu filtriranja pojedinih opažanja podatkovnog okvira na temelju određenih uvjeta. Ovaj pristup omogućuje usredotočavanje na relevantne podatke, uklanjanje outliera ili analizu određenih kategorija podataka. Filtriranje redova ključno je za ciljanu analizu specifičnih skupina ili uvjeta unutar većeg skupa podataka.
 
 ::: {.callout-tip icon="false" collapse="true" title="Glagol filter()"}
-Glagol `filter()` koristi se za odabir opažanja podatkovnog okvira podataka zadržavajući retke koji zadovoljavaju postavljene uvjete. Prvi argument funkcije je podatkovni okvir, a sljedeći argumenti su logički uvjeti koji se evaluiraju na bilo kojim uključenim stupcima. Mogu se koristiti operatori `>` (veće od), `>=` (veće ili jednako), `<` (manje od), `<=` (manje ili jednako), `==` (jednako) i `!=` (nije jednako). Također se mogu kombinirati uvjeti s `&` za označavanje "*i*" ili s `|` za označavanje "*ili*". Kako bi se zadržao, redak mora dati vrijednost `TRUE` za sve postavljene uvjete.
+Glagol `filter()` koristi se za odabir opažanja podatkovnog okvira podataka zadržavajući redove koji zadovoljavaju postavljene uvjete. Prvi argument funkcije je podatkovni okvir, a sljedeći argumenti su logički uvjeti koji se evaluiraju na bilo kojim uključenim stupcima. Mogu se koristiti operatori: `>` (veće od), `>=` (veće ili jednako), `<` (manje od), `<=` (manje ili jednako), `==` (jednako) i `!=` (nije jednako). Također se mogu kombinirati uvjeti s `&` za označavanje "*i*" ili s `|` za označavanje "*ili*". Kako bi se zadržao, redak mora dati vrijednost `TRUE` za sve postavljene uvjete.
 :::
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
@@ -129,7 +125,7 @@ Recimo da se želimo fokusirati samo na određeni dio populacije Pokemona. Prito
 pokemon_dataset |> filter(generation == 1, legendary != FALSE)
 ```
 
-Osim toga, mogu nas zanimati samo vatreni Pokemoni koji imaju više od 100 životnih bodova te samo pojedine varijable tih Pokemona. Za tu je potrebu moguće kombinirati dva glagola, `filter()` za filtriranje opažanja i `select()` za filtriranje varijabli kako bismo dobili podatkovni okvir u kojem se nalaze samo potrebni segmenti polaznog podatkovnog okvira.
+Osim toga, mogu nas zanimati samo vatreni Pokemoni koji imaju više od 100 životnih bodova te samo pojedine varijable tih Pokemona. Za to je potrebno kombinirati dva glagola, `filter()` za filtriranje opažanja i `select()` za filtriranje varijabli kako bismo dobili podatkovni okvir u kojem se nalaze samo potrebni segmenti polaznog podatkovnog okvira.
 
 ```{r}
 # Kombinacija izdvajanja varijabli i opažanja
@@ -139,12 +135,12 @@ pokemon_dataset |>
 ```
 :::
 
-#### Sortitanje opažanja
+**Sortitanje opažanja**
 
-Sortiranje podatkovnog okvira s obzirom na neke karakteristike još je jedan od segmenata manipulacije podacima. U većini slučajeva koristi se u sortiranju numeričkih vrijednosti koje se redaju ili od najmanje do najveće ili od najveće do najmanje karakteristike. Osim toga, ono može uključivati i redanje podataka abecednim redom ako se radi o opažanjima pisanima slovima.
+Sortiranje podatkovnog okvira s obzirom na neke karakteristike još je jedan od segmenata manipulacije podacima. U većini slučajeva koristi se u sortiranju numeričkih vrijednosti koje se redaju ili od najmanje do najveće ili od najveće do najmanje karakteristike. Osim toga, ono može uključivati i redanje podataka abecednim redom ako se radi o tekstualnim podacima.
 
 ::: {.callout-tip icon="false" collapse="true" title="Glagol arrange()"}
-Glagol `arrange()` sortira opažanja podatkovnog okvira prema vrijednostima odabranih stupaca. `dplyr` automatski reda podatke od najmanjih do najvećih, a želimo li da se podaci redaju od najvećih do najmanjih, u glagol treba dodati funkciju `desc()`. U slučaju kada se redaju kvalitativni podaci, oni se redaju abecednim redom od A do Z ili uz korištenje `desc()` od Z do A.
+Glagol `arrange()` sortira opažanja podatkovnog okvira prema vrijednostima odabranih stupaca. `dplyr` automatski reda podatke od najmanjih do najvećih, a želimo li da se podaci redaju od najvećih do najmanjih, u glagol treba dodati funkciju `desc()`. U slučaju kada se redaju kvalitativni podaci, oni se redaju abecednim redom od A do Z ili uz korištenje funkcije `desc()` od Z do A.
 
 Za razliku od drugih `dplyr` glagola, `arrange()` uglavnom ignorira grupiranje pa je potrebno eksplicitno spomenuti varijable koje se grupiraju ili koristiti `.by_group = TRUE` da bi se varijable grupirale po njima.
 :::
@@ -161,9 +157,9 @@ pokemon_dataset |>
 ```
 :::
 
-#### Promjena, kreiranje i brisanje varijabli
+**Promjena, kreiranje i brisanje varijabli**
 
-Posljednji segment transformacije podacima u užem smislu je rad na sadržaju varijabli podatkovnog okvira. Konkretnije, to uključuje mijenjanje sadržaja pojedinih varijabli i dodavanje nove varijable sa specifičnim sadržajem. Rad na pojedinim varijablama uglavnom se svodi na rad s numeričkim varijablama, a uključuje modificiranje brojčanih sadržaja jedna varijable (npr. promjene valute pojedine varijable) ili stvaranje novih varijabli na temelju drugih (npr. dodavanje specifičnih varijabli s različitim drugim varijablama).
+Posljednji segment manipulacije podacima u užem smislu je rad na sadržaju varijabli podatkovnog okvira. Konkretnije, to uključuje mijenjanje sadržaja pojedinih varijabli i dodavanje nove varijable sa specifičnim sadržajem. Rad na pojedinim varijablama uglavnom se svodi na rad s numeričkim varijablama, a uključuje modificiranje brojčanih sadržaja jedna varijable (npr. promjene valute pojedine varijable) ili stvaranje novih varijabli na temelju drugih (npr. dodavanje specifičnih varijabli s različitim drugim varijablama).
 
 ::: {.callout-tip icon="false" collapse="true" title="Glagol mutate()"}
 Glagol `mutate()` koristi se u tri slučaja:
@@ -174,7 +170,7 @@ Glagol `mutate()` koristi se u tri slučaja:
 
 3.  kada želimo brisati stupce.
 
-Mutiranje se izvodi s obzirom na slučaj za koji koristimo glagol, no pravilo zajedničko za sva tri slučaja je da se u glagolu prvo navodi naziv varijable, znak jednakosti i pravilo za promjenu ili stvaranje nove varijable. R prema nazivu automatski prepoznaje je li potrebno ažurirati postojeću varijablu ako je ime jednako već postoječoj varijabli ili stvoriti novu ako je naziv varijable drugačiji od bilo koje postojeće varijable. S obzirom da se `mutate()` najčešće koristi s numeričkim podacima, pravila za modificiranje ili stvaranje nove varijable uglavnom se sastoje od matematičkih operacija ili drugim funkcijama koje formiraju varijablu od interesa. Ako želimo obrisati neku varijablu, onda iza znaka jednakosti koristimo `NULL`.
+Mutiranje se izvodi s obzirom na slučaj za koji koristimo glagol, no pravilo zajedničko za sva tri slučaja je da se u glagolu prvo navodi naziv varijable, znak jednakosti i pravilo za promjenu ili stvaranje nove varijable. R prema nazivu automatski prepoznaje je li potrebno ažurirati postojeću varijablu ako je ime jednako već postoječoj varijabli ili stvoriti novu ako je naziv varijable drugačiji od bilo koje postojeće varijable. S obzirom da se `mutate()` najčešće koristi s numeričkim podacima, pravila za modificiranje ili stvaranje nove varijable uglavnom se sastoje od matematičkih operacija ili drugih funkcija koje formiraju varijablu od interesa. Ako želimo obrisati neku varijablu, onda iza znaka jednakosti koristimo `NULL`.
 :::
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
@@ -224,9 +220,9 @@ pokemon_dataset |> mutate(across(type_2 | HP:legendary, ~NULL))
 ```
 :::
 
-### Glagoli za objedinjavanje podataka
+## Glagoli za objedinjavanje podataka
 
-#### Brojanje pojavljivanja
+**Brojanje pojavljivanja**
 
 Kvantifikacija učestalosti različitih kategorija ili kombinacija varijabli temeljna je za razumijevanje distribucije podataka. Zato brojanje omogućuje brzu identifikaciju najčešćih vrijednosti, analizu kategorijskih podataka i osnovnu deskriptivnu statistiku.
 
@@ -239,12 +235,11 @@ Primjer korištenja glagola `count()` bio bi kada bismo htjeli prebrojiti broj l
 
 ```{r}
 # Brojanje pokemona prema tipu 1 i legendarnosti
-pokemon_dataset |>
-  count(type_1, legendary)
+pokemon_dataset |> count(type_1, legendary)
 ```
 :::
 
-#### Sažimanje podataka
+**Sažimanje podataka**
 
 Bitan segment manipulacije podacima je i iskazivanje agregiranih informacija o podacima. Time manipulacija podacima ulazi i u područje statističke analize podataka. Agregacija podataka u sažete statistike omogućuje izvlačenje ključnih uvida iz velikih količina podataka. Najvažnija grupirana operacija je sažetak koji, ako se koristi za izračun jedne sažete statistike, reducira podatkovni okvir na jedan red za svaku grupu. Takvo sažimanje transformira detaljne podatke u korisne mjere centralne tendencije, varijabilnosti i drugih statističkih karakteristika.
 
@@ -282,7 +277,7 @@ pokemon_dataset |>
 ```
 :::
 
-#### Grupiranje podataka
+**Grupiranje podataka**
 
 Analiza podataka često zahtijeva usporedbu različitih skupina ili kategorija unutar skupa podataka. Zato je u brojnim slučajevima potrebno grupirati podatke u pojedine skupine s obzirom na određeno konkretno obilježje podataka i tek onda provoditi zasebne manipulacije, statističke obrade ili vizualizacije unutar odabranih grupa.
 
@@ -344,9 +339,9 @@ pokemon_dataset |>
 ```
 :::
 
-### Glagoli za mijenjanje varijabli
+## Glagoli za mijenjanje varijabli
 
-#### Preimenovanje varijabli
+**Preimenovanje varijabli**
 
 Jasni i deskriptivni nazivi varijabli ključni su za razumljivost i održivost koda. Sirovi podaci često dolaze s nepraktičnim nazivima stupaca, kraticama ili nazivima koji nisu intuitivni za analizu. Zato preimenovanje omogućuje standardizaciju naziva, uklanjanje nejasnoća i poboljšanje čitljivosti podataka bez mijenjanja sadržaja ili strukture podatkovnog okvira.
 
@@ -368,7 +363,7 @@ pokemon_dataset |>
 ```
 :::
 
-#### Premještanje varijabli
+**Premještanje varijabli**
 
 Konačno, logičko organiziranje redoslijeda stupaca u podatkovnom okviru poboljšava preglednost i olakšava analizu podataka. Redoslijed varijabli može značajno utjecati na efikasnost rada s podacima, osobito kada se radi s velikim brojem stupaca. Premještanje omogućuje stvaranje logičke strukture podataka koja prati tok analize i grupira povezane informacije.
 

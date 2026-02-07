@@ -59,11 +59,11 @@ pokemon_dataset <- poke_raw |>
 
 Brojčani podaci predstavljaju temelj znanosti o podacima i statistike općenito. Numerički vektori čine okosnicu gotovo svih analiza podataka te su ključni za izgradnju prediktivnih modela i donošenje odluka temeljenih na podacima. Brojevi omogućuju kvantifikaciju stvarnosti, mjerenje promjena, usporedbu između različitih entiteta te otkrivanje skrivenih obrazaca u podacima.
 
-U kontekstu projekata analize podataka, brojčani podaci koriste se za mjerenje različitih varijabli od interesa, bilo da se radi o financijskim prihodima tvrtke, demografskim karakteristikama populacije ili performansnim metrikama modela strojnog učenja. Prema autorima knjige R for Data Science, numerički vektori su fundamentalni građevni blokovi analize podataka te se koriste u svim fazama projekta, od početnog istraživanja podataka do finalnog modeliranja. Ova svestranost numeričkih podataka čini ih nezamjenjivima u praktičnoj primjeni znanosti o podacima.
+U kontekstu analize podataka, brojčani podaci koriste se za mjerenje različitih varijabli od interesa, bilo da se radi o financijskim prihodima tvrtke, demografskim karakteristikama populacije ili performansnim metrikama modela strojnog učenja. U svim ovim slučajevima numerički vektori su fundamentalni građevni blokovi analize podataka te se koriste u svim fazama projekta, od početnog istraživanja podataka do finalnog modeliranja.
 
-Važnost brojeva u znanosti o podacima očituje se kroz nekoliko ključnih dimenzija. Prvo, brojevi omogućuju precizno mjerenje i kvantifikaciju fenomena od interesa. Umjesto kvalitativnih opisa poput "visoka cijena" ili "niska prodaja", numerički podaci omogućuju precizne vrijednosti koje se mogu uspoređivati, kombinirati i analizirati matematičkim metodama. Drugo, brojevi služ kao osnova za primjenu statističkih testova i procedura koje omogućuju donošenje zaključaka temeljenih na dokazima umjesto na intuiciji ili pretpostavkama. Treće, numerički podaci omogućuju primjenu algoritama strojnog učenja koji otkrivaju složene obrasce i relacije u podacima koje bi ljudska analiza teško mogla detektirati.
+Važnost brojeva očituje se kroz nekoliko ključnih dimenzija. Prvo, brojevi omogućuju precizno mjerenje i kvantifikaciju fenomena. Umjesto kvalitativnih opisa poput "visoka cijena" ili "niska prodaja", numerički podaci omogućuju precizne vrijednosti koje se mogu uspoređivati, kombinirati i analizirati matematičkim metodama. Drugo, brojevi služe kao osnova za primjenu statističkih testova i procedura koje omogućuju donošenje zaključaka temeljenih na dokazima umjesto na intuiciji ili pretpostavkama. Treće, numerički podaci omogućuju primjenu algoritama strojnog učenja koji otkrivaju složene obrasce i relacije u podacima koje bi ljudska analiza teško mogla detektirati.
 
-Kada govorimo o Pokemon datasetu koji ćemo koristiti za ilustraciju koncepata, varijable poput "HP", "attack", "defense" i "speed" predstavljaju numeričke vrijednosti koje opisuju različite karakteristike Pokemon stvorenja. Ove brojčane vrijednosti omogućuju nam provedbu raznovrsnih analiza, od jednostavnih deskriptivnih statistika (prosječna snaga napada po generaciji) do složenijih prediktivnih modela (predviđanje je li Pokemon legendarni na temelju njegovih statističkih atributa).
+Kada govorimo o Pokemon datasetu, varijable poput "HP", "attack", "defense" i "speed" predstavljaju numeričke vrijednosti koje opisuju različite karakteristike Pokemona. Ove brojčane vrijednosti omogućuju nam provedbu raznovrsnih analiza, od jednostavnih deskriptivnih statistika (prosječna snaga napada po generaciji) do složenijih prediktivnih modela (predviđanje je li Pokemon legendarni na temelju njegovih statističkih atributa).
 
 U većini slučajeva brojevi u R-u dolaze već spremni za analizu iz podatkovnih okvira koje učitavamo pomoću funkcija poput `read_csv()` iz paketa `readr`. Međutim, postoje situacije u kojima je potrebno stvoriti brojeve iz drugih vrsta podataka ili ih pretvoriti iz različitih formata.
 
@@ -71,48 +71,31 @@ Kada učitavamo podatke iz CSV datoteka, `readr` paket koristi heuristiku koja p
 
 Ponekad se dogodi da podaci koji bi trebali biti brojevi budu učitani kao znakovni nizovi ili karakteri. To se najčešće događa kada su brojevi u izvornoj datoteci formatirani na poseban način, primjerice kada sadrže zareze kao separatore tisućica, valutne simbole, postotke ili druge ne-numeričke znakove. U takvim situacijama R ne može automatski prepoznati brojčanu prirodu podataka i tretira ih kao tekst. Za pretvaranje takvih znakovnih nizova u brojeve koristi se funkcija `parse_number()` iz paketa `readr` koja je dizajnirana da izvuče brojčane vrijednosti ignorirajući sve ne-numeričke znakove koji okružuju broj.
 
-Primjer primjene `parse_number()` funkcije može se ilustrirati na hipotetskoj situaciji u kojoj bi podaci o težini Pokemona bili formatirani s dodatnim tekstom. Pretpostavimo da umjesto čistih brojčanih vrijednosti u varijabli weight_kg imamo zapise poput "12.5 kg" ili "weight: 89.3". U takvom slučaju bi `parse_number()` funkcija izvukla samo brojčane vrijednosti:
-
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Primjer primjene `parse_number()` funkcije može se ilustrirati na hipotetskoj situaciji u kojoj bi podaci o težini Pokemona bili formatirani s dodatnim tekstom. Pretpostavimo da umjesto čistih brojčanih vrijednosti u varijabli "weight_kg" imamo zapise poput "12.5 kg" ili "weight: 89.3". U takvom slučaju bi `parse_number()` funkcija izvukla samo brojčane vrijednosti.
+
 ```{r}
 # Primjer s formatiranim podacima o težini
 formatted_weight <- c("12.5 kg", "weight: 89.3", "45.7kg", "150.2 kilograms")
-numeric_weight <- parse_number(formatted_weight)
-numeric_weight
+parse_number(formatted_weight)
 ```
 :::
-
-Slično tome, ako bi podaci o snazi napada u pokemon_dataset okviru bili zapisani s postotnim oznakama ili bodovima, `parse_number()` bi mogla izdvojiti čiste brojčane vrijednosti. Na primjer, ako bi varijabla attack sadržavala vrijednosti poput "Attack: 49 pts" ili "55%", funkcija bi automatski pretvorila te zapise u brojeve 49 i 55.
 
 Važno je napomenuti da `parse_number()` radi tako što ignorira sve ne-numeričke znakove prije i poslije broja, ali zadržava decimalnu točku i negativni predznak ako postoje. Ova funkcija je posebno korisna pri čišćenju podataka koji dolaze iz različitih izvora gdje numerički podaci nisu standardizirano formatirani, što omogućava brzu i jednostavnu pretvorbu u format pogodan za daljnju analizu i vizualizaciju.
 
 Iznenađujuće je koliko se analize podataka može provesti samo pomoću brojanja i osnovnih aritmetičkih operacija, stoga paket `dplyr` nastoji učiniti brojanje što jednostavnijim putem funkcije `count()`. Ova funkcija predstavlja moćan alat za brzu eksploraciju podataka i provjeru tijekom analize, omogućujući istraživačima da brzo dobiju uvid u distribuciju vrijednosti unutar podatkovnog okvira.
 
-Funkcija `count()` broji koliko se puta svaka jedinstvena vrijednost pojavljuje u određenom stupcu podatkovnog okvira. Primjerice, ako želimo saznati koliko Pokémona pripada svakoj vrsti (type_1) u `pokemon_dataset` podatkovnom okviru, možemo jednostavno koristiti:
-
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
+Primjerice, ako želimo saznati koliko Pokémona pripada svakoj vrsti (type_1) u `pokemon_dataset` podatkovnom okviru, možemo jednostavno koristiti.
+
 ```{r}
-pokemon_dataset |> count(type_1)
+pokemon_dataset |> count(type_1, sort = FALSE)
 ```
+
+Ovaj kod vraća tibble koji prikazuje svaku jedinstvenu vrstu Pokémona zajedno s brojem Pokémona koji pripadaju toj vrsti. Takav pristup omogućuje brzu identifikaciju najčešćih i najrjeđih vrsta u skupu podataka. Ova naredba daje popis vrsta Pokémona poredanih od najčešćih prema najrjeđima. Ovo je osobito korisno kada radimo s podatkovnim okvirima koji sadrže mnogo jedinstvenih vrijednosti i želimo brzo identificirati dominantne kategorije. U slučaju pokemon_dataset podatkovnog okvira, takva analiza otkriva da su Pokémoni vodenog tipa (water) najčešći, dok su neki specijalizirani tipovi znatno rjeđi.
 :::
 
-Ovaj kod vraća tibble koji prikazuje svaku jedinstvenu vrstu Pokémona zajedno s brojem Pokémona koji pripadaju toj vrsti. Takav pristup omogućuje brzu identifikaciju najčešćih i najrjeđih vrsta u skupu podataka.
-
-Unatoč savjetu iz ranijih poglavlja o stilskom formatiranju koda, funkcija `count()` se često stavlja u jedan redak jer se obično koristi u konzoli za brzu provjeru da li izračun funkcionira prema očekivanjima. Ova fleksibilnost u formatiranju odražava pragmatičan pristup analizi podataka gdje je brzina istraživanja često važnija od stroge adherencije stilskim pravilima.
-
-Ako želimo vidjeti najčešće vrijednosti, možemo dodati argument `sort = TRUE` funkciji `count()`:
-
-::: {.callout-note icon="false" collapse="true" title="Primjer"}
-```{r}
-pokemon_dataset |> count(type_1, sort = TRUE)
-```
-:::
-
-Ova naredba daje popis vrsta Pokémona poredanih od najčešćih prema najrjeđima. Ovo je osobito korisno kada radimo s podatkovnim okvirima koji sadrže mnogo jedinstvenih vrijednosti i želimo brzo identificirati dominantne kategorije. U slučaju pokemon_dataset podatkovnog okvira, takva analiza otkriva da su Pokémoni vodenog tipa (water) najčešći, dok su neki specijalizirani tipovi znatno rjeđi.
-
-Važno je napomenuti da ako želimo vidjeti sve vrijednosti u rezultatu funkcije count(), možemo koristiti `|> View()` za otvaranje interaktivnog pregleda u RStudio-u ili `|> print(n = Inf)` za ispisivanje svih redaka u konzoli. Ovo je korisno kada radimo s varijablama koje imaju umjeren broj jedinstvenih vrijednosti i želimo dobiti potpun pregled distribucije.
-
-Istu računsku operaciju možemo postići "ručno" koristeći kombinaciju funkcija `group_by()`, `summarize()` i specijalne funkcije `n()`:
+Važno je napomenuti da ako želimo vidjeti sve vrijednosti u rezultatu funkcije count(), možemo koristiti `|> View()` za otvaranje interaktivnog pregleda u RStudio-u ili `|> print(n = Inf)` za ispisivanje svih redaka u konzoli. Ovo je korisno kada radimo s varijablama koje imaju umjeren broj jedinstvenih vrijednosti i želimo dobiti potpun pregled distribucije. Istu računsku operaciju možemo postići "ručno" koristeći kombinaciju funkcija `group_by()`, `summarize()` i specijalne funkcije `n()`:
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
 ```{r}
@@ -181,7 +164,7 @@ pokemon_dataset |>
 
 Ovaj pristup koristi činjenicu da is.na() vraća logičku vrijednost (`TRUE` ili `FALSE`), a `sum()` tretira `TRUE` kao 1 i `FALSE` kao 0, što rezultira brojem nedostajućih vrijednosti. U kontekstu `pokemon_dataset` podatkovnog okvira, analiza nedostajućih vrijednosti može otkriti probleme s kvalitetom podataka ili sistematske razlike između generacija u dostupnosti određenih informacija o Pokémonima.
 
-### Brojčane transformacije
+## Brojčane transformacije
 
 Funkcije transformacije dobro funkcioniraju s `mutate()` jer njihov rezultat ima istu duljinu kao ulazni podaci. Velika većina funkcija transformacije već je ugrađena u osnovni R. Nepraktično je navesti sve takve funkcije, stoga će ovo poglavlje prikazati najkorisnije od njih. Kao primjer, iako R pruža sve trigonometrijske funkcije koje biste mogli zamisliti, one ovdje nisu navedene jer se rijetko koriste u analizi podataka.
 
@@ -459,7 +442,7 @@ pokemon_dataset |>
 
 Ovaj primjer pokazuje kako se ukupna snaga akumulira kroz prve Pokémone, a kumulativni prosjek pruža uvid u prosječnu snagu do određenog Pokémona u redoslijedu.
 
-### Opće transformacije
+## Opće transformacije
 
 Sljedeći odjeljci opisuju neke opće transformacije koje se često koriste s numeričkim vektorima, ali se mogu primijeniti i na sve druge vrste stupaca podatkovnog okvira.
 
@@ -722,7 +705,7 @@ pokemon_dataset |>
 
 Ovaj primjer otkriva obrazac distribucije legendarnih Pokémona kroz Pokédex, pokazujući da se obično pojavljuju u skupinama na kraju svake generacije.
 
-### Sažimanje brojeva
+## Sažimanje brojeva
 
 Samo korištenje brojanja, prosjeka i suma koje smo već uveli može vas odvesti daleko u analizi podataka, ali R pruža mnoge druge korisne funkcije sažimanja. Ovdje je izbor funkcija koje možda smatrate korisnima u radu s numeričkim podacima
 

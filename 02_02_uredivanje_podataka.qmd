@@ -362,6 +362,7 @@ Funkcija `pivot_wider()` dio je `tidyr` paketa koja produžuje podatke smanjuju�
 
 Čest problem koji se susreće kod neuredno organiziranih podataka nastaje kada nazivi stupaca ne predstavljaju nazive varijabli, već vrijednosti neke varijable. Ovaj tip neuredno organiziranih podataka krši temeljna načela urednih podataka jer se vrijednosti jedne varijable nalaze u nazivima stupaca umjesto u jednom stupcu. Takav oblik podataka čini ih teškima za analizu jer funkcije u R-u očekuju da se vrijednosti varijabli nalaze u stupcima, a ne u njihovim nazivima.
 
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
 Primjer takvih neurednih podataka je podatkovni okvir `imdb_decades` u kojem su nazivi stupaca "1950s", "1960s", "1970s", "1980s", "1990s" i "2000s", a koji predstavljaju desetlječa. Varijabla "movie" sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno `NA` ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini premijere filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti.
 
 ```{r}
@@ -388,12 +389,13 @@ Nakon primjene funkcije, dobivamo uređeni podatkovni okvir koji sadrži tri stu
 # Pregled urednog oblika podatkovnog okvira
 imdb_decades_tidy
 ```
-
+:::
 
 **2. Više varijabli u nazivima stupaca**
 
 Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.
 
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
 Primjer takvih podataka je `realise_year_runtime_dataset`. Kod tih podataka nazivi stupaca poput "1994_142" i "1972_175" sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ili crno-bijeli s `NA` vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i boja) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.
 
 ```{r}
@@ -421,11 +423,13 @@ Nakon primjene funkcije dobivamo uredni podatkovni okvir koji sadrži pet stupac
 # Pregled urednog oblika podatkovnog okvira
 realise_year_runtime_dataset_tidy
 ```
+:::
 
 **3. Varijable pohranjene u redovima**
 
 Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva. U ovom obliku, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.
 
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
 U primjeru podatkovnog okvira `imdb_top_10_long`, svaki film predstavljen je kroz više redova, pri čemu stupac "attribute" sadrži nazive varijabli poput "release_year", "director", "genres", "runtime" i ostale, dok stupac "value" sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film "The Shawshank Redemption" prikazan je kroz deset redova, po jedan za svaku karakteristiku filma.
 
 ```{r}
@@ -450,11 +454,13 @@ Nakon primjene `pivot_wider()` funkcije, dobivamo uređeni podatkovni okvir koji
 # Pregled urednog oblika podatkovnog okvira
 head(imdb_top_10_wide, 3)
 ```
+:::
 
 **4. Isti tip vrijednosti raspoređen u više stupaca**
 
 Četvrti oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna varijabla biva podijeljena u više stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.
 
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
 `writers_dataset` je jedan takav podatkovni okvir. U njemu su informacije o scenaristima filmova podijeljene su u tri odvojena stupca: "writer_1", "writer_2" i "writer_3". Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju `NA` vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.
 
 ```{r}
@@ -482,19 +488,11 @@ Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri 
 # Pregled urednog oblika podatkovnog okvira
 writers_dataset_tidy
 ```
+:::
 
 **5. Više vrijednosti u jednoj ćeliji**
 
 Ovaj oblik neurednih podataka predstavlja pojednostavljenu verziju prethodnog problema gdje se u jednoj ćeliji nalaze vrijednosti koje pripadaju različitim varijablama, odvojene određenim separatorom. Problem nastaje kada se dvije logički različite varijable kombiniraju u jednu kolonu radi uštede prostora ili zbog ograničenja u sustavima za pohranu podataka. Ovakva organizacija krši temeljna načela urednih podataka jer svaka ćelija treba sadržavati vrijednost samo jedne varijable. Kombiniranje različitih tipova informacija u istoj ćeliji otežava sve oblike analize jer je potrebno najprije izdvojiti pojedinačne komponente prije bilo kakve obrade podataka.
-
-U primjeru `imdb_combined_variables`, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.
-
-```{r}
-# Pregled neurednog oblika podatkovnog okvira
-imdb_combined_variables
-```
-
-Problem se rješava pomoću funkcije `separate()` koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument `col = director_budget` za specificiranje stupca koji se želi podijeliti, `into = c("director", "budget")` za definiranje naziva novih stupaca koji će nastati dijeljenjem i `sep = "_"` za navođenje separatora koji razdvaja različite vrijednosti. Funkcija `separate()` automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.
 
 ::: {.callout-tip icon=false collapse="true" title="Funkcija: separate()"}
 `separate()` je ključna funkcija `tidyr` paketa koja se koristi kada imamo više varijabli spremljenih u jednoj ćeliji, a želimo ih razdvojiti u više stupaca. Funkcija može imati slijedeće argumente:
@@ -510,6 +508,16 @@ Problem se rješava pomoću funkcije `separate()` koja omogućuje dijeljenje jed
 | `extra` | Što napraviti ako se vrijednost razdvoji na više dijelova nego što smo naveli u `into`. Može biti: `warn` (zadano) koje izdaje upozorenje i spaja višak u zadnji stupac, `drop` koje odbacuje višak i `merge` koje spaja višak u zadnji stupac bez upozorenja. |
 | `fill` | Što napraviti ako se vrijednost razdvoji na manje dijelova nego što smo naveli u `into`. Može biti: `warn` (zadano) koje izdaje upozorenje, a prazna mjesta popunjava s `NA`, `right` kojim se praznine dodaju na kraj i `left` kojim se praznine dodaju na početak. |
 :::
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+U primjeru `imdb_combined_variables`, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+imdb_combined_variables
+```
+
+Problem se rješava pomoću funkcije `separate()` koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument `col = director_budget` za specificiranje stupca koji se želi podijeliti, `into = c("director", "budget")` za definiranje naziva novih stupaca koji će nastati dijeljenjem i `sep = "_"` za navođenje separatora koji razdvaja različite vrijednosti. Funkcija `separate()` automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.
 
 ```{r}
 # Uređivanje podatkovnog okvira
@@ -527,19 +535,11 @@ Nakon primjene `separate()` funkcije dobivamo uređeni podatkovni okvir koji sad
 # Pregled urednog oblika podatkovnog okvira
 imdb_combined_variables_tidy
 ```
+:::
 
 **6. Ista varijabla raspodijeljena u sva stupca**
 
 Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable.
-
-U primjeru `director_names_dataset` informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu.
-
-```{r}
-# Pregled neurednog oblika podatkovnog okvira
-director_names_dataset
-```
-
-Problem se rješava pomoću funkcije `unite()` omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument `col = "director_name"` za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti ("director_first_name", "director_last_name"), te argument `sep = " "` koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija `unite()` automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.
 
 ::: {.callout-tip icon=false collapse="true" title="Funkcija: unite()"}
 Funkcija `unite()` dio je `tidyr` paketa i koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od `separate()` funkcije. Funkcija može imati slijedeće argumente:
@@ -553,6 +553,16 @@ Funkcija `unite()` dio je `tidyr` paketa i koristi se za spajanje više stupaca 
 | `remove` | Logička vrijednost koja određuje treba li ukloniti originalne stupce iz rezultata. Zadana vrijednost je `TRUE` što znači da se originalni stupci brišu nakon spajanja. Ako postavite `FALSE`, zadržat ćete i originalne i novi spojeni stupac. |
 | `na.rm` | Logička vrijednost koja određuje treba li ukloniti nedostajuće vrijednosti (`NA`) prije spajanja. Ako je `TRUE`, `NA` vrijednosti se ignoriraju prilikom spajanja. Zadana vrijednost je `FALSE`. |
 :::
+
+::: {.callout-note icon="false" collapse="true" title="Primjer"}
+U primjeru `director_names_dataset` informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu.
+
+```{r}
+# Pregled neurednog oblika podatkovnog okvira
+director_names_dataset
+```
+
+Problem se rješava pomoću funkcije `unite()` omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument `col = "director_name"` za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti ("director_first_name", "director_last_name"), te argument `sep = " "` koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija `unite()` automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.
 
 ```{r}
 # Uređivanje podatkovnog okvira
@@ -571,3 +581,4 @@ Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri 
 # Pregled urednog oblika podatkovnog okvira
 director_names_dataset_tidy
 ```
+:::

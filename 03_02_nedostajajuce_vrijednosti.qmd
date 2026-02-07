@@ -1,6 +1,6 @@
 ---
 title: "Nedostajajuće vrijednosti"
-description: ""
+description: "Ovo poglavlje obrađuje problem nedostajućih vrijednosti u analizi podataka. Razlikuju se eksplicitne nedostajuće vrijednosti označene s `NA` i implicitne nedostajuće vrijednosti koje nastaju kada određena opažanja uopće nisu prisutna u podacima, kao i posebna vrijednost `NaN` koja se pojavljuje kao rezultat matematički nedefiniranih operacija. Nadalje se prikazuju osnovni alati u R-u za prepoznavanje i provjeru prisutnosti nedostajućih vrijednosti te se objašnjavaju najčešći načini rada s njima."
 number-sections: true
 title-block-banner: "#8B3A62"
 title-block-banner-color: "white"
@@ -59,7 +59,7 @@ pokemon_dataset <- poke_raw |>
 
 **Nedostajuće vrijednosti** (*missing values*) predstavljaju jedan od najčešćih izazova u radu sa stvarnim podacima. Prilikom rada s velikim i složenim skupovima podataka, nedostajuće vrijednosti se gotovo neizbježno pojavljuju tijekom procesa prikupljanja, čišćenja i obrade podataka.
 
-U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s `NA` oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti, s druge strane, nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.
+U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s `NA` oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.
 
 Nedostajuće vrijednosti mogu nastati iz različitih razloga. Najčešće se pojavljuju zbog praktičnih razloga tijekom unosa podataka kada osoba koja unosi podatke preskoči određena polja ili koristiti konvencije za označavanje nepoznatih vrijednosti. Također mogu nastati zbog tehničkih problema s instrumentima za mjerenje, nedostupnosti ispitanika u određenim trenucima istraživanja ili zbog prethodne obrade podataka gdje su problematični zapisi uklonjeni. Jedan od najčešćih razloga je praktičnost unosa podataka kada se nedostajuće vrijednosti koriste kao oznaka da se vrijednost iz prethodnog reda prenosi dalje. To je posebno uobičajeno kod ručnog unosa podataka gdje se želi izbjeći ponavljanje istih vrijednosti. Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu. U drugim slučajevima, neki konkretni broj poput 99 ili -999 može predstavljati nedostajuću vrijednost što je naslijeđe iz starijih sustava koji nisu imali prikladan način za reprezentaciju nedostajućih vrijednosti.
 
@@ -67,7 +67,7 @@ Postoji i poseban tip nedostajuće vrijednosti poznat kao `NaN` (*Not a Number*)
 
 Nedostajuće vrijednosti mogu značajno utjecati na analize podataka jer mogu interferirati s izračunavanjem statistika i stvarati neočekivane rezultate u grafičkim prikazima. One mijenjaju distribucije varijabli i mogu uvesti pristranost u rezultate. Njihova prisutnost može smanjiti statističku snagu analiza i otežati interpretaciju rezultata. Stoga je ključno razviti strategije za prepoznavanje, evaluaciju i rukovanje nedostajućim vrijednostima koje će omogućiti točne i pouzdane analize, ali i razumjeti kako ih prepoznati, raditi s njima i prilagoditi analitičke pristupe njihovoj prisutnosti u podacima. Ipak, važno je razumjeti da nedostajuće vrijednosti nisu uvijek greška ili problem koji treba riješiti. Ponekad one nose informacije o prirodi podataka ili procesu njihova prikupljanja. Na primjer, ako u anketi o prihodima velik broj ispitanika ne odgovara na pitanje o visini svoje plaće, onda to može ukazivati na osjetljivost teme ili socioekonomske karakteristike uzorka.
 
-### Prepoznavanje nedostajajućih vrijednosti
+## Prepoznavanje nedostajajućih vrijednosti
 
 U R-u postoji nekoliko osnovnih funkcija koje se koriste za prepoznavanje i rad s nedostajućim vrijednostima. Funkcija `is.na()` je najosnovnija funkcija za prepoznavanje nedostajajućih vrijednosti koja vraća logički vektor koji označava koje su vrijednosti u podatkovnom okviru nedostajuće. Pritom se može primijeniti na pojedinačne stupce ili na cijeli podatkovni okvir.
 
@@ -101,9 +101,7 @@ Funkcija `is.nan()` koristi se za identifikaciju `NaN` vrijednosti koje označav
 | `x`      | R objekt koji se testira na prisutnost nedostajućih vrijednosti |
 :::
 
-------------------------------------- NASTAVAK -------------------------------------
-
-Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija elementarnog R-a i `tidyverse` kolekcije paketa. Pritom se ističu funkcije `sum()` i `colSums()` za brojanje nedostajajućih vrijednosti u pojedinom stupcu te `rowSums()` za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom `is.na()` kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.
+Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija. Pritom se ističu funkcije `sum()` i `colSums()` za brojanje nedostajajućih vrijednosti u pojedinom stupcu te `rowSums()` za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom `is.na()` kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
 ```{r}
@@ -115,7 +113,7 @@ rowSums(is.na(pokemon_dataset))
 ```
 :::
 
-Unutar `tidyverse`-a je posebno korisna funkcija `summarise()` za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara novi podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.
+Unutar `tidyverse`-a je posebno korisna funkcija `summarise()` za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
 ```{r}
@@ -128,12 +126,12 @@ pokemon_dataset |>
 
 # Brojanje ne-NA vrijednosti po grupama
 pokemon_dataset |>
-  group_by(generation) %>%
+  group_by(generation) |>
   summarise(not_NA_count = sum(!is.na(generation)))
 ```
 :::
 
-Funkcija `complete.cases()` je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redci u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.
+Funkcija `complete.cases()` je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redovi u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
 ```{r}
@@ -142,8 +140,7 @@ complete.cases(pokemon_dataset)
 
 ```{r}
 # Zadržavanje samo kompletnih redaka
-pokemon_complete_dataset <- pokemon_dataset[complete.cases(pokemon_dataset), ]
-pokemon_complete_dataset
+pokemon_dataset[complete.cases(pokemon_dataset), ]
 ```
 :::
 
@@ -156,12 +153,12 @@ pokemon_dataset |>
   drop_na()
 
 # Uklanjanje redova s NA vrijednostima samo u specifičnim stupcima
-pokemon_dataset %>%
+pokemon_dataset |>
   drop_na(type_2)
 ```
 :::
 
-### Rad s nedostajajućim vrijednostima
+## Rad s nedostajajućim vrijednostima
 
 Postoji više načina rješavanja problema nedostajajućih vrijednosti, od jednostavnijih kao što je njihovo ignoriranje do raznoraznih imputiranja regresijom. U nastavku će biti prikazano nekoliko jednostavnijih načina rada s nedostajajućim vrijednostima.
 
@@ -202,8 +199,6 @@ pokemon_dataset |>
   mutate(type_2 = na_if(type_2, "flying"))
 ```
 :::
-
-Isti se problem može riješiti odmah pri uvozu podataka u R argumentom `na` u funkciji `read_csv()`.
 
 **Parametar `na.rm`**
 

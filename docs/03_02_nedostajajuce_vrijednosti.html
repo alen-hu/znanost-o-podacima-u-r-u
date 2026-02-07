@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Ovo poglavlje obrađuje problem nedostajućih vrijednosti u analizi podataka. Razlikuju se eksplicitne nedostajuće vrijednosti označene s NA i implicitne nedostajuće vrijednosti koje nastaju kada određena opažanja uopće nisu prisutna u podacima, kao i posebna vrijednost NaN koja se pojavljuje kao rezultat matematički nedefiniranih operacija. Nadalje se prikazuju osnovni alati u R-u za prepoznavanje i provjeru prisutnosti nedostajućih vrijednosti te se objašnjavaju najčešći načini rada s njima.">
 
 <title>5&nbsp; Nedostajajuće vrijednosti – Znanost o podacima u R-u</title>
 <style>
@@ -150,7 +151,12 @@ background: #8B3A62;
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./03_02_nedostajajuce_vrijednosti.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></a></li></ol></nav>
       <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Nedostajajuće vrijednosti</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-                      </div>
+                  <div>
+        <div class="description">
+          Ovo poglavlje obrađuje problem nedostajućih vrijednosti u analizi podataka. Razlikuju se eksplicitne nedostajuće vrijednosti označene s <code>NA</code> i implicitne nedostajuće vrijednosti koje nastaju kada određena opažanja uopće nisu prisutna u podacima, kao i posebna vrijednost <code>NaN</code> koja se pojavljuje kao rezultat matematički nedefiniranih operacija. Nadalje se prikazuju osnovni alati u R-u za prepoznavanje i provjeru prisutnosti nedostajućih vrijednosti te se objašnjavaju najčešći načini rada s njima.
+        </div>
+      </div>
+                </div>
   </div>
     
   
@@ -302,8 +308,8 @@ background: #8B3A62;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepoznavanje-nedostajajućih-vrijednosti" id="toc-prepoznavanje-nedostajajućih-vrijednosti" class="nav-link active" data-scroll-target="#prepoznavanje-nedostajajućih-vrijednosti"><span class="header-section-number">0.1</span> Prepoznavanje nedostajajućih vrijednosti</a></li>
-  <li><a href="#rad-s-nedostajajućim-vrijednostima" id="toc-rad-s-nedostajajućim-vrijednostima" class="nav-link" data-scroll-target="#rad-s-nedostajajućim-vrijednostima"><span class="header-section-number">0.2</span> Rad s nedostajajućim vrijednostima</a></li>
+  <li><a href="#prepoznavanje-nedostajajućih-vrijednosti" id="toc-prepoznavanje-nedostajajućih-vrijednosti" class="nav-link active" data-scroll-target="#prepoznavanje-nedostajajućih-vrijednosti"><span class="header-section-number">1</span> Prepoznavanje nedostajajućih vrijednosti</a></li>
+  <li><a href="#rad-s-nedostajajućim-vrijednostima" id="toc-rad-s-nedostajajućim-vrijednostima" class="nav-link" data-scroll-target="#rad-s-nedostajajućim-vrijednostima"><span class="header-section-number">2</span> Rad s nedostajajućim vrijednostima</a></li>
   </ul>
 </nav>
     </div>
@@ -315,12 +321,12 @@ background: #8B3A62;
 
 
 <p><strong>Nedostajuće vrijednosti</strong> (<em>missing values</em>) predstavljaju jedan od najčešćih izazova u radu sa stvarnim podacima. Prilikom rada s velikim i složenim skupovima podataka, nedostajuće vrijednosti se gotovo neizbježno pojavljuju tijekom procesa prikupljanja, čišćenja i obrade podataka.</p>
-<p>U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s <code>NA</code> oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti, s druge strane, nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.</p>
+<p>U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s <code>NA</code> oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.</p>
 <p>Nedostajuće vrijednosti mogu nastati iz različitih razloga. Najčešće se pojavljuju zbog praktičnih razloga tijekom unosa podataka kada osoba koja unosi podatke preskoči određena polja ili koristiti konvencije za označavanje nepoznatih vrijednosti. Također mogu nastati zbog tehničkih problema s instrumentima za mjerenje, nedostupnosti ispitanika u određenim trenucima istraživanja ili zbog prethodne obrade podataka gdje su problematični zapisi uklonjeni. Jedan od najčešćih razloga je praktičnost unosa podataka kada se nedostajuće vrijednosti koriste kao oznaka da se vrijednost iz prethodnog reda prenosi dalje. To je posebno uobičajeno kod ručnog unosa podataka gdje se želi izbjeći ponavljanje istih vrijednosti. Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu. U drugim slučajevima, neki konkretni broj poput 99 ili -999 može predstavljati nedostajuću vrijednost što je naslijeđe iz starijih sustava koji nisu imali prikladan način za reprezentaciju nedostajućih vrijednosti.</p>
 <p>Postoji i poseban tip nedostajuće vrijednosti poznat kao <code>NaN</code> (<em>Not a Number</em>) koji nastaje kada se izvodi matematička operacija s neodređenim rezultatom, poput dijeljenja nule s nulom ili računanja korijena negativnog broja. Iako se <code>NaN</code> općenito ponaša slično kao <code>NA</code>, važno je razumjeti da predstavlja specifičan matematički koncept.</p>
 <p>Nedostajuće vrijednosti mogu značajno utjecati na analize podataka jer mogu interferirati s izračunavanjem statistika i stvarati neočekivane rezultate u grafičkim prikazima. One mijenjaju distribucije varijabli i mogu uvesti pristranost u rezultate. Njihova prisutnost može smanjiti statističku snagu analiza i otežati interpretaciju rezultata. Stoga je ključno razviti strategije za prepoznavanje, evaluaciju i rukovanje nedostajućim vrijednostima koje će omogućiti točne i pouzdane analize, ali i razumjeti kako ih prepoznati, raditi s njima i prilagoditi analitičke pristupe njihovoj prisutnosti u podacima. Ipak, važno je razumjeti da nedostajuće vrijednosti nisu uvijek greška ili problem koji treba riješiti. Ponekad one nose informacije o prirodi podataka ili procesu njihova prikupljanja. Na primjer, ako u anketi o prihodima velik broj ispitanika ne odgovara na pitanje o visini svoje plaće, onda to može ukazivati na osjetljivost teme ili socioekonomske karakteristike uzorka.</p>
-<section id="prepoznavanje-nedostajajućih-vrijednosti" class="level3" data-number="0.1">
-<h3 data-number="0.1" class="anchored" data-anchor-id="prepoznavanje-nedostajajućih-vrijednosti"><span class="header-section-number">0.1</span> Prepoznavanje nedostajajućih vrijednosti</h3>
+<section id="prepoznavanje-nedostajajućih-vrijednosti" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="prepoznavanje-nedostajajućih-vrijednosti"><span class="header-section-number">1</span> Prepoznavanje nedostajajućih vrijednosti</h2>
 <p>U R-u postoji nekoliko osnovnih funkcija koje se koriste za prepoznavanje i rad s nedostajućim vrijednostima. Funkcija <code>is.na()</code> je najosnovnija funkcija za prepoznavanje nedostajajućih vrijednosti koja vraća logički vektor koji označava koje su vrijednosti u podatkovnom okviru nedostajuće. Pritom se može primijeniti na pojedinačne stupce ili na cijeli podatkovni okvir.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija is.na()">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -467,8 +473,7 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-<p>————————————- NASTAVAK ————————————-</p>
-<p>Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija elementarnog R-a i <code>tidyverse</code> kolekcije paketa. Pritom se ističu funkcije <code>sum()</code> i <code>colSums()</code> za brojanje nedostajajućih vrijednosti u pojedinom stupcu te <code>rowSums()</code> za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom <code>is.na()</code> kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.</p>
+<p>Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija. Pritom se ističu funkcije <code>sum()</code> i <code>colSums()</code> za brojanje nedostajajućih vrijednosti u pojedinom stupcu te <code>rowSums()</code> za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom <code>is.na()</code> kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -524,7 +529,7 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-<p>Unutar <code>tidyverse</code>-a je posebno korisna funkcija <code>summarise()</code> za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara novi podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.</p>
+<p>Unutar <code>tidyverse</code>-a je posebno korisna funkcija <code>summarise()</code> za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -557,7 +562,7 @@ background: #8B3A62;
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ne-NA vrijednosti po grupama</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(generation) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(generation) <span class="sc">|&gt;</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">not_NA_count =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(generation)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
@@ -574,7 +579,7 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-<p>Funkcija <code>complete.cases()</code> je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redci u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.</p>
+<p>Funkcija <code>complete.cases()</code> je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redovi u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -661,8 +666,7 @@ background: #8B3A62;
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Zadržavanje samo kompletnih redaka</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset <span class="ot">&lt;-</span> pokemon_dataset[<span class="fu">complete.cases</span>(pokemon_dataset), ]</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset[<span class="fu">complete.cases</span>(pokemon_dataset), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 414 × 13
       id name            type_1 type_2 total    HP attack defense special_attack
@@ -721,7 +725,7 @@ background: #8B3A62;
 #   legendary &lt;lgl&gt;</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima samo u specifičnim stupcima</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(type_2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 414 × 13
@@ -746,8 +750,8 @@ background: #8B3A62;
 </div>
 </div>
 </section>
-<section id="rad-s-nedostajajućim-vrijednostima" class="level3" data-number="0.2">
-<h3 data-number="0.2" class="anchored" data-anchor-id="rad-s-nedostajajućim-vrijednostima"><span class="header-section-number">0.2</span> Rad s nedostajajućim vrijednostima</h3>
+<section id="rad-s-nedostajajućim-vrijednostima" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="rad-s-nedostajajućim-vrijednostima"><span class="header-section-number">2</span> Rad s nedostajajućim vrijednostima</h2>
 <p>Postoji više načina rješavanja problema nedostajajućih vrijednosti, od jednostavnijih kao što je njihovo ignoriranje do raznoraznih imputiranja regresijom. U nastavku će biti prikazano nekoliko jednostavnijih načina rada s nedostajajućim vrijednostima.</p>
 <p><strong>Popunjavanje nedostajajućih vrijednosti fiksnim vrijednostima</strong></p>
 <p>Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu ili neku drugu kategorijalnu varijablu. U takvim slučajevima možete koristiti funkcija <code>coalesce()</code> <code>dplyr</code> paketa kako bi se u ćelije podatkovnog okvira stavila neka fiksna vrijednost. Jedna je često korištena mogućnost kod numeričkih imputiranje aritmetičke sredine vrijednosti koje imamo na mjesto nedostajajućih vrijednosti.</p>
@@ -883,7 +887,6 @@ background: #8B3A62;
 </div>
 </div>
 </div>
-<p>Isti se problem može riješiti odmah pri uvozu podataka u R argumentom <code>na</code> u funkciji <code>read_csv()</code>.</p>
 <p><strong>Parametar <code>na.rm</code></strong></p>
 <p>Parametar <code>na.rm</code> označava “<em>NA remove</em>” i ignorira nedostajajuće vrijednosti tijekom izračuna. Postavljanjem argumenta <code>na.rm = TRUE</code> funkcije poput <code>sum()</code>, <code>mean()</code>, <code>median()</code>, <code>min()</code>, <code>max()</code> i druge, računaju rezultate bez utjecaja nedostajajućih vrijednosti. Bez ovog parametra, funkcije bi vratile <code>NA</code> ako su nedostajajuće vrijednosti prisutne u podacima.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
@@ -1387,7 +1390,7 @@ background: #8B3A62;
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Nedostajajuće vrijednosti"</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> ""</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> "Ovo poglavlje obrađuje problem nedostajućih vrijednosti u analizi podataka. Razlikuju se eksplicitne nedostajuće vrijednosti označene s `NA` i implicitne nedostajuće vrijednosti koje nastaju kada određena opažanja uopće nisu prisutna u podacima, kao i posebna vrijednost `NaN` koja se pojavljuje kao rezultat matematički nedefiniranih operacija. Nadalje se prikazuju osnovni alati u R-u za prepoznavanje i provjeru prisutnosti nedostajućih vrijednosti te se objašnjavaju najčešći načini rada s njima."</span></span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> "#8B3A62"</span></span>
 <span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner-color:</span><span class="co"> "white"</span></span>
@@ -1446,7 +1449,7 @@ background: #8B3A62;
 <span id="cb37-63"><a href="#cb37-63" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-64"><a href="#cb37-64" aria-hidden="true" tabindex="-1"></a>**Nedostajuće vrijednosti** (*missing values*) predstavljaju jedan od najčešćih izazova u radu sa stvarnim podacima. Prilikom rada s velikim i složenim skupovima podataka, nedostajuće vrijednosti se gotovo neizbježno pojavljuju tijekom procesa prikupljanja, čišćenja i obrade podataka.</span>
 <span id="cb37-65"><a href="#cb37-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-66"><a href="#cb37-66" aria-hidden="true" tabindex="-1"></a>U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s <span class="in">`NA`</span> oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti, s druge strane, nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.</span>
+<span id="cb37-66"><a href="#cb37-66" aria-hidden="true" tabindex="-1"></a>U R-u se nedostajuće vrijednosti mogu se pojaviti u eksplicitnom obliku kada je u podatkovnom okviru polje s nedostajajućim vrijednostima popunjeno s <span class="in">`NA`</span> oznakama ili u implicitnom obliku kada cijeli redak podataka jednostavno ne postoji u skupu podataka. Eksplicitne nedostajuće vrijednosti predstavljaju situacije gdje znamo da određena vrijednost postoji, ali nam nije poznata ili dostupna. Implicitne nedostajuće vrijednosti nastaju kada nam nisu poznate ili uključene vrijednosti cijelog jednog opažanja.</span>
 <span id="cb37-67"><a href="#cb37-67" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-68"><a href="#cb37-68" aria-hidden="true" tabindex="-1"></a>Nedostajuće vrijednosti mogu nastati iz različitih razloga. Najčešće se pojavljuju zbog praktičnih razloga tijekom unosa podataka kada osoba koja unosi podatke preskoči određena polja ili koristiti konvencije za označavanje nepoznatih vrijednosti. Također mogu nastati zbog tehničkih problema s instrumentima za mjerenje, nedostupnosti ispitanika u određenim trenucima istraživanja ili zbog prethodne obrade podataka gdje su problematični zapisi uklonjeni. Jedan od najčešćih razloga je praktičnost unosa podataka kada se nedostajuće vrijednosti koriste kao oznaka da se vrijednost iz prethodnog reda prenosi dalje. To je posebno uobičajeno kod ručnog unosa podataka gdje se želi izbjeći ponavljanje istih vrijednosti. Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu. U drugim slučajevima, neki konkretni broj poput 99 ili -999 može predstavljati nedostajuću vrijednost što je naslijeđe iz starijih sustava koji nisu imali prikladan način za reprezentaciju nedostajućih vrijednosti.</span>
 <span id="cb37-69"><a href="#cb37-69" aria-hidden="true" tabindex="-1"></a></span>
@@ -1454,7 +1457,7 @@ background: #8B3A62;
 <span id="cb37-71"><a href="#cb37-71" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-72"><a href="#cb37-72" aria-hidden="true" tabindex="-1"></a>Nedostajuće vrijednosti mogu značajno utjecati na analize podataka jer mogu interferirati s izračunavanjem statistika i stvarati neočekivane rezultate u grafičkim prikazima. One mijenjaju distribucije varijabli i mogu uvesti pristranost u rezultate. Njihova prisutnost može smanjiti statističku snagu analiza i otežati interpretaciju rezultata. Stoga je ključno razviti strategije za prepoznavanje, evaluaciju i rukovanje nedostajućim vrijednostima koje će omogućiti točne i pouzdane analize, ali i razumjeti kako ih prepoznati, raditi s njima i prilagoditi analitičke pristupe njihovoj prisutnosti u podacima. Ipak, važno je razumjeti da nedostajuće vrijednosti nisu uvijek greška ili problem koji treba riješiti. Ponekad one nose informacije o prirodi podataka ili procesu njihova prikupljanja. Na primjer, ako u anketi o prihodima velik broj ispitanika ne odgovara na pitanje o visini svoje plaće, onda to može ukazivati na osjetljivost teme ili socioekonomske karakteristike uzorka.</span>
 <span id="cb37-73"><a href="#cb37-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-74"><a href="#cb37-74" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prepoznavanje nedostajajućih vrijednosti</span></span>
+<span id="cb37-74"><a href="#cb37-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prepoznavanje nedostajajućih vrijednosti</span></span>
 <span id="cb37-75"><a href="#cb37-75" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-76"><a href="#cb37-76" aria-hidden="true" tabindex="-1"></a>U R-u postoji nekoliko osnovnih funkcija koje se koriste za prepoznavanje i rad s nedostajućim vrijednostima. Funkcija <span class="in">`is.na()`</span> je najosnovnija funkcija za prepoznavanje nedostajajućih vrijednosti koja vraća logički vektor koji označava koje su vrijednosti u podatkovnom okviru nedostajuće. Pritom se može primijeniti na pojedinačne stupce ili na cijeli podatkovni okvir.</span>
 <span id="cb37-77"><a href="#cb37-77" aria-hidden="true" tabindex="-1"></a></span>
@@ -1488,125 +1491,120 @@ background: #8B3A62;
 <span id="cb37-107"><a href="#cb37-107" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`x`</span>      <span class="pp">|</span> R objekt koji se testira na prisutnost nedostajućih vrijednosti <span class="pp">|</span></span>
 <span id="cb37-108"><a href="#cb37-108" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb37-109"><a href="#cb37-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-110"><a href="#cb37-110" aria-hidden="true" tabindex="-1"></a>------------------------------------- NASTAVAK -------------------------------------</span>
+<span id="cb37-110"><a href="#cb37-110" aria-hidden="true" tabindex="-1"></a>Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija. Pritom se ističu funkcije <span class="in">`sum()`</span> i <span class="in">`colSums()`</span> za brojanje nedostajajućih vrijednosti u pojedinom stupcu te <span class="in">`rowSums()`</span> za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom <span class="in">`is.na()`</span> kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.</span>
 <span id="cb37-111"><a href="#cb37-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-112"><a href="#cb37-112" aria-hidden="true" tabindex="-1"></a>Za brojanje nedostajajućih vrijednosti može se efikasno koristiti nekoliko kombiniranih funkcija elementarnog R-a i <span class="in">`tidyverse`</span> kolekcije paketa. Pritom se ističu funkcije <span class="in">`sum()`</span> i <span class="in">`colSums()`</span> za brojanje nedostajajućih vrijednosti u pojedinom stupcu te <span class="in">`rowSums()`</span> za brojanje nedostajajućih vrijednosti po redcima. Te se funkcije kombiniraju s funkcijom <span class="in">`is.na()`</span> kako bi dale informaciju o tome koliko je nedostajajućih vrijednosti u podatkovnim okvirima.</span>
-<span id="cb37-113"><a href="#cb37-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-114"><a href="#cb37-114" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-117"><a href="#cb37-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-118"><a href="#cb37-118" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(pokemon_dataset<span class="sc">$</span>type_2))</span>
+<span id="cb37-112"><a href="#cb37-112" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-115"><a href="#cb37-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-116"><a href="#cb37-116" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(pokemon_dataset<span class="sc">$</span>type_2))</span>
+<span id="cb37-117"><a href="#cb37-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-118"><a href="#cb37-118" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span>
 <span id="cb37-119"><a href="#cb37-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-120"><a href="#cb37-120" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span>
-<span id="cb37-121"><a href="#cb37-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-122"><a href="#cb37-122" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span>
-<span id="cb37-123"><a href="#cb37-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-124"><a href="#cb37-124" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-120"><a href="#cb37-120" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">is.na</span>(pokemon_dataset))</span>
+<span id="cb37-121"><a href="#cb37-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-122"><a href="#cb37-122" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-123"><a href="#cb37-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-124"><a href="#cb37-124" aria-hidden="true" tabindex="-1"></a>Unutar <span class="in">`tidyverse`</span>-a je posebno korisna funkcija <span class="in">`summarise()`</span> za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.</span>
 <span id="cb37-125"><a href="#cb37-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-126"><a href="#cb37-126" aria-hidden="true" tabindex="-1"></a>Unutar <span class="in">`tidyverse`</span>-a je posebno korisna funkcija <span class="in">`summarise()`</span> za stvaranje sažetaka podataka, uključujući brojanje nedostajajućih vrijednosti. Ova funkcija stvara novi podatkovni okvir s jednim redom za svaku kombinaciju grupiranih varijabli, a ako nema grupiranih varijabli, rezultat će imati jedan red koji sažima sve opažanja.</span>
-<span id="cb37-127"><a href="#cb37-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-128"><a href="#cb37-128" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-131"><a href="#cb37-131" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-132"><a href="#cb37-132" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje NA vrijednosti za specifične stupce</span></span>
-<span id="cb37-133"><a href="#cb37-133" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">na_count_type_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(type_2)))</span>
-<span id="cb37-134"><a href="#cb37-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-135"><a href="#cb37-135" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ukupnog broja NA vrijednosti u cijelom podatkovnom okviru</span></span>
-<span id="cb37-136"><a href="#cb37-136" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> </span>
-<span id="cb37-137"><a href="#cb37-137" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_NA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="fu">across</span>(<span class="fu">everything</span>()))))</span>
-<span id="cb37-138"><a href="#cb37-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-139"><a href="#cb37-139" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ne-NA vrijednosti po grupama</span></span>
-<span id="cb37-140"><a href="#cb37-140" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb37-141"><a href="#cb37-141" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(generation) <span class="sc">%&gt;%</span></span>
-<span id="cb37-142"><a href="#cb37-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">not_NA_count =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(generation)))</span>
-<span id="cb37-143"><a href="#cb37-143" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-144"><a href="#cb37-144" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-126"><a href="#cb37-126" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-129"><a href="#cb37-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-130"><a href="#cb37-130" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje NA vrijednosti za specifične stupce</span></span>
+<span id="cb37-131"><a href="#cb37-131" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">na_count_type_2 =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(type_2)))</span>
+<span id="cb37-132"><a href="#cb37-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-133"><a href="#cb37-133" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ukupnog broja NA vrijednosti u cijelom podatkovnom okviru</span></span>
+<span id="cb37-134"><a href="#cb37-134" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span> </span>
+<span id="cb37-135"><a href="#cb37-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_NA =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(<span class="fu">across</span>(<span class="fu">everything</span>()))))</span>
+<span id="cb37-136"><a href="#cb37-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-137"><a href="#cb37-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Brojanje ne-NA vrijednosti po grupama</span></span>
+<span id="cb37-138"><a href="#cb37-138" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-139"><a href="#cb37-139" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(generation) <span class="sc">|&gt;</span></span>
+<span id="cb37-140"><a href="#cb37-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">not_NA_count =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(generation)))</span>
+<span id="cb37-141"><a href="#cb37-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-142"><a href="#cb37-142" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-143"><a href="#cb37-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-144"><a href="#cb37-144" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`complete.cases()`</span> je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redovi u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.</span>
 <span id="cb37-145"><a href="#cb37-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-146"><a href="#cb37-146" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`complete.cases()`</span> je posebno korisna za identifikaciju redaka koji nemaju nedostajajuće vrijednosti. Ova funkcija vraća logički vektor koji označava koji redci u podatkovnom okviru ne sadrže nikakve nedostajajuće vrijednosti. To je korisno kada želimo filtrirati podatke ili analizirati samo potpune zapise.</span>
-<span id="cb37-147"><a href="#cb37-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-148"><a href="#cb37-148" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-151"><a href="#cb37-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-152"><a href="#cb37-152" aria-hidden="true" tabindex="-1"></a><span class="fu">complete.cases</span>(pokemon_dataset)</span>
-<span id="cb37-153"><a href="#cb37-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-154"><a href="#cb37-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-157"><a href="#cb37-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-158"><a href="#cb37-158" aria-hidden="true" tabindex="-1"></a><span class="co"># Zadržavanje samo kompletnih redaka</span></span>
-<span id="cb37-159"><a href="#cb37-159" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset <span class="ot">&lt;-</span> pokemon_dataset[<span class="fu">complete.cases</span>(pokemon_dataset), ]</span>
-<span id="cb37-160"><a href="#cb37-160" aria-hidden="true" tabindex="-1"></a>pokemon_complete_dataset</span>
-<span id="cb37-161"><a href="#cb37-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-162"><a href="#cb37-162" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb37-163"><a href="#cb37-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-164"><a href="#cb37-164" aria-hidden="true" tabindex="-1"></a>Osim toga funkcija <span class="in">`drop_na()`</span> iz <span class="in">`tidyr`</span> paketa uklanja redove koji sadrže nedostajuće vrijednosti u bilo kojem od specificiranih stupaca. Ova funkcija je vrlo jednostavna za korištenje i omogućava preciznu kontrolu nad time koji stupci se razmatraju pri uklanjanju redova.</span>
-<span id="cb37-165"><a href="#cb37-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-166"><a href="#cb37-166" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-169"><a href="#cb37-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-170"><a href="#cb37-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima u bilo kojem stupcu</span></span>
-<span id="cb37-171"><a href="#cb37-171" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb37-172"><a href="#cb37-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
-<span id="cb37-173"><a href="#cb37-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-174"><a href="#cb37-174" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima samo u specifičnim stupcima</span></span>
-<span id="cb37-175"><a href="#cb37-175" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb37-176"><a href="#cb37-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(type_2)</span>
-<span id="cb37-177"><a href="#cb37-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-178"><a href="#cb37-178" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb37-179"><a href="#cb37-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-180"><a href="#cb37-180" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rad s nedostajajućim vrijednostima</span></span>
-<span id="cb37-181"><a href="#cb37-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-182"><a href="#cb37-182" aria-hidden="true" tabindex="-1"></a>Postoji više načina rješavanja problema nedostajajućih vrijednosti, od jednostavnijih kao što je njihovo ignoriranje do raznoraznih imputiranja regresijom. U nastavku će biti prikazano nekoliko jednostavnijih načina rada s nedostajajućim vrijednostima.</span>
-<span id="cb37-183"><a href="#cb37-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-184"><a href="#cb37-184" aria-hidden="true" tabindex="-1"></a>**Popunjavanje nedostajajućih vrijednosti fiksnim vrijednostima**</span>
-<span id="cb37-185"><a href="#cb37-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-186"><a href="#cb37-186" aria-hidden="true" tabindex="-1"></a>Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu ili neku drugu kategorijalnu varijablu. U takvim slučajevima možete koristiti funkcija <span class="in">`coalesce()`</span> <span class="in">`dplyr`</span> paketa kako bi se u ćelije podatkovnog okvira stavila neka fiksna vrijednost. Jedna je često korištena mogućnost kod numeričkih imputiranje aritmetičke sredine vrijednosti koje imamo na mjesto nedostajajućih vrijednosti.</span>
-<span id="cb37-187"><a href="#cb37-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-188"><a href="#cb37-188" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-191"><a href="#cb37-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-192"><a href="#cb37-192" aria-hidden="true" tabindex="-1"></a><span class="co"># Zamjena NA vrijednosti s nulom</span></span>
-<span id="cb37-193"><a href="#cb37-193" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb37-194"><a href="#cb37-194" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">coalesce</span>(type_2, <span class="st">"unknown"</span>))</span>
-<span id="cb37-195"><a href="#cb37-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-196"><a href="#cb37-196" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb37-197"><a href="#cb37-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-198"><a href="#cb37-198" aria-hidden="true" tabindex="-1"></a>**Last Observation Carried Forward**</span>
-<span id="cb37-199"><a href="#cb37-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-200"><a href="#cb37-200" aria-hidden="true" tabindex="-1"></a>Česta se nedostajajuće vrijednosti javljaju iz praktičnih razloga pri unosu podataka. U tim slučajevima nedostajuće vrijednosti označavaju da se vrijednost iz prethodnog reda prenosi dalje, odnosno da bi vrijednost u pojedinoj ćeliji trebala biti ona iz prve gornje popunjene ćelije. U R-u se na taj način mogu popuniti nedostajuće vrijednosti pomoću funkcije <span class="in">`fill()`</span> iz <span class="in">`tidyr`</span> paketa.</span>
-<span id="cb37-201"><a href="#cb37-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-202"><a href="#cb37-202" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-205"><a href="#cb37-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-206"><a href="#cb37-206" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pokemon_dataset, <span class="dv">10</span>)</span>
-<span id="cb37-207"><a href="#cb37-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-208"><a href="#cb37-208" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb37-209"><a href="#cb37-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
-<span id="cb37-210"><a href="#cb37-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(type_2, <span class="at">.direction =</span> <span class="st">"down"</span>)</span>
-<span id="cb37-211"><a href="#cb37-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-212"><a href="#cb37-212" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb37-213"><a href="#cb37-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-214"><a href="#cb37-214" aria-hidden="true" tabindex="-1"></a>**Pretvaranje konkretnih vrijednosti u nedostajuće**</span>
-<span id="cb37-215"><a href="#cb37-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-216"><a href="#cb37-216" aria-hidden="true" tabindex="-1"></a>Ponekad je moguće naići na suprotan problem gdje neka konkretna vrijednost zapravo predstavlja nedostajuću vrijednost. To se obično događa s podacima generiranim od strane programa koji nemaju prikladan način za predstavljanje nedostajajućih vrijednosti, pa umjesto toga koriste neku specijalnu vrijednost poput "99" ili "-999" kao oznaku za nedostajajuće vrijednosti.</span>
-<span id="cb37-217"><a href="#cb37-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-218"><a href="#cb37-218" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-221"><a href="#cb37-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-222"><a href="#cb37-222" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
-<span id="cb37-223"><a href="#cb37-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
-<span id="cb37-224"><a href="#cb37-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">na_if</span>(type_2, <span class="st">"flying"</span>))</span>
-<span id="cb37-225"><a href="#cb37-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-226"><a href="#cb37-226" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb37-227"><a href="#cb37-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-228"><a href="#cb37-228" aria-hidden="true" tabindex="-1"></a>Isti se problem može riješiti odmah pri uvozu podataka u R argumentom <span class="in">`na`</span> u funkciji <span class="in">`read_csv()`</span>.</span>
-<span id="cb37-229"><a href="#cb37-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-230"><a href="#cb37-230" aria-hidden="true" tabindex="-1"></a>**Parametar `na.rm`**</span>
-<span id="cb37-231"><a href="#cb37-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-232"><a href="#cb37-232" aria-hidden="true" tabindex="-1"></a>Parametar <span class="in">`na.rm`</span> označava "*NA remove*" i ignorira nedostajajuće vrijednosti tijekom izračuna. Postavljanjem argumenta <span class="in">`na.rm = TRUE`</span> funkcije poput <span class="in">`sum()`</span>, <span class="in">`mean()`</span>, <span class="in">`median()`</span>, <span class="in">`min()`</span>, <span class="in">`max()`</span> i druge, računaju rezultate bez utjecaja nedostajajućih vrijednosti. Bez ovog parametra, funkcije bi vratile <span class="in">`NA`</span> ako su nedostajajuće vrijednosti prisutne u podacima.</span>
-<span id="cb37-233"><a href="#cb37-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-234"><a href="#cb37-234" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
-<span id="cb37-237"><a href="#cb37-237" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb37-238"><a href="#cb37-238" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor s nedostajajućim vrijednostima</span></span>
-<span id="cb37-239"><a href="#cb37-239" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>, <span class="dv">5</span>, <span class="cn">NA</span>, <span class="dv">7</span>)</span>
+<span id="cb37-146"><a href="#cb37-146" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-149"><a href="#cb37-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-150"><a href="#cb37-150" aria-hidden="true" tabindex="-1"></a><span class="fu">complete.cases</span>(pokemon_dataset)</span>
+<span id="cb37-151"><a href="#cb37-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-152"><a href="#cb37-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-155"><a href="#cb37-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-156"><a href="#cb37-156" aria-hidden="true" tabindex="-1"></a><span class="co"># Zadržavanje samo kompletnih redaka</span></span>
+<span id="cb37-157"><a href="#cb37-157" aria-hidden="true" tabindex="-1"></a>pokemon_dataset[<span class="fu">complete.cases</span>(pokemon_dataset), ]</span>
+<span id="cb37-158"><a href="#cb37-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-159"><a href="#cb37-159" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-160"><a href="#cb37-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-161"><a href="#cb37-161" aria-hidden="true" tabindex="-1"></a>Osim toga funkcija <span class="in">`drop_na()`</span> iz <span class="in">`tidyr`</span> paketa uklanja redove koji sadrže nedostajuće vrijednosti u bilo kojem od specificiranih stupaca. Ova funkcija je vrlo jednostavna za korištenje i omogućava preciznu kontrolu nad time koji stupci se razmatraju pri uklanjanju redova.</span>
+<span id="cb37-162"><a href="#cb37-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-163"><a href="#cb37-163" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-166"><a href="#cb37-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-167"><a href="#cb37-167" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima u bilo kojem stupcu</span></span>
+<span id="cb37-168"><a href="#cb37-168" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-169"><a href="#cb37-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb37-170"><a href="#cb37-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-171"><a href="#cb37-171" aria-hidden="true" tabindex="-1"></a><span class="co"># Uklanjanje redova s NA vrijednostima samo u specifičnim stupcima</span></span>
+<span id="cb37-172"><a href="#cb37-172" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-173"><a href="#cb37-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(type_2)</span>
+<span id="cb37-174"><a href="#cb37-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-175"><a href="#cb37-175" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-176"><a href="#cb37-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-177"><a href="#cb37-177" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rad s nedostajajućim vrijednostima</span></span>
+<span id="cb37-178"><a href="#cb37-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-179"><a href="#cb37-179" aria-hidden="true" tabindex="-1"></a>Postoji više načina rješavanja problema nedostajajućih vrijednosti, od jednostavnijih kao što je njihovo ignoriranje do raznoraznih imputiranja regresijom. U nastavku će biti prikazano nekoliko jednostavnijih načina rada s nedostajajućim vrijednostima.</span>
+<span id="cb37-180"><a href="#cb37-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-181"><a href="#cb37-181" aria-hidden="true" tabindex="-1"></a>**Popunjavanje nedostajajućih vrijednosti fiksnim vrijednostima**</span>
+<span id="cb37-182"><a href="#cb37-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-183"><a href="#cb37-183" aria-hidden="true" tabindex="-1"></a>Ponekad nedostajuće vrijednosti predstavljaju fiksnu i poznatu vrijednost, najčešće nulu ili neku drugu kategorijalnu varijablu. U takvim slučajevima možete koristiti funkcija <span class="in">`coalesce()`</span> <span class="in">`dplyr`</span> paketa kako bi se u ćelije podatkovnog okvira stavila neka fiksna vrijednost. Jedna je često korištena mogućnost kod numeričkih imputiranje aritmetičke sredine vrijednosti koje imamo na mjesto nedostajajućih vrijednosti.</span>
+<span id="cb37-184"><a href="#cb37-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-185"><a href="#cb37-185" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-188"><a href="#cb37-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-189"><a href="#cb37-189" aria-hidden="true" tabindex="-1"></a><span class="co"># Zamjena NA vrijednosti s nulom</span></span>
+<span id="cb37-190"><a href="#cb37-190" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-191"><a href="#cb37-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">coalesce</span>(type_2, <span class="st">"unknown"</span>))</span>
+<span id="cb37-192"><a href="#cb37-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-193"><a href="#cb37-193" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-194"><a href="#cb37-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-195"><a href="#cb37-195" aria-hidden="true" tabindex="-1"></a>**Last Observation Carried Forward**</span>
+<span id="cb37-196"><a href="#cb37-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-197"><a href="#cb37-197" aria-hidden="true" tabindex="-1"></a>Česta se nedostajajuće vrijednosti javljaju iz praktičnih razloga pri unosu podataka. U tim slučajevima nedostajuće vrijednosti označavaju da se vrijednost iz prethodnog reda prenosi dalje, odnosno da bi vrijednost u pojedinoj ćeliji trebala biti ona iz prve gornje popunjene ćelije. U R-u se na taj način mogu popuniti nedostajuće vrijednosti pomoću funkcije <span class="in">`fill()`</span> iz <span class="in">`tidyr`</span> paketa.</span>
+<span id="cb37-198"><a href="#cb37-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-199"><a href="#cb37-199" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-202"><a href="#cb37-202" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-203"><a href="#cb37-203" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pokemon_dataset, <span class="dv">10</span>)</span>
+<span id="cb37-204"><a href="#cb37-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-205"><a href="#cb37-205" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-206"><a href="#cb37-206" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb37-207"><a href="#cb37-207" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fill</span>(type_2, <span class="at">.direction =</span> <span class="st">"down"</span>)</span>
+<span id="cb37-208"><a href="#cb37-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-209"><a href="#cb37-209" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-210"><a href="#cb37-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-211"><a href="#cb37-211" aria-hidden="true" tabindex="-1"></a>**Pretvaranje konkretnih vrijednosti u nedostajuće**</span>
+<span id="cb37-212"><a href="#cb37-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-213"><a href="#cb37-213" aria-hidden="true" tabindex="-1"></a>Ponekad je moguće naići na suprotan problem gdje neka konkretna vrijednost zapravo predstavlja nedostajuću vrijednost. To se obično događa s podacima generiranim od strane programa koji nemaju prikladan način za predstavljanje nedostajajućih vrijednosti, pa umjesto toga koriste neku specijalnu vrijednost poput "99" ili "-999" kao oznaku za nedostajajuće vrijednosti.</span>
+<span id="cb37-214"><a href="#cb37-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-215"><a href="#cb37-215" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-218"><a href="#cb37-218" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-219"><a href="#cb37-219" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="sc">|&gt;</span></span>
+<span id="cb37-220"><a href="#cb37-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, name, type_2) <span class="sc">|&gt;</span></span>
+<span id="cb37-221"><a href="#cb37-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type_2 =</span> <span class="fu">na_if</span>(type_2, <span class="st">"flying"</span>))</span>
+<span id="cb37-222"><a href="#cb37-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-223"><a href="#cb37-223" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb37-224"><a href="#cb37-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-225"><a href="#cb37-225" aria-hidden="true" tabindex="-1"></a>**Parametar `na.rm`**</span>
+<span id="cb37-226"><a href="#cb37-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-227"><a href="#cb37-227" aria-hidden="true" tabindex="-1"></a>Parametar <span class="in">`na.rm`</span> označava "*NA remove*" i ignorira nedostajajuće vrijednosti tijekom izračuna. Postavljanjem argumenta <span class="in">`na.rm = TRUE`</span> funkcije poput <span class="in">`sum()`</span>, <span class="in">`mean()`</span>, <span class="in">`median()`</span>, <span class="in">`min()`</span>, <span class="in">`max()`</span> i druge, računaju rezultate bez utjecaja nedostajajućih vrijednosti. Bez ovog parametra, funkcije bi vratile <span class="in">`NA`</span> ako su nedostajajuće vrijednosti prisutne u podacima.</span>
+<span id="cb37-228"><a href="#cb37-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-229"><a href="#cb37-229" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb37-232"><a href="#cb37-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb37-233"><a href="#cb37-233" aria-hidden="true" tabindex="-1"></a><span class="co"># Vektor s nedostajajućim vrijednostima</span></span>
+<span id="cb37-234"><a href="#cb37-234" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="cn">NA</span>, <span class="dv">5</span>, <span class="cn">NA</span>, <span class="dv">7</span>)</span>
+<span id="cb37-235"><a href="#cb37-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-236"><a href="#cb37-236" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x)</span>
+<span id="cb37-237"><a href="#cb37-237" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-238"><a href="#cb37-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb37-239"><a href="#cb37-239" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb37-240"><a href="#cb37-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-241"><a href="#cb37-241" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x)</span>
-<span id="cb37-242"><a href="#cb37-242" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb37-243"><a href="#cb37-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb37-244"><a href="#cb37-244" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb37-245"><a href="#cb37-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-246"><a href="#cb37-246" aria-hidden="true" tabindex="-1"></a>Na sličan se način argument može koristiti i ako se spomenute funkcije koriste unutar glagol <span class="in">`summarise()`</span> iz <span class="in">`dplyr`</span> paketa.</span>
+<span id="cb37-241"><a href="#cb37-241" aria-hidden="true" tabindex="-1"></a>Na sličan se način argument može koristiti i ako se spomenute funkcije koriste unutar glagol <span class="in">`summarise()`</span> iz <span class="in">`dplyr`</span> paketa.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

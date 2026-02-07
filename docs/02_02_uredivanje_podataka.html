@@ -695,6 +695,18 @@ Tablica&nbsp;2: Dugački format
 </div>
 <p><strong>1. Nazivi varijabli kao vrijednosti</strong></p>
 <p>Čest problem koji se susreće kod neuredno organiziranih podataka nastaje kada nazivi stupaca ne predstavljaju nazive varijabli, već vrijednosti neke varijable. Ovaj tip neuredno organiziranih podataka krši temeljna načela urednih podataka jer se vrijednosti jedne varijable nalaze u nazivima stupaca umjesto u jednom stupcu. Takav oblik podataka čini ih teškima za analizu jer funkcije u R-u očekuju da se vrijednosti varijabli nalaze u stupcima, a ne u njihovim nazivima.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>Primjer takvih neurednih podataka je podatkovni okvir <code>imdb_decades</code> u kojem su nazivi stupaca “1950s”, “1960s”, “1970s”, “1980s”, “1990s” i “2000s”, a koji predstavljaju desetlječa. Varijabla “movie” sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno <code>NA</code> ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini premijere filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
@@ -746,8 +758,23 @@ Tablica&nbsp;2: Dugački format
 10 The Good, the Bad and the Ugly        1960s   1966</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 <p><strong>2. Više varijabli u nazivima stupaca</strong></p>
 <p>Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>Primjer takvih podataka je <code>realise_year_runtime_dataset</code>. Kod tih podataka nazivi stupaca poput “1994_142” i “1972_175” sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci “rank” i “movie” predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ili crno-bijeli s <code>NA</code> vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i boja) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
@@ -802,8 +829,23 @@ Tablica&nbsp;2: Dugački format
 10    10 The Good, Bas and the Ugly                    1966  178     Color      </code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 <p><strong>3. Varijable pohranjene u redovima</strong></p>
 <p>Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva. U ovom obliku, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>U primjeru podatkovnog okvira <code>imdb_top_10_long</code>, svaki film predstavljen je kroz više redova, pri čemu stupac “attribute” sadrži nazive varijabli poput “release_year”, “director”, “genres”, “runtime” i ostale, dok stupac “value” sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film “The Shawshank Redemption” prikazan je kroz deset redova, po jedan za svaku karakteristiku filma.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
@@ -848,8 +890,23 @@ Tablica&nbsp;2: Dugački format
 # ℹ 4 more variables: language &lt;chr&gt;, runtime &lt;chr&gt;, colour &lt;chr&gt;, budget &lt;chr&gt;</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 <p><strong>4. Isti tip vrijednosti raspoređen u više stupaca</strong></p>
 <p>Četvrti oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna varijabla biva podijeljena u više stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p><code>writers_dataset</code> je jedan takav podatkovni okvir. U njemu su informacije o scenaristima filmova podijeljene su u tri odvojena stupca: “writer_1”, “writer_2” i “writer_3”. Stupci “rank” i “movie” predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju <code>NA</code> vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
@@ -903,31 +960,13 @@ Tablica&nbsp;2: Dugački format
 # ℹ 13 more rows</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 <p><strong>5. Više vrijednosti u jednoj ćeliji</strong></p>
 <p>Ovaj oblik neurednih podataka predstavlja pojednostavljenu verziju prethodnog problema gdje se u jednoj ćeliji nalaze vrijednosti koje pripadaju različitim varijablama, odvojene određenim separatorom. Problem nastaje kada se dvije logički različite varijable kombiniraju u jednu kolonu radi uštede prostora ili zbog ograničenja u sustavima za pohranu podataka. Ovakva organizacija krši temeljna načela urednih podataka jer svaka ćelija treba sadržavati vrijednost samo jedne varijable. Kombiniranje različitih tipova informacija u istoj ćeliji otežava sve oblike analize jer je potrebno najprije izdvojiti pojedinačne komponente prije bilo kakve obrade podataka.</p>
-<p>U primjeru <code>imdb_combined_variables</code>, stupac “director_budget” sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost “Frank Darabont_25000000” predstavlja dva različita podatka: ime redatelja “Frank Darabont” i budžet filma od 25 milijuna dolara. Stupci “rank” i “movie” već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 3
-    rank movie                                         director_budget          
-   &lt;dbl&gt; &lt;chr&gt;                                         &lt;chr&gt;                    
- 1     1 The Shawshank Redemption                      Frank Darabont_25000000  
- 2     2 The Godfather                                 Francis Ford Coppola_600…
- 3     3 The Dark Knight                               Christopher Nolan_185000…
- 4     4 The Godfather Part II                         Francis Ford Coppola_130…
- 5     5 12 Angry Men                                  Sidney Lumet_350000      
- 6     6 The Lord of the Rings: Return of the King     Peter Jackson_94000000   
- 7     7 Schindler's List                              Steven Spielberg_22000000
- 8     8 Pulp Fiction                                  Quentin Tarantino_8000000
- 9     9 Lord of the Rings: The Fellowship of the Ring Peter Jackson_93000000   
-10    10 The Good, the Bad and the Ugly                Sergio Leone_1200000     </code></pre>
-</div>
-</div>
-<p>Problem se rješava pomoću funkcije <code>separate()</code> koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument <code>col = director_budget</code> za specificiranje stupca koji se želi podijeliti, <code>into = c("director", "budget")</code> za definiranje naziva novih stupaca koji će nastati dijeljenjem i <code>sep = "_"</code> za navođenje separatora koji razdvaja različite vrijednosti. Funkcija <code>separate()</code> automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija: separate()">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -936,7 +975,7 @@ Tablica&nbsp;2: Dugački format
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><code>separate()</code> je ključna funkcija <code>tidyr</code> paketa koja se koristi kada imamo više varijabli spremljenih u jednoj ćeliji, a želimo ih razdvojiti u više stupaca. Funkcija može imati slijedeće argumente:</p>
 <table class="caption-top table">
@@ -988,6 +1027,39 @@ Tablica&nbsp;2: Dugački format
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>U primjeru <code>imdb_combined_variables</code>, stupac “director_budget” sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost “Frank Darabont_25000000” predstavlja dva različita podatka: ime redatelja “Frank Darabont” i budžet filma od 25 milijuna dolara. Stupci “rank” i “movie” već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+    rank movie                                         director_budget          
+   &lt;dbl&gt; &lt;chr&gt;                                         &lt;chr&gt;                    
+ 1     1 The Shawshank Redemption                      Frank Darabont_25000000  
+ 2     2 The Godfather                                 Francis Ford Coppola_600…
+ 3     3 The Dark Knight                               Christopher Nolan_185000…
+ 4     4 The Godfather Part II                         Francis Ford Coppola_130…
+ 5     5 12 Angry Men                                  Sidney Lumet_350000      
+ 6     6 The Lord of the Rings: Return of the King     Peter Jackson_94000000   
+ 7     7 Schindler's List                              Steven Spielberg_22000000
+ 8     8 Pulp Fiction                                  Quentin Tarantino_8000000
+ 9     9 Lord of the Rings: The Fellowship of the Ring Peter Jackson_93000000   
+10    10 The Good, the Bad and the Ugly                Sergio Leone_1200000     </code></pre>
+</div>
+</div>
+<p>Problem se rješava pomoću funkcije <code>separate()</code> koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument <code>col = director_budget</code> za specificiranje stupca koji se želi podijeliti, <code>into = c("director", "budget")</code> za definiranje naziva novih stupaca koji će nastati dijeljenjem i <code>sep = "_"</code> za navođenje separatora koji razdvaja različite vrijednosti. Funkcija <code>separate()</code> automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables_tidy <span class="ot">&lt;-</span> imdb_combined_variables <span class="sc">|&gt;</span></span>
@@ -1017,31 +1089,13 @@ Tablica&nbsp;2: Dugački format
 10    10 The Good, the Bad and the Ugly                Sergio Leone       12000…</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
 <p><strong>6. Ista varijabla raspodijeljena u sva stupca</strong></p>
 <p>Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable.</p>
-<p>U primjeru <code>director_names_dataset</code> informacija o imenu redatelja podijeljena je u dva odvojena stupca, “director_first_name” koji sadrži ime i “director_last_name” koji sadrži prezime redatelja. Na primjer, za film “The Shawshank Redemption”, ime redatelja “Frank Darabont” podijeljeno je na “Frank” u prvom stupcu i “Darabont” u drugom stupcu.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>director_names_dataset</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 4
-    rank movie                            director_first_name director_last_name
-   &lt;dbl&gt; &lt;chr&gt;                            &lt;chr&gt;               &lt;chr&gt;             
- 1     1 The Shawshank Redemption         Frank               Darabont          
- 2     2 The Godfather                    Francis Ford        Coppola           
- 3     3 The Dark Knight                  Christopher         Nolan             
- 4     4 The Godfather Part II            Francis Ford        Coppola           
- 5     5 12 Angry Men                     Sidney              Lumet             
- 6     6 The Lord of the Rings: Return o… Peter               Jackson           
- 7     7 Schindler's List                 Steven              Spielberg         
- 8     8 Pulp Fiction                     Quentin             Tarantino         
- 9     9 Lord of the Rings: The Fellowsh… Peter               Jackson           
-10    10 The Good, the Bad and the Ugly   Sergio              Leone             </code></pre>
-</div>
-</div>
-<p>Problem se rješava pomoću funkcije <code>unite()</code> omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument <code>col = "director_name"</code> za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti (“director_first_name”, “director_last_name”), te argument <code>sep = " "</code> koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija <code>unite()</code> automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.</p>
 <div class="callout callout-style-default callout-tip no-icon callout-titled" title="Funkcija: unite()">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -1050,7 +1104,7 @@ Tablica&nbsp;2: Dugački format
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Funkcija <code>unite()</code> dio je <code>tidyr</code> paketa i koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od <code>separate()</code> funkcije. Funkcija može imati slijedeće argumente:</p>
 <table class="caption-top table">
@@ -1094,6 +1148,39 @@ Tablica&nbsp;2: Dugački format
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Primjer">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Primjer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>U primjeru <code>director_names_dataset</code> informacija o imenu redatelja podijeljena je u dva odvojena stupca, “director_first_name” koji sadrži ime i “director_last_name” koji sadrži prezime redatelja. Na primjer, za film “The Shawshank Redemption”, ime redatelja “Frank Darabont” podijeljeno je na “Frank” u prvom stupcu i “Darabont” u drugom stupcu.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>director_names_dataset</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+    rank movie                            director_first_name director_last_name
+   &lt;dbl&gt; &lt;chr&gt;                            &lt;chr&gt;               &lt;chr&gt;             
+ 1     1 The Shawshank Redemption         Frank               Darabont          
+ 2     2 The Godfather                    Francis Ford        Coppola           
+ 3     3 The Dark Knight                  Christopher         Nolan             
+ 4     4 The Godfather Part II            Francis Ford        Coppola           
+ 5     5 12 Angry Men                     Sidney              Lumet             
+ 6     6 The Lord of the Rings: Return o… Peter               Jackson           
+ 7     7 Schindler's List                 Steven              Spielberg         
+ 8     8 Pulp Fiction                     Quentin             Tarantino         
+ 9     9 Lord of the Rings: The Fellowsh… Peter               Jackson           
+10    10 The Good, the Bad and the Ugly   Sergio              Leone             </code></pre>
+</div>
+</div>
+<p>Problem se rješava pomoću funkcije <code>unite()</code> omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument <code>col = "director_name"</code> za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti (“director_first_name”, “director_last_name”), te argument <code>sep = " "</code> koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija <code>unite()</code> automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>director_names_dataset_tidy <span class="ot">&lt;-</span> director_names_dataset <span class="sc">|&gt;</span></span>
@@ -1122,6 +1209,9 @@ Tablica&nbsp;2: Dugački format
  8     8 Pulp Fiction                                  Quentin Tarantino   
  9     9 Lord of the Rings: The Fellowship of the Ring Peter Jackson       
 10    10 The Good, the Bad and the Ugly                Sergio Leone        </code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 
@@ -1958,215 +2048,226 @@ Tablica&nbsp;2: Dugački format
 <span id="cb35-372"><a href="#cb35-372" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-373"><a href="#cb35-373" aria-hidden="true" tabindex="-1"></a>Čest problem koji se susreće kod neuredno organiziranih podataka nastaje kada nazivi stupaca ne predstavljaju nazive varijabli, već vrijednosti neke varijable. Ovaj tip neuredno organiziranih podataka krši temeljna načela urednih podataka jer se vrijednosti jedne varijable nalaze u nazivima stupaca umjesto u jednom stupcu. Takav oblik podataka čini ih teškima za analizu jer funkcije u R-u očekuju da se vrijednosti varijabli nalaze u stupcima, a ne u njihovim nazivima.</span>
 <span id="cb35-374"><a href="#cb35-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-375"><a href="#cb35-375" aria-hidden="true" tabindex="-1"></a>Primjer takvih neurednih podataka je podatkovni okvir <span class="in">`imdb_decades`</span> u kojem su nazivi stupaca "1950s", "1960s", "1970s", "1980s", "1990s" i "2000s", a koji predstavljaju desetlječa. Varijabla "movie" sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno <span class="in">`NA`</span> ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini premijere filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti.</span>
-<span id="cb35-376"><a href="#cb35-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-379"><a href="#cb35-379" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-380"><a href="#cb35-380" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb35-381"><a href="#cb35-381" aria-hidden="true" tabindex="-1"></a>imdb_decades</span>
-<span id="cb35-382"><a href="#cb35-382" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-383"><a href="#cb35-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-384"><a href="#cb35-384" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_longer()`</span>. Funkcija omogućuje specificiranje stupaca koji se trebaju urediti pomoću argumenta <span class="in">`cols`</span>, naziv nove varijable koja će sadržavati nazive stupaca pomoću argumenta <span class="in">`names_to`</span> te naziv varijable koja će sadržavati vrijednosti iz ćelija pomoću argumenta <span class="in">`values_to`</span>. Dodatno, argument <span class="in">`values_drop_na = TRUE`</span> može se koristiti za uklanjanje redova s nedostajućim vrijednostima.</span>
-<span id="cb35-385"><a href="#cb35-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-388"><a href="#cb35-388" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-389"><a href="#cb35-389" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
-<span id="cb35-390"><a href="#cb35-390" aria-hidden="true" tabindex="-1"></a>imdb_decades_tidy <span class="ot">&lt;-</span> imdb_decades <span class="sc">|&gt;</span></span>
-<span id="cb35-391"><a href="#cb35-391" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb35-392"><a href="#cb35-392" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"19"</span>, <span class="st">"20"</span>)),</span>
-<span id="cb35-393"><a href="#cb35-393" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"decade"</span>,</span>
-<span id="cb35-394"><a href="#cb35-394" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"year"</span>,</span>
-<span id="cb35-395"><a href="#cb35-395" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
-<span id="cb35-396"><a href="#cb35-396" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-397"><a href="#cb35-397" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-398"><a href="#cb35-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-399"><a href="#cb35-399" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije, dobivamo uređeni podatkovni okvir koji sadrži tri stupca: "movie", "decade" i "year". Svaki red predstavlja jedno opažanje - kombinaciju filma i desetljeća s odgovarajućom godinom premijere. Uredni format omogućuje lakše grupiranje podataka po desetljećima, izračunavanje sažetaka te stvaranje vizualizacija što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu.</span>
-<span id="cb35-400"><a href="#cb35-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-403"><a href="#cb35-403" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-404"><a href="#cb35-404" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
-<span id="cb35-405"><a href="#cb35-405" aria-hidden="true" tabindex="-1"></a>imdb_decades_tidy</span>
-<span id="cb35-406"><a href="#cb35-406" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-407"><a href="#cb35-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-408"><a href="#cb35-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-409"><a href="#cb35-409" aria-hidden="true" tabindex="-1"></a>**2. Više varijabli u nazivima stupaca**</span>
-<span id="cb35-410"><a href="#cb35-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-411"><a href="#cb35-411" aria-hidden="true" tabindex="-1"></a>Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.</span>
-<span id="cb35-412"><a href="#cb35-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-413"><a href="#cb35-413" aria-hidden="true" tabindex="-1"></a>Primjer takvih podataka je <span class="in">`realise_year_runtime_dataset`</span>. Kod tih podataka nazivi stupaca poput "1994_142" i "1972_175" sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ili crno-bijeli s <span class="in">`NA`</span> vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i boja) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.</span>
-<span id="cb35-414"><a href="#cb35-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-417"><a href="#cb35-417" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-418"><a href="#cb35-418" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb35-419"><a href="#cb35-419" aria-hidden="true" tabindex="-1"></a>realise_year_runtime_dataset</span>
-<span id="cb35-420"><a href="#cb35-420" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-421"><a href="#cb35-421" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-422"><a href="#cb35-422" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_longer()`</span> s dodatnim argumentima za razdvajanje složenih naziva stupaca. Ključni argument <span class="in">`names_to`</span> prima vektor naziva novih varijabli koje će nastati razdvajanjem naziva stupaca, dok argument <span class="in">`names_sep`</span> specificira separator koji razdvaja različite dijelove naziva stupaca. U ovom slučaju, <span class="in">`names_to = c("year", "runtime")`</span> stvara dvije nove varijable, a <span class="in">`names_sep = "_"`</span> specificira da se nazivi stupaca dijele po podvlaci. Argument <span class="in">`values_drop_na = TRUE`</span> uklanja redove s nedostajućim vrijednostima koji predstavljaju umjetno stvorene kombinacije.</span>
+<span id="cb35-375"><a href="#cb35-375" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb35-376"><a href="#cb35-376" aria-hidden="true" tabindex="-1"></a>Primjer takvih neurednih podataka je podatkovni okvir <span class="in">`imdb_decades`</span> u kojem su nazivi stupaca "1950s", "1960s", "1970s", "1980s", "1990s" i "2000s", a koji predstavljaju desetlječa. Varijabla "movie" sadrži nazive filmova, dok ćelije sadrže godinu premijere filma ako film pripada određenom desetljeću, odnosno <span class="in">`NA`</span> ako ne pripada. Ovaj oblik podataka ima široki format gdje se informacije o godini premijere filma protežu kroz više stupaca, a većina ćelija sadrži nedostajuće vrijednosti.</span>
+<span id="cb35-377"><a href="#cb35-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-380"><a href="#cb35-380" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-381"><a href="#cb35-381" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb35-382"><a href="#cb35-382" aria-hidden="true" tabindex="-1"></a>imdb_decades</span>
+<span id="cb35-383"><a href="#cb35-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-384"><a href="#cb35-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-385"><a href="#cb35-385" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_longer()`</span>. Funkcija omogućuje specificiranje stupaca koji se trebaju urediti pomoću argumenta <span class="in">`cols`</span>, naziv nove varijable koja će sadržavati nazive stupaca pomoću argumenta <span class="in">`names_to`</span> te naziv varijable koja će sadržavati vrijednosti iz ćelija pomoću argumenta <span class="in">`values_to`</span>. Dodatno, argument <span class="in">`values_drop_na = TRUE`</span> može se koristiti za uklanjanje redova s nedostajućim vrijednostima.</span>
+<span id="cb35-386"><a href="#cb35-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-389"><a href="#cb35-389" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-390"><a href="#cb35-390" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
+<span id="cb35-391"><a href="#cb35-391" aria-hidden="true" tabindex="-1"></a>imdb_decades_tidy <span class="ot">&lt;-</span> imdb_decades <span class="sc">|&gt;</span></span>
+<span id="cb35-392"><a href="#cb35-392" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb35-393"><a href="#cb35-393" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"19"</span>, <span class="st">"20"</span>)),</span>
+<span id="cb35-394"><a href="#cb35-394" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"decade"</span>,</span>
+<span id="cb35-395"><a href="#cb35-395" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"year"</span>,</span>
+<span id="cb35-396"><a href="#cb35-396" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
+<span id="cb35-397"><a href="#cb35-397" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-398"><a href="#cb35-398" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-399"><a href="#cb35-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-400"><a href="#cb35-400" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije, dobivamo uređeni podatkovni okvir koji sadrži tri stupca: "movie", "decade" i "year". Svaki red predstavlja jedno opažanje - kombinaciju filma i desetljeća s odgovarajućom godinom premijere. Uredni format omogućuje lakše grupiranje podataka po desetljećima, izračunavanje sažetaka te stvaranje vizualizacija što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu.</span>
+<span id="cb35-401"><a href="#cb35-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-404"><a href="#cb35-404" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-405"><a href="#cb35-405" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
+<span id="cb35-406"><a href="#cb35-406" aria-hidden="true" tabindex="-1"></a>imdb_decades_tidy</span>
+<span id="cb35-407"><a href="#cb35-407" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-408"><a href="#cb35-408" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-409"><a href="#cb35-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-410"><a href="#cb35-410" aria-hidden="true" tabindex="-1"></a>**2. Više varijabli u nazivima stupaca**</span>
+<span id="cb35-411"><a href="#cb35-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-412"><a href="#cb35-412" aria-hidden="true" tabindex="-1"></a>Složeniji oblik neurednih podataka nastaje kada se u nazivima stupaca nalazi više dijelova informacije odvojenih određenim separatorom pri čemu svaki dio predstavlja vrijednost različite varijable. Takva organizacija podataka otežava analizu jer se vrijednosti više varijabli nalaze pomiješane u nazivima stupaca umjesto da svaka varijabla ima svoj vlastiti stupac.</span>
+<span id="cb35-413"><a href="#cb35-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-414"><a href="#cb35-414" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb35-415"><a href="#cb35-415" aria-hidden="true" tabindex="-1"></a>Primjer takvih podataka je <span class="in">`realise_year_runtime_dataset`</span>. Kod tih podataka nazivi stupaca poput "1994_142" i "1972_175" sadrže dvije različite informacije odvojene podvlakom, godinu premijere filma i trajanje filma. Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok ćelije sadrže informaciju o tome je li film u boji ili crno-bijeli s <span class="in">`NA`</span> vrijednostima za kombinacije koje ne odgovaraju određenom filmu. Ovaj oblik podataka ima izrazito široki format gdje se tri različite varijable (godina, trajanje i boja) nalaze raspršene kroz nazive stupaca i vrijednosti ćelija.</span>
+<span id="cb35-416"><a href="#cb35-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-419"><a href="#cb35-419" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-420"><a href="#cb35-420" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb35-421"><a href="#cb35-421" aria-hidden="true" tabindex="-1"></a>realise_year_runtime_dataset</span>
+<span id="cb35-422"><a href="#cb35-422" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb35-423"><a href="#cb35-423" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-426"><a href="#cb35-426" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-427"><a href="#cb35-427" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
-<span id="cb35-428"><a href="#cb35-428" aria-hidden="true" tabindex="-1"></a>realise_year_runtime_dataset_tidy <span class="ot">&lt;-</span> realise_year_runtime_dataset <span class="sc">|&gt;</span></span>
-<span id="cb35-429"><a href="#cb35-429" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb35-430"><a href="#cb35-430" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(rank, movie),</span>
-<span id="cb35-431"><a href="#cb35-431" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"year"</span>, <span class="st">"runtime"</span>),</span>
-<span id="cb35-432"><a href="#cb35-432" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
-<span id="cb35-433"><a href="#cb35-433" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span>,</span>
-<span id="cb35-434"><a href="#cb35-434" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
-<span id="cb35-435"><a href="#cb35-435" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-436"><a href="#cb35-436" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-437"><a href="#cb35-437" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-438"><a href="#cb35-438" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije dobivamo uredni podatkovni okvir koji sadrži pet stupaca: "rank", "movie", "year", "runtime" i "value". Svaki red predstavlja jedno opažanje - jedan film s njegovim karakteristikama.</span>
+<span id="cb35-424"><a href="#cb35-424" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_longer()`</span> s dodatnim argumentima za razdvajanje složenih naziva stupaca. Ključni argument <span class="in">`names_to`</span> prima vektor naziva novih varijabli koje će nastati razdvajanjem naziva stupaca, dok argument <span class="in">`names_sep`</span> specificira separator koji razdvaja različite dijelove naziva stupaca. U ovom slučaju, <span class="in">`names_to = c("year", "runtime")`</span> stvara dvije nove varijable, a <span class="in">`names_sep = "_"`</span> specificira da se nazivi stupaca dijele po podvlaci. Argument <span class="in">`values_drop_na = TRUE`</span> uklanja redove s nedostajućim vrijednostima koji predstavljaju umjetno stvorene kombinacije.</span>
+<span id="cb35-425"><a href="#cb35-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-428"><a href="#cb35-428" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-429"><a href="#cb35-429" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
+<span id="cb35-430"><a href="#cb35-430" aria-hidden="true" tabindex="-1"></a>realise_year_runtime_dataset_tidy <span class="ot">&lt;-</span> realise_year_runtime_dataset <span class="sc">|&gt;</span></span>
+<span id="cb35-431"><a href="#cb35-431" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb35-432"><a href="#cb35-432" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(rank, movie),</span>
+<span id="cb35-433"><a href="#cb35-433" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"year"</span>, <span class="st">"runtime"</span>),</span>
+<span id="cb35-434"><a href="#cb35-434" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span>,</span>
+<span id="cb35-435"><a href="#cb35-435" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span>,</span>
+<span id="cb35-436"><a href="#cb35-436" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
+<span id="cb35-437"><a href="#cb35-437" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-438"><a href="#cb35-438" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb35-439"><a href="#cb35-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-442"><a href="#cb35-442" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-443"><a href="#cb35-443" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
-<span id="cb35-444"><a href="#cb35-444" aria-hidden="true" tabindex="-1"></a>realise_year_runtime_dataset_tidy</span>
-<span id="cb35-445"><a href="#cb35-445" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-446"><a href="#cb35-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-447"><a href="#cb35-447" aria-hidden="true" tabindex="-1"></a>**3. Varijable pohranjene u redovima**</span>
-<span id="cb35-448"><a href="#cb35-448" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-449"><a href="#cb35-449" aria-hidden="true" tabindex="-1"></a>Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva. U ovom obliku, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.</span>
-<span id="cb35-450"><a href="#cb35-450" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-451"><a href="#cb35-451" aria-hidden="true" tabindex="-1"></a>U primjeru podatkovnog okvira <span class="in">`imdb_top_10_long`</span>, svaki film predstavljen je kroz više redova, pri čemu stupac "attribute" sadrži nazive varijabli poput "release_year", "director", "genres", "runtime" i ostale, dok stupac "value" sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film "The Shawshank Redemption" prikazan je kroz deset redova, po jedan za svaku karakteristiku filma.</span>
-<span id="cb35-452"><a href="#cb35-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-455"><a href="#cb35-455" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-456"><a href="#cb35-456" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb35-457"><a href="#cb35-457" aria-hidden="true" tabindex="-1"></a>imdb_top_10_long</span>
-<span id="cb35-458"><a href="#cb35-458" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-459"><a href="#cb35-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-460"><a href="#cb35-460" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_wider()`</span>. Funkcija koristi argument <span class="in">`names_from`</span> za specificiranje stupca koji sadrži nazive budućih varijabli (u ovom slučaju stupac "attribute") te argument <span class="in">`values_from`</span> za specificiranje stupca koji sadrži vrijednosti tih varijabli (stupac "value"). Funkcija <span class="in">`pivot_wider()`</span> automatski grupira podatke prema svim stupcima koji nisu specificirani u <span class="in">`names_from`</span> i <span class="in">`values_from`</span> argumentima što znači da će se podaci grupirati po "rank" i "movie" stupcima.</span>
-<span id="cb35-461"><a href="#cb35-461" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-464"><a href="#cb35-464" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-465"><a href="#cb35-465" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
-<span id="cb35-466"><a href="#cb35-466" aria-hidden="true" tabindex="-1"></a>imdb_top_10_wide <span class="ot">&lt;-</span> imdb_top_10_long <span class="sc">|&gt;</span></span>
-<span id="cb35-467"><a href="#cb35-467" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
-<span id="cb35-468"><a href="#cb35-468" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> attribute,</span>
-<span id="cb35-469"><a href="#cb35-469" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> value</span>
-<span id="cb35-470"><a href="#cb35-470" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-471"><a href="#cb35-471" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-472"><a href="#cb35-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-473"><a href="#cb35-473" aria-hidden="true" tabindex="-1"></a>Nakon primjene <span class="in">`pivot_wider()`</span> funkcije, dobivamo uređeni podatkovni okvir koji sadrži 12 stupaca: identifikacijske varijable "rank" i "movie" te deset novih stupaca koji predstavljaju filmske karakteristike. Svaki od 10 redova predstavlja jedan film s njegovim kompletnim karakteristikama.</span>
-<span id="cb35-474"><a href="#cb35-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-477"><a href="#cb35-477" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-478"><a href="#cb35-478" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
-<span id="cb35-479"><a href="#cb35-479" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(imdb_top_10_wide, <span class="dv">3</span>)</span>
-<span id="cb35-480"><a href="#cb35-480" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-481"><a href="#cb35-481" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-482"><a href="#cb35-482" aria-hidden="true" tabindex="-1"></a>**4. Isti tip vrijednosti raspoređen u više stupaca**</span>
-<span id="cb35-483"><a href="#cb35-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-484"><a href="#cb35-484" aria-hidden="true" tabindex="-1"></a>Četvrti oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna varijabla biva podijeljena u više stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.</span>
-<span id="cb35-485"><a href="#cb35-485" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-486"><a href="#cb35-486" aria-hidden="true" tabindex="-1"></a><span class="in">`writers_dataset`</span> je jedan takav podatkovni okvir. U njemu su informacije o scenaristima filmova podijeljene su u tri odvojena stupca: "writer_1", "writer_2" i "writer_3". Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju <span class="in">`NA`</span> vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.</span>
-<span id="cb35-487"><a href="#cb35-487" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-490"><a href="#cb35-490" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-491"><a href="#cb35-491" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb35-492"><a href="#cb35-492" aria-hidden="true" tabindex="-1"></a>writers_dataset</span>
-<span id="cb35-493"><a href="#cb35-493" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-494"><a href="#cb35-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-495"><a href="#cb35-495" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_longer()`</span> uz dodatne argumente koji olakšavaju rad s nazivima stupaca koji imaju zajednički prefiks. Argument <span class="in">`cols = starts_with("writer_")`</span> specificira da se produže svi stupci koji počinju s "writer_", dok argument <span class="in">`names_prefix = "writer_"`</span> uklanja prefiks iz naziva stupaca prije pohranjivanja u novu varijablu. Argument <span class="in">`names_to = "writer_id"`</span> stvara novu varijablu koja označava redni broj scenarista, a <span class="in">`values_to = "writer"`</span> stvara varijablu koja sadrži imena scenarista. Argument <span class="in">`values_drop_na = TRUE`</span> uklanja redove s nedostajućim vrijednostima koji nastaju zbog nejednakog broja scenarista po filmovima.</span>
-<span id="cb35-496"><a href="#cb35-496" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-499"><a href="#cb35-499" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-500"><a href="#cb35-500" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
-<span id="cb35-501"><a href="#cb35-501" aria-hidden="true" tabindex="-1"></a>writers_dataset_tidy <span class="ot">&lt;-</span> writers_dataset <span class="sc">|&gt;</span></span>
-<span id="cb35-502"><a href="#cb35-502" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb35-503"><a href="#cb35-503" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"writer_"</span>),</span>
-<span id="cb35-504"><a href="#cb35-504" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"writer_id"</span>,</span>
-<span id="cb35-505"><a href="#cb35-505" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"writer_"</span>,</span>
-<span id="cb35-506"><a href="#cb35-506" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"writer"</span>,</span>
-<span id="cb35-507"><a href="#cb35-507" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
-<span id="cb35-508"><a href="#cb35-508" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-509"><a href="#cb35-509" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-510"><a href="#cb35-510" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-511"><a href="#cb35-511" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie", "writer_id" (redni broj scenarista) i "writer" (ime scenarista). Svaki red predstavlja kombinaciju film-scenarist što omogućuje jednostavno brojanje filmova po scenaristu, identifikaciju najproduktivnijih scenarista ili analizu suradnji između različitih scenarista. Uređeni format također olakšava spajanje s drugim podacima o scenaristima te stvaranje vizualizacija mreža suradnji, što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu s odvojenim stupcima za svakog scenarista.</span>
-<span id="cb35-512"><a href="#cb35-512" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-515"><a href="#cb35-515" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-516"><a href="#cb35-516" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
-<span id="cb35-517"><a href="#cb35-517" aria-hidden="true" tabindex="-1"></a>writers_dataset_tidy</span>
-<span id="cb35-518"><a href="#cb35-518" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-519"><a href="#cb35-519" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-520"><a href="#cb35-520" aria-hidden="true" tabindex="-1"></a>**5. Više vrijednosti u jednoj ćeliji**</span>
-<span id="cb35-521"><a href="#cb35-521" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-522"><a href="#cb35-522" aria-hidden="true" tabindex="-1"></a>Ovaj oblik neurednih podataka predstavlja pojednostavljenu verziju prethodnog problema gdje se u jednoj ćeliji nalaze vrijednosti koje pripadaju različitim varijablama, odvojene određenim separatorom. Problem nastaje kada se dvije logički različite varijable kombiniraju u jednu kolonu radi uštede prostora ili zbog ograničenja u sustavima za pohranu podataka. Ovakva organizacija krši temeljna načela urednih podataka jer svaka ćelija treba sadržavati vrijednost samo jedne varijable. Kombiniranje različitih tipova informacija u istoj ćeliji otežava sve oblike analize jer je potrebno najprije izdvojiti pojedinačne komponente prije bilo kakve obrade podataka.</span>
-<span id="cb35-523"><a href="#cb35-523" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-524"><a href="#cb35-524" aria-hidden="true" tabindex="-1"></a>U primjeru <span class="in">`imdb_combined_variables`</span>, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.</span>
-<span id="cb35-525"><a href="#cb35-525" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-528"><a href="#cb35-528" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-529"><a href="#cb35-529" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb35-530"><a href="#cb35-530" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables</span>
-<span id="cb35-531"><a href="#cb35-531" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-532"><a href="#cb35-532" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-533"><a href="#cb35-533" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`separate()`</span> koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument <span class="in">`col = director_budget`</span> za specificiranje stupca koji se želi podijeliti, <span class="in">`into = c("director", "budget")`</span> za definiranje naziva novih stupaca koji će nastati dijeljenjem i <span class="in">`sep = "_"`</span> za navođenje separatora koji razdvaja različite vrijednosti. Funkcija <span class="in">`separate()`</span> automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.</span>
-<span id="cb35-534"><a href="#cb35-534" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-535"><a href="#cb35-535" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon=false collapse="true" title="Funkcija: separate()"}</span>
-<span id="cb35-536"><a href="#cb35-536" aria-hidden="true" tabindex="-1"></a><span class="in">`separate()`</span> je ključna funkcija <span class="in">`tidyr`</span> paketa koja se koristi kada imamo više varijabli spremljenih u jednoj ćeliji, a želimo ih razdvojiti u više stupaca. Funkcija može imati slijedeće argumente:</span>
-<span id="cb35-537"><a href="#cb35-537" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-538"><a href="#cb35-538" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
-<span id="cb35-539"><a href="#cb35-539" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb35-540"><a href="#cb35-540" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`data`</span> <span class="pp">|</span> Podatkovni okvir kojem mijenjamo format. <span class="pp">|</span></span>
-<span id="cb35-541"><a href="#cb35-541" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`col`</span> <span class="pp">|</span> Naziv stupca koji želimo razdvojiti. <span class="pp">|</span></span>
-<span id="cb35-542"><a href="#cb35-542" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`into`</span> <span class="pp">|</span> Imena novih stupaca u koje želimo rasporediti rezultate. <span class="pp">|</span></span>
-<span id="cb35-543"><a href="#cb35-543" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`sep`</span> <span class="pp">|</span> Kako razdvajamo vrijednosti u stupcu (npr. "_", "-"). <span class="pp">|</span></span>
-<span id="cb35-544"><a href="#cb35-544" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`remove`</span> <span class="pp">|</span> Ako je <span class="in">`TRUE`</span> (zadano), onda se originalni stupac briše nakon razdvajanja, a ako je <span class="in">`FALSE`</span>, onda originalni stupac ostaje u tablici zajedno s novim stupcima. <span class="pp">|</span></span>
-<span id="cb35-545"><a href="#cb35-545" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`convert`</span> <span class="pp">|</span> Ako je <span class="in">`TRUE`</span>, onda pokušava automatski pretvoriti nove stupce u odgovarajući tip podataka (npr. "1994" u integer), a ako je <span class="in">`FALSE`</span>, koji je i zadani, onda će svi novi stupci biti character. <span class="pp">|</span></span>
-<span id="cb35-546"><a href="#cb35-546" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`extra`</span> <span class="pp">|</span> Što napraviti ako se vrijednost razdvoji na više dijelova nego što smo naveli u <span class="in">`into`</span>. Može biti: <span class="in">`warn`</span> (zadano) koje izdaje upozorenje i spaja višak u zadnji stupac, <span class="in">`drop`</span> koje odbacuje višak i <span class="in">`merge`</span> koje spaja višak u zadnji stupac bez upozorenja. <span class="pp">|</span></span>
-<span id="cb35-547"><a href="#cb35-547" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`fill`</span> <span class="pp">|</span> Što napraviti ako se vrijednost razdvoji na manje dijelova nego što smo naveli u <span class="in">`into`</span>. Može biti: <span class="in">`warn`</span> (zadano) koje izdaje upozorenje, a prazna mjesta popunjava s <span class="in">`NA`</span>, <span class="in">`right`</span> kojim se praznine dodaju na kraj i <span class="in">`left`</span> kojim se praznine dodaju na početak. <span class="pp">|</span></span>
-<span id="cb35-548"><a href="#cb35-548" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb35-549"><a href="#cb35-549" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-552"><a href="#cb35-552" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-553"><a href="#cb35-553" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
-<span id="cb35-554"><a href="#cb35-554" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables_tidy <span class="ot">&lt;-</span> imdb_combined_variables <span class="sc">|&gt;</span></span>
-<span id="cb35-555"><a href="#cb35-555" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(</span>
-<span id="cb35-556"><a href="#cb35-556" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> director_budget,</span>
-<span id="cb35-557"><a href="#cb35-557" aria-hidden="true" tabindex="-1"></a>    <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"director"</span>, <span class="st">"budget"</span>),</span>
-<span id="cb35-558"><a href="#cb35-558" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">"_"</span></span>
-<span id="cb35-559"><a href="#cb35-559" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-560"><a href="#cb35-560" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-561"><a href="#cb35-561" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-562"><a href="#cb35-562" aria-hidden="true" tabindex="-1"></a>Nakon primjene <span class="in">`separate()`</span> funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie", "director" i "budget". Svaki red predstavlja jedan film s jasno odvojenima karakteristikama, pri čemu svaki stupac sadrži samo jedan tip informacije.</span>
-<span id="cb35-563"><a href="#cb35-563" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-566"><a href="#cb35-566" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-567"><a href="#cb35-567" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
-<span id="cb35-568"><a href="#cb35-568" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables_tidy</span>
-<span id="cb35-569"><a href="#cb35-569" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-570"><a href="#cb35-570" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-571"><a href="#cb35-571" aria-hidden="true" tabindex="-1"></a>**6. Ista varijabla raspodijeljena u sva stupca**</span>
-<span id="cb35-572"><a href="#cb35-572" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-573"><a href="#cb35-573" aria-hidden="true" tabindex="-1"></a>Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable.</span>
-<span id="cb35-574"><a href="#cb35-574" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-575"><a href="#cb35-575" aria-hidden="true" tabindex="-1"></a>U primjeru <span class="in">`director_names_dataset`</span> informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu.</span>
-<span id="cb35-576"><a href="#cb35-576" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-579"><a href="#cb35-579" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-580"><a href="#cb35-580" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
-<span id="cb35-581"><a href="#cb35-581" aria-hidden="true" tabindex="-1"></a>director_names_dataset</span>
-<span id="cb35-582"><a href="#cb35-582" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-440"><a href="#cb35-440" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije dobivamo uredni podatkovni okvir koji sadrži pet stupaca: "rank", "movie", "year", "runtime" i "value". Svaki red predstavlja jedno opažanje - jedan film s njegovim karakteristikama.</span>
+<span id="cb35-441"><a href="#cb35-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-444"><a href="#cb35-444" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-445"><a href="#cb35-445" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
+<span id="cb35-446"><a href="#cb35-446" aria-hidden="true" tabindex="-1"></a>realise_year_runtime_dataset_tidy</span>
+<span id="cb35-447"><a href="#cb35-447" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-448"><a href="#cb35-448" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-449"><a href="#cb35-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-450"><a href="#cb35-450" aria-hidden="true" tabindex="-1"></a>**3. Varijable pohranjene u redovima**</span>
+<span id="cb35-451"><a href="#cb35-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-452"><a href="#cb35-452" aria-hidden="true" tabindex="-1"></a>Varijable pohranjene u redovima predstavljaju obrnuti problem od prethodnih slučajeva. U ovom obliku, ono što bi trebale biti varijable nalazi se u redovima, dok se vrijednosti tih varijabli nalaze u drugom stupcu. Ovakav oblik podataka rezultira pretjerano dugačkim formatom gdje se jedno opažanje proteže kroz više redova umjesto da bude sadržano u jednom redu. Ova organizacija čini podatke teškima za analizu jer krši temeljna načela urednih podataka prema kojima svaki red treba predstavljati jedno opažanje.</span>
+<span id="cb35-453"><a href="#cb35-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-454"><a href="#cb35-454" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb35-455"><a href="#cb35-455" aria-hidden="true" tabindex="-1"></a>U primjeru podatkovnog okvira <span class="in">`imdb_top_10_long`</span>, svaki film predstavljen je kroz više redova, pri čemu stupac "attribute" sadrži nazive varijabli poput "release_year", "director", "genres", "runtime" i ostale, dok stupac "value" sadrži odgovarajuće vrijednosti tih varijabli. Na primjer, film "The Shawshank Redemption" prikazan je kroz deset redova, po jedan za svaku karakteristiku filma.</span>
+<span id="cb35-456"><a href="#cb35-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-459"><a href="#cb35-459" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-460"><a href="#cb35-460" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb35-461"><a href="#cb35-461" aria-hidden="true" tabindex="-1"></a>imdb_top_10_long</span>
+<span id="cb35-462"><a href="#cb35-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-463"><a href="#cb35-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-464"><a href="#cb35-464" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_wider()`</span>. Funkcija koristi argument <span class="in">`names_from`</span> za specificiranje stupca koji sadrži nazive budućih varijabli (u ovom slučaju stupac "attribute") te argument <span class="in">`values_from`</span> za specificiranje stupca koji sadrži vrijednosti tih varijabli (stupac "value"). Funkcija <span class="in">`pivot_wider()`</span> automatski grupira podatke prema svim stupcima koji nisu specificirani u <span class="in">`names_from`</span> i <span class="in">`values_from`</span> argumentima što znači da će se podaci grupirati po "rank" i "movie" stupcima.</span>
+<span id="cb35-465"><a href="#cb35-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-468"><a href="#cb35-468" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-469"><a href="#cb35-469" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
+<span id="cb35-470"><a href="#cb35-470" aria-hidden="true" tabindex="-1"></a>imdb_top_10_wide <span class="ot">&lt;-</span> imdb_top_10_long <span class="sc">|&gt;</span></span>
+<span id="cb35-471"><a href="#cb35-471" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb35-472"><a href="#cb35-472" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> attribute,</span>
+<span id="cb35-473"><a href="#cb35-473" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> value</span>
+<span id="cb35-474"><a href="#cb35-474" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-475"><a href="#cb35-475" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-476"><a href="#cb35-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-477"><a href="#cb35-477" aria-hidden="true" tabindex="-1"></a>Nakon primjene <span class="in">`pivot_wider()`</span> funkcije, dobivamo uređeni podatkovni okvir koji sadrži 12 stupaca: identifikacijske varijable "rank" i "movie" te deset novih stupaca koji predstavljaju filmske karakteristike. Svaki od 10 redova predstavlja jedan film s njegovim kompletnim karakteristikama.</span>
+<span id="cb35-478"><a href="#cb35-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-481"><a href="#cb35-481" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-482"><a href="#cb35-482" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
+<span id="cb35-483"><a href="#cb35-483" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(imdb_top_10_wide, <span class="dv">3</span>)</span>
+<span id="cb35-484"><a href="#cb35-484" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-485"><a href="#cb35-485" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-486"><a href="#cb35-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-487"><a href="#cb35-487" aria-hidden="true" tabindex="-1"></a>**4. Isti tip vrijednosti raspoređen u više stupaca**</span>
+<span id="cb35-488"><a href="#cb35-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-489"><a href="#cb35-489" aria-hidden="true" tabindex="-1"></a>Četvrti oblik neurednih podataka nastaje kada se vrijednosti iste varijable raspoređuju u više stupaca umjesto da budu pohranjene u jednom stupcu. Ovaj problem često se javlja kada se podaci dizajniraju za lakši unos podataka, a ne za analizu što rezultira situacijom gdje jedna varijabla biva podijeljena u više stupaca. Takva organizacija krši temeljna načela urednih podataka jer se ista vrsta informacije nalazi u različitim stupcima što otežava analize koje zahtijevaju rad s tom varijablom kao cjelinom.</span>
+<span id="cb35-490"><a href="#cb35-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-491"><a href="#cb35-491" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb35-492"><a href="#cb35-492" aria-hidden="true" tabindex="-1"></a><span class="in">`writers_dataset`</span> je jedan takav podatkovni okvir. U njemu su informacije o scenaristima filmova podijeljene su u tri odvojena stupca: "writer_1", "writer_2" i "writer_3". Stupci "rank" i "movie" predstavljaju identifikacijske varijable, dok se imena scenarista nalaze u odvojenim stupcima ovisno o redoslijedu njihovog navođenja. Većina filmova ima dva ili tri scenarista što znači da se u podatkovnom okviru pojavljuju <span class="in">`NA`</span> vrijednosti kada film nema dovoljno scenarista za popunjavanje svih stupaca. Ovakav format otežava analize poput brojanja koliko filmova ima određeni scenarist ili grupiranja filmova prema scenaristu.</span>
+<span id="cb35-493"><a href="#cb35-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-496"><a href="#cb35-496" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-497"><a href="#cb35-497" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb35-498"><a href="#cb35-498" aria-hidden="true" tabindex="-1"></a>writers_dataset</span>
+<span id="cb35-499"><a href="#cb35-499" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-500"><a href="#cb35-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-501"><a href="#cb35-501" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`pivot_longer()`</span> uz dodatne argumente koji olakšavaju rad s nazivima stupaca koji imaju zajednički prefiks. Argument <span class="in">`cols = starts_with("writer_")`</span> specificira da se produže svi stupci koji počinju s "writer_", dok argument <span class="in">`names_prefix = "writer_"`</span> uklanja prefiks iz naziva stupaca prije pohranjivanja u novu varijablu. Argument <span class="in">`names_to = "writer_id"`</span> stvara novu varijablu koja označava redni broj scenarista, a <span class="in">`values_to = "writer"`</span> stvara varijablu koja sadrži imena scenarista. Argument <span class="in">`values_drop_na = TRUE`</span> uklanja redove s nedostajućim vrijednostima koji nastaju zbog nejednakog broja scenarista po filmovima.</span>
+<span id="cb35-502"><a href="#cb35-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-505"><a href="#cb35-505" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-506"><a href="#cb35-506" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
+<span id="cb35-507"><a href="#cb35-507" aria-hidden="true" tabindex="-1"></a>writers_dataset_tidy <span class="ot">&lt;-</span> writers_dataset <span class="sc">|&gt;</span></span>
+<span id="cb35-508"><a href="#cb35-508" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb35-509"><a href="#cb35-509" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"writer_"</span>),</span>
+<span id="cb35-510"><a href="#cb35-510" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"writer_id"</span>,</span>
+<span id="cb35-511"><a href="#cb35-511" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_prefix =</span> <span class="st">"writer_"</span>,</span>
+<span id="cb35-512"><a href="#cb35-512" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"writer"</span>,</span>
+<span id="cb35-513"><a href="#cb35-513" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_drop_na =</span> <span class="cn">TRUE</span></span>
+<span id="cb35-514"><a href="#cb35-514" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-515"><a href="#cb35-515" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-516"><a href="#cb35-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-517"><a href="#cb35-517" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie", "writer_id" (redni broj scenarista) i "writer" (ime scenarista). Svaki red predstavlja kombinaciju film-scenarist što omogućuje jednostavno brojanje filmova po scenaristu, identifikaciju najproduktivnijih scenarista ili analizu suradnji između različitih scenarista. Uređeni format također olakšava spajanje s drugim podacima o scenaristima te stvaranje vizualizacija mreža suradnji, što bi bilo komplicirano ili nemoguće u neuredno organiziranom širom formatu s odvojenim stupcima za svakog scenarista.</span>
+<span id="cb35-518"><a href="#cb35-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-521"><a href="#cb35-521" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-522"><a href="#cb35-522" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
+<span id="cb35-523"><a href="#cb35-523" aria-hidden="true" tabindex="-1"></a>writers_dataset_tidy</span>
+<span id="cb35-524"><a href="#cb35-524" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-525"><a href="#cb35-525" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-526"><a href="#cb35-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-527"><a href="#cb35-527" aria-hidden="true" tabindex="-1"></a>**5. Više vrijednosti u jednoj ćeliji**</span>
+<span id="cb35-528"><a href="#cb35-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-529"><a href="#cb35-529" aria-hidden="true" tabindex="-1"></a>Ovaj oblik neurednih podataka predstavlja pojednostavljenu verziju prethodnog problema gdje se u jednoj ćeliji nalaze vrijednosti koje pripadaju različitim varijablama, odvojene određenim separatorom. Problem nastaje kada se dvije logički različite varijable kombiniraju u jednu kolonu radi uštede prostora ili zbog ograničenja u sustavima za pohranu podataka. Ovakva organizacija krši temeljna načela urednih podataka jer svaka ćelija treba sadržavati vrijednost samo jedne varijable. Kombiniranje različitih tipova informacija u istoj ćeliji otežava sve oblike analize jer je potrebno najprije izdvojiti pojedinačne komponente prije bilo kakve obrade podataka.</span>
+<span id="cb35-530"><a href="#cb35-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-531"><a href="#cb35-531" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon=false collapse="true" title="Funkcija: separate()"}</span>
+<span id="cb35-532"><a href="#cb35-532" aria-hidden="true" tabindex="-1"></a><span class="in">`separate()`</span> je ključna funkcija <span class="in">`tidyr`</span> paketa koja se koristi kada imamo više varijabli spremljenih u jednoj ćeliji, a želimo ih razdvojiti u više stupaca. Funkcija može imati slijedeće argumente:</span>
+<span id="cb35-533"><a href="#cb35-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-534"><a href="#cb35-534" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
+<span id="cb35-535"><a href="#cb35-535" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb35-536"><a href="#cb35-536" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`data`</span> <span class="pp">|</span> Podatkovni okvir kojem mijenjamo format. <span class="pp">|</span></span>
+<span id="cb35-537"><a href="#cb35-537" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`col`</span> <span class="pp">|</span> Naziv stupca koji želimo razdvojiti. <span class="pp">|</span></span>
+<span id="cb35-538"><a href="#cb35-538" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`into`</span> <span class="pp">|</span> Imena novih stupaca u koje želimo rasporediti rezultate. <span class="pp">|</span></span>
+<span id="cb35-539"><a href="#cb35-539" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`sep`</span> <span class="pp">|</span> Kako razdvajamo vrijednosti u stupcu (npr. "_", "-"). <span class="pp">|</span></span>
+<span id="cb35-540"><a href="#cb35-540" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`remove`</span> <span class="pp">|</span> Ako je <span class="in">`TRUE`</span> (zadano), onda se originalni stupac briše nakon razdvajanja, a ako je <span class="in">`FALSE`</span>, onda originalni stupac ostaje u tablici zajedno s novim stupcima. <span class="pp">|</span></span>
+<span id="cb35-541"><a href="#cb35-541" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`convert`</span> <span class="pp">|</span> Ako je <span class="in">`TRUE`</span>, onda pokušava automatski pretvoriti nove stupce u odgovarajući tip podataka (npr. "1994" u integer), a ako je <span class="in">`FALSE`</span>, koji je i zadani, onda će svi novi stupci biti character. <span class="pp">|</span></span>
+<span id="cb35-542"><a href="#cb35-542" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`extra`</span> <span class="pp">|</span> Što napraviti ako se vrijednost razdvoji na više dijelova nego što smo naveli u <span class="in">`into`</span>. Može biti: <span class="in">`warn`</span> (zadano) koje izdaje upozorenje i spaja višak u zadnji stupac, <span class="in">`drop`</span> koje odbacuje višak i <span class="in">`merge`</span> koje spaja višak u zadnji stupac bez upozorenja. <span class="pp">|</span></span>
+<span id="cb35-543"><a href="#cb35-543" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`fill`</span> <span class="pp">|</span> Što napraviti ako se vrijednost razdvoji na manje dijelova nego što smo naveli u <span class="in">`into`</span>. Može biti: <span class="in">`warn`</span> (zadano) koje izdaje upozorenje, a prazna mjesta popunjava s <span class="in">`NA`</span>, <span class="in">`right`</span> kojim se praznine dodaju na kraj i <span class="in">`left`</span> kojim se praznine dodaju na početak. <span class="pp">|</span></span>
+<span id="cb35-544"><a href="#cb35-544" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-545"><a href="#cb35-545" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-546"><a href="#cb35-546" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb35-547"><a href="#cb35-547" aria-hidden="true" tabindex="-1"></a>U primjeru <span class="in">`imdb_combined_variables`</span>, stupac "director_budget" sadrži kombinaciju imena redatelja i budžeta filma odvojena podvlakom. Na primjer, vrijednost "Frank Darabont_25000000" predstavlja dva različita podatka: ime redatelja "Frank Darabont" i budžet filma od 25 milijuna dolara. Stupci "rank" i "movie" već su u ispravnom formatu jer sadrže samo jednu vrstu informacije po ćeliji.</span>
+<span id="cb35-548"><a href="#cb35-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-551"><a href="#cb35-551" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-552"><a href="#cb35-552" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb35-553"><a href="#cb35-553" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables</span>
+<span id="cb35-554"><a href="#cb35-554" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-555"><a href="#cb35-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-556"><a href="#cb35-556" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`separate()`</span> koja omogućuje dijeljenje jednog stupca u dva ili više stupaca na temelju određenog separatora. Funkcija koristi argument <span class="in">`col = director_budget`</span> za specificiranje stupca koji se želi podijeliti, <span class="in">`into = c("director", "budget")`</span> za definiranje naziva novih stupaca koji će nastati dijeljenjem i <span class="in">`sep = "_"`</span> za navođenje separatora koji razdvaja različite vrijednosti. Funkcija <span class="in">`separate()`</span> automatski prepoznaje poziciju separatora u svakoj ćeliji i dijeli sadržaj na odgovarajući način, stvarajući dva nova stupca s jasno odvojenima informacijama.</span>
+<span id="cb35-557"><a href="#cb35-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-560"><a href="#cb35-560" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-561"><a href="#cb35-561" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
+<span id="cb35-562"><a href="#cb35-562" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables_tidy <span class="ot">&lt;-</span> imdb_combined_variables <span class="sc">|&gt;</span></span>
+<span id="cb35-563"><a href="#cb35-563" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(</span>
+<span id="cb35-564"><a href="#cb35-564" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> director_budget,</span>
+<span id="cb35-565"><a href="#cb35-565" aria-hidden="true" tabindex="-1"></a>    <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"director"</span>, <span class="st">"budget"</span>),</span>
+<span id="cb35-566"><a href="#cb35-566" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">"_"</span></span>
+<span id="cb35-567"><a href="#cb35-567" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-568"><a href="#cb35-568" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-569"><a href="#cb35-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-570"><a href="#cb35-570" aria-hidden="true" tabindex="-1"></a>Nakon primjene <span class="in">`separate()`</span> funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie", "director" i "budget". Svaki red predstavlja jedan film s jasno odvojenima karakteristikama, pri čemu svaki stupac sadrži samo jedan tip informacije.</span>
+<span id="cb35-571"><a href="#cb35-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-574"><a href="#cb35-574" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-575"><a href="#cb35-575" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
+<span id="cb35-576"><a href="#cb35-576" aria-hidden="true" tabindex="-1"></a>imdb_combined_variables_tidy</span>
+<span id="cb35-577"><a href="#cb35-577" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-578"><a href="#cb35-578" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-579"><a href="#cb35-579" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-580"><a href="#cb35-580" aria-hidden="true" tabindex="-1"></a>**6. Ista varijabla raspodijeljena u sva stupca**</span>
+<span id="cb35-581"><a href="#cb35-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-582"><a href="#cb35-582" aria-hidden="true" tabindex="-1"></a>Ovaj oblik neurednih podataka nastaje kada se logički jedna varijabla nepotrebno dijeli u više stupaca. Problem se javlja kada se podaci organiziraju prema komponentama varijable umjesto prema samoj varijabli kao cjelini. Iako ovakva organizacija može biti korisna u specifičnim slučajevima kada trebamo raditi s pojedinim komponentama, češće otežava analizu jer zahtijeva kombiniranje informacija iz više stupaca za dobivanje potpune vrijednosti varijable.</span>
 <span id="cb35-583"><a href="#cb35-583" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-584"><a href="#cb35-584" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`unite()`</span> omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument <span class="in">`col = "director_name"`</span> za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti ("director_first_name", "director_last_name"), te argument <span class="in">`sep = " "`</span> koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija <span class="in">`unite()`</span> automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.</span>
-<span id="cb35-585"><a href="#cb35-585" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-586"><a href="#cb35-586" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon=false collapse="true" title="Funkcija: unite()"}</span>
-<span id="cb35-587"><a href="#cb35-587" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`unite()`</span> dio je <span class="in">`tidyr`</span> paketa i koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od <span class="in">`separate()`</span> funkcije. Funkcija može imati slijedeće argumente:</span>
-<span id="cb35-588"><a href="#cb35-588" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-589"><a href="#cb35-589" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
-<span id="cb35-590"><a href="#cb35-590" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb35-591"><a href="#cb35-591" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`data`</span> <span class="pp">|</span> Podatkovni okvir na kojem se izvršava operacija spajanja stupaca. <span class="pp">|</span></span>
-<span id="cb35-592"><a href="#cb35-592" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`col`</span> <span class="pp">|</span> Naziv novog stupca koji će nastati spajanjem postojećih stupaca. Može se navesti kao string (u navodnicima) ili kao simbol (bez navodnika). <span class="pp">|</span></span>
-<span id="cb35-593"><a href="#cb35-593" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`...`</span> <span class="pp">|</span> Stupci koji se žele spojiti. <span class="pp">|</span></span>
-<span id="cb35-594"><a href="#cb35-594" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`sep`</span> <span class="pp">|</span> Separator koji se umeće između vrijednosti prilikom spajanja. <span class="pp">|</span></span>
-<span id="cb35-595"><a href="#cb35-595" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`remove`</span> <span class="pp">|</span> Logička vrijednost koja određuje treba li ukloniti originalne stupce iz rezultata. Zadana vrijednost je <span class="in">`TRUE`</span> što znači da se originalni stupci brišu nakon spajanja. Ako postavite <span class="in">`FALSE`</span>, zadržat ćete i originalne i novi spojeni stupac. <span class="pp">|</span></span>
-<span id="cb35-596"><a href="#cb35-596" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`na.rm`</span> <span class="pp">|</span> Logička vrijednost koja određuje treba li ukloniti nedostajuće vrijednosti (<span class="in">`NA`</span>) prije spajanja. Ako je <span class="in">`TRUE`</span>, <span class="in">`NA`</span> vrijednosti se ignoriraju prilikom spajanja. Zadana vrijednost je <span class="in">`FALSE`</span>. <span class="pp">|</span></span>
-<span id="cb35-597"><a href="#cb35-597" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb35-598"><a href="#cb35-598" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-601"><a href="#cb35-601" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-602"><a href="#cb35-602" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
-<span id="cb35-603"><a href="#cb35-603" aria-hidden="true" tabindex="-1"></a>director_names_dataset_tidy <span class="ot">&lt;-</span> director_names_dataset <span class="sc">|&gt;</span></span>
-<span id="cb35-604"><a href="#cb35-604" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(</span>
-<span id="cb35-605"><a href="#cb35-605" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"director_name"</span>,</span>
-<span id="cb35-606"><a href="#cb35-606" aria-hidden="true" tabindex="-1"></a>    director_first_name,</span>
-<span id="cb35-607"><a href="#cb35-607" aria-hidden="true" tabindex="-1"></a>    director_last_name,</span>
-<span id="cb35-608"><a href="#cb35-608" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">" "</span></span>
-<span id="cb35-609"><a href="#cb35-609" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb35-610"><a href="#cb35-610" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-611"><a href="#cb35-611" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-612"><a href="#cb35-612" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie" i novi "director_name" (puno ime redatelja). Svaki red predstavlja jedan film s kompletnim imenom redatelja u jednom stupcu što omogućuje jednostavno sortiranje filmova prema imenima redatelja, filtriranje prema specifičnim redateljima te spajanje s drugim izvorima podataka koji koriste puna imena.</span>
-<span id="cb35-613"><a href="#cb35-613" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-616"><a href="#cb35-616" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb35-617"><a href="#cb35-617" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
-<span id="cb35-618"><a href="#cb35-618" aria-hidden="true" tabindex="-1"></a>director_names_dataset_tidy</span>
-<span id="cb35-619"><a href="#cb35-619" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-584"><a href="#cb35-584" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon=false collapse="true" title="Funkcija: unite()"}</span>
+<span id="cb35-585"><a href="#cb35-585" aria-hidden="true" tabindex="-1"></a>Funkcija <span class="in">`unite()`</span> dio je <span class="in">`tidyr`</span> paketa i koristi se za spajanje više stupaca u jedan stupac u podatkovnom okviru. Ovo je suprotna operacija od <span class="in">`separate()`</span> funkcije. Funkcija može imati slijedeće argumente:</span>
+<span id="cb35-586"><a href="#cb35-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-587"><a href="#cb35-587" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Argument <span class="pp">|</span> Objašnjenje <span class="pp">|</span></span>
+<span id="cb35-588"><a href="#cb35-588" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb35-589"><a href="#cb35-589" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`data`</span> <span class="pp">|</span> Podatkovni okvir na kojem se izvršava operacija spajanja stupaca. <span class="pp">|</span></span>
+<span id="cb35-590"><a href="#cb35-590" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`col`</span> <span class="pp">|</span> Naziv novog stupca koji će nastati spajanjem postojećih stupaca. Može se navesti kao string (u navodnicima) ili kao simbol (bez navodnika). <span class="pp">|</span></span>
+<span id="cb35-591"><a href="#cb35-591" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`...`</span> <span class="pp">|</span> Stupci koji se žele spojiti. <span class="pp">|</span></span>
+<span id="cb35-592"><a href="#cb35-592" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`sep`</span> <span class="pp">|</span> Separator koji se umeće između vrijednosti prilikom spajanja. <span class="pp">|</span></span>
+<span id="cb35-593"><a href="#cb35-593" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`remove`</span> <span class="pp">|</span> Logička vrijednost koja određuje treba li ukloniti originalne stupce iz rezultata. Zadana vrijednost je <span class="in">`TRUE`</span> što znači da se originalni stupci brišu nakon spajanja. Ako postavite <span class="in">`FALSE`</span>, zadržat ćete i originalne i novi spojeni stupac. <span class="pp">|</span></span>
+<span id="cb35-594"><a href="#cb35-594" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`na.rm`</span> <span class="pp">|</span> Logička vrijednost koja određuje treba li ukloniti nedostajuće vrijednosti (<span class="in">`NA`</span>) prije spajanja. Ako je <span class="in">`TRUE`</span>, <span class="in">`NA`</span> vrijednosti se ignoriraju prilikom spajanja. Zadana vrijednost je <span class="in">`FALSE`</span>. <span class="pp">|</span></span>
+<span id="cb35-595"><a href="#cb35-595" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb35-596"><a href="#cb35-596" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-597"><a href="#cb35-597" aria-hidden="true" tabindex="-1"></a>::: {.callout-note icon="false" collapse="true" title="Primjer"}</span>
+<span id="cb35-598"><a href="#cb35-598" aria-hidden="true" tabindex="-1"></a>U primjeru <span class="in">`director_names_dataset`</span> informacija o imenu redatelja podijeljena je u dva odvojena stupca, "director_first_name" koji sadrži ime i "director_last_name" koji sadrži prezime redatelja. Na primjer, za film "The Shawshank Redemption", ime redatelja "Frank Darabont" podijeljeno je na "Frank" u prvom stupcu i "Darabont" u drugom stupcu.</span>
+<span id="cb35-599"><a href="#cb35-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-602"><a href="#cb35-602" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-603"><a href="#cb35-603" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled neurednog oblika podatkovnog okvira</span></span>
+<span id="cb35-604"><a href="#cb35-604" aria-hidden="true" tabindex="-1"></a>director_names_dataset</span>
+<span id="cb35-605"><a href="#cb35-605" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-606"><a href="#cb35-606" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-607"><a href="#cb35-607" aria-hidden="true" tabindex="-1"></a>Problem se rješava pomoću funkcije <span class="in">`unite()`</span> omogućuje spajanje više stupaca u jedan stupac. Funkcija koristi argument <span class="in">`col = "director_name"`</span> za specificiranje naziva novog stupca, zatim navodi nazive stupaca koji se žele spojiti ("director_first_name", "director_last_name"), te argument <span class="in">`sep = " "`</span> koji definira separator koji će se umetnuti između spojenih vrijednosti. Funkcija <span class="in">`unite()`</span> automatski kombinira vrijednosti iz specificiranih stupaca redoslijedom kojim su navedeni, stvarajući jednu koherentnu varijablu koja predstavlja punu informaciju.</span>
+<span id="cb35-608"><a href="#cb35-608" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-611"><a href="#cb35-611" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-612"><a href="#cb35-612" aria-hidden="true" tabindex="-1"></a><span class="co"># Uređivanje podatkovnog okvira</span></span>
+<span id="cb35-613"><a href="#cb35-613" aria-hidden="true" tabindex="-1"></a>director_names_dataset_tidy <span class="ot">&lt;-</span> director_names_dataset <span class="sc">|&gt;</span></span>
+<span id="cb35-614"><a href="#cb35-614" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(</span>
+<span id="cb35-615"><a href="#cb35-615" aria-hidden="true" tabindex="-1"></a>    <span class="at">col =</span> <span class="st">"director_name"</span>,</span>
+<span id="cb35-616"><a href="#cb35-616" aria-hidden="true" tabindex="-1"></a>    director_first_name,</span>
+<span id="cb35-617"><a href="#cb35-617" aria-hidden="true" tabindex="-1"></a>    director_last_name,</span>
+<span id="cb35-618"><a href="#cb35-618" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">" "</span></span>
+<span id="cb35-619"><a href="#cb35-619" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-620"><a href="#cb35-620" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-621"><a href="#cb35-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-622"><a href="#cb35-622" aria-hidden="true" tabindex="-1"></a>Nakon primjene funkcije dobivamo uređeni podatkovni okvir koji sadrži četiri stupca: "rank", "movie" i novi "director_name" (puno ime redatelja). Svaki red predstavlja jedan film s kompletnim imenom redatelja u jednom stupcu što omogućuje jednostavno sortiranje filmova prema imenima redatelja, filtriranje prema specifičnim redateljima te spajanje s drugim izvorima podataka koji koriste puna imena.</span>
+<span id="cb35-623"><a href="#cb35-623" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-626"><a href="#cb35-626" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb35-627"><a href="#cb35-627" aria-hidden="true" tabindex="-1"></a><span class="co"># Pregled urednog oblika podatkovnog okvira</span></span>
+<span id="cb35-628"><a href="#cb35-628" aria-hidden="true" tabindex="-1"></a>director_names_dataset_tidy</span>
+<span id="cb35-629"><a href="#cb35-629" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb35-630"><a href="#cb35-630" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
