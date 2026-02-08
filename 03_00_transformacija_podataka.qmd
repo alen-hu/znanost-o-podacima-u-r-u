@@ -2,7 +2,7 @@
 title: "Transformacija podataka"
 description: ""
 number-sections: true
-title-block-banner: "#8B3A62"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:
@@ -58,7 +58,7 @@ pokemon_dataset <- poke_raw |>
 ```
 
 ::: {.callout-important icon="false" collapse="true" title="Podaci korišteni u poglavlju"}
-U svrhu ilustracije svih postupaka transformacije podataka u ovom poglavlju koristit će se skup podataka **Pokemon with stats** autora Alberta Barradasa, objavljen na platformi [Kaggle](https://www.kaggle.com/datasets/abcsds/pokemon) 2016. godine. Ovaj skup podataka sadrži informacije o 721 Pokemonu, uključujući njihove detaljne statistike i vrste. Podaci su kvalitetan primjer za demonstraciju različitih tehnika transformacije podataka `dplyr` paketom, a u nastavku će poglavlja svi primjeri transformacije podataka biti će temeljeni isključivo na ovom skupu podataka.
+U svrhu ilustracije postupaka transformacije podataka u ovom poglavlju koristit će se skup podataka **Pokemon with stats** autora Alberta Barradasa, objavljen na platformi [Kaggle](https://www.kaggle.com/datasets/abcsds/pokemon) 2016. godine. Ovaj skup podataka sadrži informacije o 721 Pokemonu, uključujući njihove detaljne statistike i vrste. Podaci su kvalitetan primjer za demonstraciju različitih tehnika transformacije podataka `dplyr` paketom, a u nastavku će poglavlja svi primjeri transformacije biti temeljeni na ovom skupu podataka.
 
 Podaci su spremljeni u podatkovnom okviru`pokemon_dataset` koji sadrži 271 Pokemona i 13 varijabli:
 
@@ -72,11 +72,11 @@ Podaci su spremljeni u podatkovnom okviru`pokemon_dataset` koji sadrži 271 Poke
 
 -   "total" - ukupan zbroj svih osnovnih statistika Pokemona (numerička varijabla),
 
--   "HP" - životni koji označavaju količinu štete koju Pokemon može podnijeti prije nego bude poražen (numerička varijabla),
+-   "HP" - životni bodovi koji označavaju količinu štete koju Pokemon može podnijeti prije nego bude poražen (numerička varijabla),
 
--   "attack" - napadačka statistika (numerička varijabla),
+-   "attack" - napadačka snaga Pokemona (numerička varijabla),
 
--   "defense" - obrambena statistika (numerička varijabla),
+-   "defense" - obrambena snaga Pokemona (numerička varijabla),
 
 -   "special_attack" - snaga posebnog napada (numerička varijabla),
 
@@ -98,7 +98,7 @@ str(pokemon_dataset, 5)
 
 Transformacija označava skup tehnika i postupaka kojima se podatci organiziraju, mijenjaju i pripremaju za analizu. Riječ je o jednoj od najvažnijih faza u analitičkom procesu jer se stvarna korisnost podataka često otkriva tek nakon što se podaci temeljito transformiraju, odnosno kada se strukturiraju i prikažu na način koji odgovara svrsi analize. Transformacija podataka, dakle, označava izmjenu strukture, sadržaja ili organizacije podatkovnog skupa bez nužnog mijenjanja samih vrijednosti varijabli.
 
-Tehnike transformacije podatakamogu se organizirati u nekoliko glavnih kategorija:
+Tehnike transformacije podataka mogu se organizirati u nekoliko glavnih kategorija:
 
 **1. Pridruživanje i kombiniranje podataka (*Data Joining*):** Analiza podataka rijetko se oslanja na jedan izvor podataka, nego je često potrebno raditi s više podatkovnih okvira. Zato je jedan od temeljnih koraka u transformaciji kombiniranje bliskih podataka iz različitih izvora. Ovo uključuje različite vrste spajanja podatkovnih okvira, a koje omogućuju kombiniranje informacija na temelju zajedničkih ključeva.
 
@@ -106,14 +106,14 @@ Tehnike transformacije podatakamogu se organizirati u nekoliko glavnih kategorij
 
 **3. Nedostajuće vrijednosti (*Missing Values*):** Nedostajuće vrijednosti predstavljaju čest izazov i zahtijevaju pažljiv pristup u transformaciji. Pritom rad s nedostajućim vrijednostima uključuje prepoznavanje različitih oblika nedostajućih podataka i razumijevanje uzroka njihova nastanka te pravilno postupanje s njima ovisno o prirodi podataka, uzroku njihovog javljanja i željenoj analizi.
 
-**4. Numerički podaci:** Numerički podaci predstavljaju temelj kvantitativne analize i zahtijevaju specijalizirane tehnike transformacije za optimalno iskorištavanje u analizi. Numeričke transformacije uključuju različite tehnike rada s brojevima, od kojih su najvažnije: osnovne matematičke operacije (zbrajanje, oduzimanje, množenje i dijeljenje); statistička računanja (mjere centralne tendencije - prosjek, medijan i mod); mjere varijabilnosti (standardna devijacija, varijanca i raspon te kvantili i percentili); matematičke funkcije logaritma, eksponencijalnih funkcija, trigonometrijskih funkcija i potenciranja; zaokruživanje i formatiranje numeričkih podataka; konverzija numeričkih tipova između cijelih brojeva, decimalnih brojeva i drugih numeričkih formata.
+**4. Numerički podaci:** Numerički podaci predstavljaju temelj kvantitativne analize i zahtijevaju specijalizirane tehnike transformacije za optimalno iskorištavanje u analizi. Numeričke transformacije uključuju različite tehnike rada s brojevima, od kojih su najvažnije: osnovne matematičke operacije (zbrajanje, oduzimanje, množenje i dijeljenje), statistička računanja (prosjek, medijan i mod), mjere varijabilnosti (standardna devijacija, varijanca i raspon te kvantili i percentili), matematičke funkcije logaritma, eksponencijalnih funkcija, trigonometrijskih funkcija i potenciranja, zaokruživanje i formatiranje numeričkih podataka, konverzija numeričkih tipova između cijelih brojeva, decimalnih brojeva i drugih numeričkih formata.
 
 **5. Logičke vrijednosti (*Logical vectors*):** Logički vektori predstavljaju temeljni alat za filtriranje, uvjetno procesiranje i kreiranje binarnih varijabli u transformaciji podataka. One mogu poprimiti samo dvije vrijednosti, `TRUE` i `FALSE`, a koriste se za evaluaciju uvjeta i donošenje odluka o tome koji će se podaci obraditi ili transformirati. Logičke vrijednosti nastaju kao rezultat usporedbi pomoću operatora poput `==`, `!=`, `>`, `<`, `>=` i `<=`.
 
 **6. Faktori (*Factors*):** Faktori predstavljaju specijalizirani tip podataka za rukovanje kategorijalnim vrijednostima. Riječ je o tekstualnim kategorijama koje mogu imati ograničen broj mogućnosti, primjerice proizvođača neke odjeće ili fakulteta na kojem studenti studiraju. Upravljanje kategorijskim podacima uključuje definiranje razina faktora, njihov redoslijed i označavanja, a što je ključno za pravilnu interpretaciju i analizu kategorijskih podataka.
 
-**7. Nizovi (*Strings*):** Nizovi znakova predstavljaju tekstualne podatke koji mogu uključivati nazive, opise, kategorije, adrese, datume u tekstualnom formatu i mnoge druge vrste informacija koje nisu numeričke prirode. Rad s nizovima znakova zahtijeva specijalizirane tehnike za njihovu manipulaciju, čišćenje i transformaciju kako bi podaci postali korisni za analizu. Osnovne operacije s nizovima uključuju spajanje tekstualnih vrijednosti, izdvajanje dijelova teksta, zamjenu određenih znakova ili riječi, promjenu velikih i malih slova, te uklanjanje nepotrebnih razmaka. Ove operacije često su neophodne jer sirovi tekstualni podaci dolaze u nekonzistentnim formatima s tipografskim greškama ili dodatnim znakovima koji otežavaju analizu.
+**7. Znakovni nizovi (*Strings*):** Znakovni nizovi predstavljaju tekstualne podatke koji mogu uključivati nazive, opise, kategorije, adrese, datume u tekstualnom formatu i mnoge druge vrste informacija koje nisu numeričke prirode. Rad s nizovima zahtijeva specijalizirane tehnike za njihovu manipulaciju, čišćenje i transformaciju kako bi podaci postali korisni za analizu. Osnovne operacije s nizovima uključuju spajanje tekstualnih vrijednosti, izdvajanje dijelova teksta, zamjenu određenih znakova ili riječi i slično.
 
-**8. Regularni izrazi (*Regular expressions*):** Regularni izrazi su alat za prepoznavanje i manipulaciju složenih uzoraka u tekstualnim podacima. Oni koriste specijalne znakove i simbole za opisivanje uzoraka u tekstu, a mogu se koristiti za pronalaženje, primjerice, svih email adresa u tekstu, izdvajanje brojeva telefona ili identifikaciju svih riječi koje počinju velikim slovom. Osnovna sintaksa regularnih izraza uključuje simbole poput točke (`.`) koja predstavlja bilo koji znak, zvjezdice (`*`) koja označava ponavljanje, plus znaka (`+`) za jedno ili više ponavljanja te uglate zagrade (`[]`) za definiranje skupa dozvoljenih znakova.
+**8. Regularni izrazi (*Regular expressions*):** Regularni izrazi su alat za prepoznavanje i manipulaciju složenih uzoraka u tekstualnim podacima. Oni koriste specijalne znakove i simbole za opisivanje uzoraka u tekstu, a mogu se koristiti za pronalaženje, primjerice, svih email adresa u tekstu, izdvajanje brojeva telefona ili identifikaciju svih riječi koje počinju velikim slovom. Osnovna sintaksa regularnih izraza uključuje simbole poput točke (`.`), zvjezdice (`*`), plus znaka (`+`), uglate zagrade (`[]`) i drugih.
 
 **9. Datum i vrijeme:** Temporalni podaci zahtijevaju specijalizirane tehnike transformacije zbog složenosti vremenskih formata i računanja. Rad s takvim podacima uključuje pretvaranje tekstualnih reprezentacija datuma iz različitih formata u standardne tipove podataka koji omogućuju temporalne kalkulacije. Temporalna računanja omogućuju izračunavanje razlika između datuma, dodavanje ili oduzimanje vremenskih perioda, te ekstraktiranje komponenti datuma poput godine, mjeseca ili dana u tjednu.

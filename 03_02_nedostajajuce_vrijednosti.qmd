@@ -2,7 +2,7 @@
 title: "Nedostajajuće vrijednosti"
 description: "Ovo poglavlje obrađuje problem nedostajućih vrijednosti u analizi podataka. Razlikuju se eksplicitne nedostajuće vrijednosti označene s `NA` i implicitne nedostajuće vrijednosti koje nastaju kada određena opažanja uopće nisu prisutna u podacima, kao i posebna vrijednost `NaN` koja se pojavljuje kao rezultat matematički nedefiniranih operacija. Nadalje se prikazuju osnovni alati u R-u za prepoznavanje i provjeru prisutnosti nedostajućih vrijednosti te se objašnjavaju najčešći načini rada s njima."
 number-sections: true
-title-block-banner: "#8B3A62"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:

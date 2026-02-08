@@ -2,7 +2,7 @@
 title: "Uvoz podataka u R"
 description: ""
 number-sections: true
-title-block-banner: "#753a97ff"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="hr" xml:lang="hr"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.8.27">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Uvoz podataka u R – Znanost o podacima u R-u</title>
+<title>dplyr – Znanost o podacima u R-u</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,8 +65,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./02_02_uredivanje_podataka.html" rel="next">
-<link href="./01_01_uvod_u_znanost_o_podacima.html" rel="prev">
+<link href="./03_01_manipulacija_podacima.html" rel="next">
+<link href="./03_00_transformacija_podataka.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -105,23 +105,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<style>
-
-      .quarto-title-block .quarto-title-banner h1,
-      .quarto-title-block .quarto-title-banner h2,
-      .quarto-title-block .quarto-title-banner h3,
-      .quarto-title-block .quarto-title-banner h4,
-      .quarto-title-block .quarto-title-banner h5,
-      .quarto-title-block .quarto-title-banner h6
-      {
-        color: white;
-      }
-
-      .quarto-title-block .quarto-title-banner {
-        color: white;
-background: #483D8B;
-      }
-</style>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -130,13 +113,13 @@ background: #483D8B;
 <body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_01_uvoz_podataka.html">Uvoz i uređivanje podataka</a></li><li class="breadcrumb-item"><a href="./02_01_uvoz_podataka.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Uvoz podataka u R</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./dplyr.html">dplyr</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -146,23 +129,7 @@ background: #483D8B;
   </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02_01_uvoz_podataka.html">Uvoz i uređivanje podataka</a></li><li class="breadcrumb-item"><a href="./02_01_uvoz_podataka.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Uvoz podataka u R</span></a></li></ol></nav>
-      <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Uvoz podataka u R</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -209,7 +176,7 @@ background: #483D8B;
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02_01_uvoz_podataka.html" class="sidebar-item-text sidebar-link active">
+  <a href="./02_01_uvoz_podataka.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Uvoz podataka u R</span></span></a>
   </div>
 </li>
@@ -232,7 +199,7 @@ background: #483D8B;
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./dplyr.html" class="sidebar-item-text sidebar-link">
+  <a href="./dplyr.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">dplyr</span></a>
   </div>
 </li>
@@ -307,12 +274,77 @@ background: #483D8B;
         
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03_00_transformacija_podataka.html">Transformacija podataka</a></li><li class="breadcrumb-item"><a href="./dplyr.html">dplyr</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">dplyr</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
+
+
+<p>Transformacija podataka predstavlja proces manipulacije i preoblikovanja podataka kako bi se oni doveli u oblik prikladan za daljnju analizu. U tom je kontekstu često potrebno kreirati nove varijable ili sažetke kako bi se odgovorilo na pitanja s podacima ili jednostavno preimenovati varijable, promijeniti redoslijed opažanja kako bi se podaci učinili lakšima za rad i slično.</p>
+<p>Na isti način kao što paket <code>ggplot2</code> predstavlja gramatiku vizualizacije podataka, <strong><code>dplyr</code></strong> paket predstavlja gramatiku transformacije podataka. Ovaj pristup inspiriran je Wickham-ovom željom da zamuti granice između R-a i sveprisutne sintakse za upitovanje relacijskih baza podataka SQL. <code>dplyr</code> predstavlja jedan od najvažnijih alata za transformaciju podataka u R-u i ključan je dio <code>tidyverse</code> kolekcije paketa. <code>dplyr</code> je gramatika manipulacije podataka koja pruža dosljedan skup glagola koji pomažu u rješavanju najčešćih izazova transformacije podataka.</p>
+<p>Paket <code>dplyr</code> razvio je Hadley Wickham i predstavlja optimiziranu i pročišćenu verziju <code>plyr</code> paketa. Cilj razvoja paketa je pružiti pregled svih ključnih alata za transformaciju podatkovnih okvira. <code>dplyr</code> olakšava transformaciju urednih tabličnih podataka koristeći skup funkcija koje se mogu kombinirati za izdvajanje i sažimanje uvida iz podataka. <code>dplyr</code> pritom ne pruža nikakve nove funkcionalnosti u smislu da se sve što <code>dplyr</code> radi već moglo napraviti s osnovnim R-om, ali uvelike pojednostavljuje postojeće funkcionalnosti u R-u.</p>
+<p><code>dplyr</code> omogućava rad s funkcijama koje djeluju na retke i stupce podatkovnog okvira, a također pruža mogućnost rada s grupama podataka. Osim glagola za rad s jednom tablicom, također pruža različite glagole za rad s dvije tablice što omogućava povezivanje i uspoređivanje podataka iz više izvora.</p>
+<p>Gramatika manipulacija podataka u <code>dplyr</code>-u temelji se na konceptu “<em>glagola</em>” koji opisuju različite operacije koje možemo provoditi nad podacima. <code>dplyr</code> pruža gramatiku manipulacije podataka gdje se svaka funkcija može smatrati zasebnim glagolom koji djeluje na skup podataka (u tibble obliku). Temeljne funkcije kojima se izvode radnje manipulacije podacima u <code>dplyr</code>-u nazivaju se <strong>glagoli</strong> (<em>verbs</em>). Svaki glagol <code>dplyr</code> paketa obavlja specifičnu operaciju podacima, a njihova je uloga gotovo istovjetna funkcijama u elementarnom R-u. Ti glagoli dijele određene zajedničke karakteristike:</p>
+<ol type="1">
+<li><p>prvi argument uvijek je podatkovni okvir koji se transformira,</p></li>
+<li><p>naknadni argumenti obično opisuju na kojim varijablama treba operirati koristeći imena varijabli,</p></li>
+<li><p>različiti se glagoli mogu povezati u jedan niz glagola koji transformiraju podatkovni okvir koristeći poveznik,</p></li>
+<li><p>rezultat je uvijek novi podatkovni okvir.</p></li>
+</ol>
+<p>Rješavanje složenih problema obično zahtijeva kombiniranje više glagola. Kao što je napomenuto, pri transformaciji podacima koristi se operator <strong>poveznik</strong> (<em>pipe</em>) koji se koristi za spajanje više funkcija u lanac operacija i time omogućuje pisanje jasnog, čitljivog i elegantnog koda. Ova sintaksa zadržava logiku korak-po-korak originalnog koda, dok je lako čitljiva i efikasna s obzirom na memoriju i stvaranje privremenih podatkovnih okvira. U R-u postoje dvije vrste poveznika, <code>%&gt;%</code> i <code>|&gt;</code>, koji uglavnom funkcioniraju na isti način.</p>
+<p>Važno je napomenuti da <code>dplyr</code> funkcije nikada ne mijenjaju svoje ulaze, pa je, ako želimo spremiti rezultat, potrebno koristiti operator dodjeljivanja <code>&lt;-</code>. Ovo osigurava da se originalni podaci nikada nenamjerno ne mijenjaju tijekom analize.</p>
+<p>Najjednostavniji način pisanja kodova <code>dplyr</code> paketom je na način da u svakom retku bude napisana jedan glagol, a da se na kraju svakog retka, nakon glagola, piše poveznik kojim se jedan glagol, odnosno rezultat operacije jednog glagola povezuje s idućim glagolom. U praksi se, dakle, poveznik piše na kraju svakog retka kako bi naznačio da kodiranje nije završeno, nego se nastavlja u idućem redu. Kod <code>dplyr</code> paketa mora započinjali podatkovnim okvirom, odnosno tibble-om, na koji će se primjenjivati glagoli <code>dplyr</code> paketa, a nakon toga slijede glagoli koji odvojeni poveznicima.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="Glagol glimpse()">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Glagol glimpse()
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Prije svega, jedan od korisnih glagola koji nudi <code>dplyr</code> paket je <code>glimpse()</code>, a koji služi za brz i pregledan prikaz strukture podataka što je korisno za dobivanje sažetka bez ispisivanja cijelog skupa podataka. Glagol ima samo jedan argument, a to je <code>x</code> kojim se definira podatkovni okvir čiju strukturu želimo istražiti.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pokemon_dataset)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 800
+Columns: 13
+$ id              &lt;dbl&gt; 1, 2, 3, 3, 4, 5, 6, 6, 6, 7, 8, 9, 9, 10, 11, 12, 13,…
+$ name            &lt;chr&gt; "bulbasaur", "ivysaur", "venusaur", "venusaurmega venu…
+$ type_1          &lt;fct&gt; grass, grass, grass, grass, fire, fire, fire, fire, fi…
+$ type_2          &lt;fct&gt; poison, poison, poison, poison, NA, NA, flying, dragon…
+$ total           &lt;dbl&gt; 318, 405, 525, 625, 309, 405, 534, 634, 634, 314, 405,…
+$ HP              &lt;dbl&gt; 45, 60, 80, 80, 39, 58, 78, 78, 78, 44, 59, 79, 79, 45…
+$ attack          &lt;dbl&gt; 49, 62, 82, 100, 52, 64, 84, 130, 104, 48, 63, 83, 103…
+$ defense         &lt;dbl&gt; 49, 63, 83, 123, 43, 58, 78, 111, 78, 65, 80, 100, 120…
+$ special_attack  &lt;dbl&gt; 65, 80, 100, 122, 60, 80, 109, 130, 159, 50, 65, 85, 1…
+$ special_defense &lt;dbl&gt; 65, 80, 100, 120, 50, 65, 85, 85, 115, 64, 80, 105, 11…
+$ speed           &lt;dbl&gt; 45, 60, 80, 80, 65, 80, 100, 100, 100, 43, 58, 78, 78,…
+$ generation      &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ legendary       &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE…</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 
 <!-- -->
@@ -772,27 +804,93 @@ background: #483D8B;
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01_01_uvod_u_znanost_o_podacima.html" class="pagination-link" aria-label="Uvod u znanost o podacima">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Uvod u znanost o podacima</span></span>
+      <a href="./03_00_transformacija_podataka.html" class="pagination-link" aria-label="Transformacija podataka">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Transformacija podataka</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./02_02_uredivanje_podataka.html" class="pagination-link" aria-label="Uređivanje podataka">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Uređivanje podataka</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./03_01_manipulacija_podacima.html" class="pagination-link" aria-label="Manipulacija podacima">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Manipulacija podacima</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Uvoz podataka u R"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> ""</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner:</span><span class="co"> "#483D8B"</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="an">title-block-banner-color:</span><span class="co"> "white"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="an">lang:</span><span class="co"> hr</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: "Tablica"</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: "Slika"</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># dplyr {.unnumbered}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Aktiviranje paketa</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RKaggle)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Učitavanje podataka</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>poke_raw <span class="ot">&lt;-</span> <span class="fu">get_dataset</span>(<span class="st">"abcsds/pokemon"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Prilagodba podatkovnog okvira</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>pokemon_dataset <span class="ot">&lt;-</span> poke_raw <span class="sc">|&gt;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">id =</span> <span class="st">`</span><span class="at">#</span><span class="st">`</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">`</span><span class="at">Name</span><span class="st">`</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_1 =</span> <span class="st">`</span><span class="at">Type 1</span><span class="st">`</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">type_2 =</span> <span class="st">`</span><span class="at">Type 2</span><span class="st">`</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="st">`</span><span class="at">Total</span><span class="st">`</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">attack =</span> <span class="st">`</span><span class="at">Attack</span><span class="st">`</span>,</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">defense =</span> <span class="st">`</span><span class="at">Defense</span><span class="st">`</span>,</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_attack =</span> <span class="st">`</span><span class="at">Sp. Atk</span><span class="st">`</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">special_defense =</span> <span class="st">`</span><span class="at">Sp. Def</span><span class="st">`</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">speed =</span> <span class="st">`</span><span class="at">Speed</span><span class="st">`</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">generation =</span> <span class="st">`</span><span class="at">Generation</span><span class="st">`</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">legendary =</span> <span class="st">`</span><span class="at">Legendary</span><span class="st">`</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">c</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>, <span class="st">`</span><span class="at">type_2</span><span class="st">`</span>, generation), as.character),</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(legendary, as.logical),</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">str_to_lower</span>(.x))) <span class="sc">|&gt;</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_1</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_1</span><span class="st">`</span>),</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">type_2</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">type_2</span><span class="st">`</span>),</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">generation</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fct_infreq</span>(<span class="st">`</span><span class="at">generation</span><span class="st">`</span>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>Transformacija podataka predstavlja proces manipulacije i preoblikovanja podataka kako bi se oni doveli u oblik prikladan za daljnju analizu. U tom je kontekstu često potrebno kreirati nove varijable ili sažetke kako bi se odgovorilo na pitanja s podacima ili jednostavno preimenovati varijable, promijeniti redoslijed opažanja kako bi se podaci učinili lakšima za rad i slično.</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>Na isti način kao što paket <span class="in">`ggplot2`</span> predstavlja gramatiku vizualizacije podataka, **`dplyr`** paket predstavlja gramatiku transformacije podataka. Ovaj pristup inspiriran je Wickham-ovom željom da zamuti granice između R-a i sveprisutne sintakse za upitovanje relacijskih baza podataka SQL. <span class="in">`dplyr`</span> predstavlja jedan od najvažnijih alata za transformaciju podataka u R-u i ključan je dio <span class="in">`tidyverse`</span> kolekcije paketa. <span class="in">`dplyr`</span> je gramatika manipulacije podataka koja pruža dosljedan skup glagola koji pomažu u rješavanju najčešćih izazova transformacije podataka.</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>Paket <span class="in">`dplyr`</span> razvio je Hadley Wickham i predstavlja optimiziranu i pročišćenu verziju <span class="in">`plyr`</span> paketa. Cilj razvoja paketa je pružiti pregled svih ključnih alata za transformaciju podatkovnih okvira. <span class="in">`dplyr`</span> olakšava transformaciju urednih tabličnih podataka koristeći skup funkcija koje se mogu kombinirati za izdvajanje i sažimanje uvida iz podataka. <span class="in">`dplyr`</span> pritom ne pruža nikakve nove funkcionalnosti u smislu da se sve što <span class="in">`dplyr`</span> radi već moglo napraviti s osnovnim R-om, ali uvelike pojednostavljuje postojeće funkcionalnosti u R-u.</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="in">`dplyr`</span> omogućava rad s funkcijama koje djeluju na retke i stupce podatkovnog okvira, a također pruža mogućnost rada s grupama podataka. Osim glagola za rad s jednom tablicom, također pruža različite glagole za rad s dvije tablice što omogućava povezivanje i uspoređivanje podataka iz više izvora.</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>Gramatika manipulacija podataka u <span class="in">`dplyr`</span>-u temelji se na konceptu "*glagola*" koji opisuju različite operacije koje možemo provoditi nad podacima. `dplyr` pruža gramatiku manipulacije podataka gdje se svaka funkcija može smatrati zasebnim glagolom koji djeluje na skup podataka (u tibble obliku). Temeljne funkcije kojima se izvode radnje manipulacije podacima u `dplyr`-u nazivaju se **glagoli** (*verbs*). Svaki glagol <span class="in">`dplyr`</span> paketa obavlja specifičnu operaciju podacima, a njihova je uloga gotovo istovjetna funkcijama u elementarnom R-u. Ti glagoli dijele određene zajedničke karakteristike:</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>prvi argument uvijek je podatkovni okvir koji se transformira,</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>naknadni argumenti obično opisuju na kojim varijablama treba operirati koristeći imena varijabli,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>različiti se glagoli mogu povezati u jedan niz glagola koji transformiraju podatkovni okvir koristeći poveznik,</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>rezultat je uvijek novi podatkovni okvir.</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>Rješavanje složenih problema obično zahtijeva kombiniranje više glagola. Kao što je napomenuto, pri transformaciji podacima koristi se operator **poveznik** (*pipe*) koji se koristi za spajanje više funkcija u lanac operacija i time omogućuje pisanje jasnog, čitljivog i elegantnog koda. Ova sintaksa zadržava logiku korak-po-korak originalnog koda, dok je lako čitljiva i efikasna s obzirom na memoriju i stvaranje privremenih podatkovnih okvira. U R-u postoje dvije vrste poveznika, <span class="in">`%&gt;%`</span> i <span class="in">`|&gt;`</span>, koji uglavnom funkcioniraju na isti način.</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>Važno je napomenuti da <span class="in">`dplyr`</span> funkcije nikada ne mijenjaju svoje ulaze, pa je, ako želimo spremiti rezultat, potrebno koristiti operator dodjeljivanja <span class="in">`&lt;-`</span>. Ovo osigurava da se originalni podaci nikada nenamjerno ne mijenjaju tijekom analize.</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>Najjednostavniji način pisanja kodova <span class="in">`dplyr`</span> paketom je na način da u svakom retku bude napisana jedan glagol, a da se na kraju svakog retka, nakon glagola, piše poveznik kojim se jedan glagol, odnosno rezultat operacije jednog glagola povezuje s idućim glagolom. U praksi se, dakle, poveznik piše na kraju svakog retka kako bi naznačio da kodiranje nije završeno, nego se nastavlja u idućem redu. Kod <span class="in">`dplyr`</span> paketa mora započinjali podatkovnim okvirom, odnosno tibble-om, na koji će se primjenjivati glagoli <span class="in">`dplyr`</span> paketa, a nakon toga slijede glagoli koji odvojeni poveznicima.</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip icon=false collapse="true" title="Glagol glimpse()"}</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>Prije svega, jedan od korisnih glagola koji nudi <span class="in">`dplyr`</span> paket je <span class="in">`glimpse()`</span>, a koji služi za brz i pregledan prikaz strukture podataka što je korisno za dobivanje sažetka bez ispisivanja cijelog skupa podataka. Glagol ima samo jedan argument, a to je <span class="in">`x`</span> kojim se definira podatkovni okvir čiju strukturu želimo istražiti.</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(pokemon_dataset)</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>:::</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

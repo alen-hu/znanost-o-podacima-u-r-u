@@ -1,7 +1,7 @@
 ---
 title: "Uvod"
 number-sections: true
-title-block-banner: "#8B3A62"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:

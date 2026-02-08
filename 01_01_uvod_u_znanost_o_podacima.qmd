@@ -2,7 +2,7 @@
 title: "Uvod u znanost o podacima"
 description: ""
 number-sections: true
-title-block-banner: "#753a97ff"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 ---
 

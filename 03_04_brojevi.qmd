@@ -2,7 +2,7 @@
 title: "Brojevi"
 description: ""
 number-sections: true
-title-block-banner: "#8B3A62"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:
@@ -15,11 +15,7 @@ crossref:
 
 # Aktiviranje paketa
 library(tidyverse)
-library(stringr)
 library(RKaggle)
-library(forcats)
-library(lubridate)
-library(hms)
 ```
 
 ```{r}
@@ -57,22 +53,37 @@ pokemon_dataset <- poke_raw |>
   )
 ```
 
-Brojčani podaci predstavljaju temelj znanosti o podacima i statistike općenito. Numerički vektori čine okosnicu gotovo svih analiza podataka te su ključni za izgradnju prediktivnih modela i donošenje odluka temeljenih na podacima. Brojevi omogućuju kvantifikaciju stvarnosti, mjerenje promjena, usporedbu između različitih entiteta te otkrivanje skrivenih obrazaca u podacima.
+Brojčani podaci predstavljaju temelj znanosti o podacima i statistike općenito, a numerički vektori čine temelj večine analiza podataka te su ključni za izgradnju prediktivnih modela i donošenje odluka temeljenih na podacima. Brojevi omogućuju kvantifikaciju stvarnosti, mjerenje promjena, usporedbu između različitih entiteta te otkrivanje skrivenih obrazaca u podacima. U kontekstu analize podataka, brojčani podaci koriste se za mjerenje različitih varijabli od interesa, bilo da se radi o financijskim prihodima tvrtke, demografskim karakteristikama populacije ili performansnim metrikama modela strojnog učenja. U svim ovim slučajevima numerički vektori su fundamentalni građevni blokovi analize.
 
-U kontekstu analize podataka, brojčani podaci koriste se za mjerenje različitih varijabli od interesa, bilo da se radi o financijskim prihodima tvrtke, demografskim karakteristikama populacije ili performansnim metrikama modela strojnog učenja. U svim ovim slučajevima numerički vektori su fundamentalni građevni blokovi analize podataka te se koriste u svim fazama projekta, od početnog istraživanja podataka do finalnog modeliranja.
+Važnost brojeva očituje se kroz nekoliko ključnih dimenzija:
 
-Važnost brojeva očituje se kroz nekoliko ključnih dimenzija. Prvo, brojevi omogućuju precizno mjerenje i kvantifikaciju fenomena. Umjesto kvalitativnih opisa poput "visoka cijena" ili "niska prodaja", numerički podaci omogućuju precizne vrijednosti koje se mogu uspoređivati, kombinirati i analizirati matematičkim metodama. Drugo, brojevi služe kao osnova za primjenu statističkih testova i procedura koje omogućuju donošenje zaključaka temeljenih na dokazima umjesto na intuiciji ili pretpostavkama. Treće, numerički podaci omogućuju primjenu algoritama strojnog učenja koji otkrivaju složene obrasce i relacije u podacima koje bi ljudska analiza teško mogla detektirati.
+1. Brojevi omogućuju precizno mjerenje i kvantifikaciju fenomena. Umjesto kvalitativnih opisa poput "visoka cijena" ili "niska prodaja", numerički podaci omogućuju precizne vrijednosti koje se mogu uspoređivati, kombinirati i analizirati matematičkim metodama.
 
-Kada govorimo o Pokemon datasetu, varijable poput "HP", "attack", "defense" i "speed" predstavljaju numeričke vrijednosti koje opisuju različite karakteristike Pokemona. Ove brojčane vrijednosti omogućuju nam provedbu raznovrsnih analiza, od jednostavnih deskriptivnih statistika (prosječna snaga napada po generaciji) do složenijih prediktivnih modela (predviđanje je li Pokemon legendarni na temelju njegovih statističkih atributa).
+2. Brojevi služe kao osnova za primjenu statističkih testova koje omogućuju donošenje zaključaka temeljenih na kvantificiranim vrijednostima umjesto na intuiciji ili pretpostavkama.
 
-U većini slučajeva brojevi u R-u dolaze već spremni za analizu iz podatkovnih okvira koje učitavamo pomoću funkcija poput `read_csv()` iz paketa `readr`. Međutim, postoje situacije u kojima je potrebno stvoriti brojeve iz drugih vrsta podataka ili ih pretvoriti iz različitih formata.
+3. Numerički podaci omogućuju primjenu algoritama strojnog učenja koji otkrivaju složene obrasce i relacije u podacima koje bi ljudska analiza teško mogla detektirati.
 
-Kada učitavamo podatke iz CSV datoteka, `readr` paket koristi heuristiku koja pokušava automatski prepoznati tip podataka u svakom stupcu. Ako stupac sadrži samo brojeve i možda posebne vrijednosti kao što su `NA`, `readr` će ga automatski parsirati kao numerički vektor. Na primjer, u `pokemon_dataset` podatkovnom okviru varijable poput "HP", "attack", "defense", "special_attack", "special_defense" i "speed" automatski se prepoznaju kao numeričke vrijednosti jer sadrže isključivo brojčane podatke koje predstavljaju različite statističke karakteristike Pokemona.
+Kada govorimo o `pokemon_dataset`, varijable poput "HP", "attack", "defense" i "speed" predstavljaju numeričke vrijednosti koje opisuju različite karakteristike Pokemona. Ove brojčane vrijednosti omogućuju provedbu raznovrsnih analiza, od jednostavnih deskriptivnih statistika (prosječna snaga napada po generaciji) do složenijih prediktivnih modela (predviđanje je li Pokemon legendaran na temelju njegovih atributa).
 
-Ponekad se dogodi da podaci koji bi trebali biti brojevi budu učitani kao znakovni nizovi ili karakteri. To se najčešće događa kada su brojevi u izvornoj datoteci formatirani na poseban način, primjerice kada sadrže zareze kao separatore tisućica, valutne simbole, postotke ili druge ne-numeričke znakove. U takvim situacijama R ne može automatski prepoznati brojčanu prirodu podataka i tretira ih kao tekst. Za pretvaranje takvih znakovnih nizova u brojeve koristi se funkcija `parse_number()` iz paketa `readr` koja je dizajnirana da izvuče brojčane vrijednosti ignorirajući sve ne-numeričke znakove koji okružuju broj.
+U većini slučajeva brojevi u R-u dolaze već spremni za analizu iz podatkovnih okvira koje učitavamo pomoću funkcija poput `read_csv()`. Međutim, postoje situacije u kojima je potrebno stvoriti brojeve iz drugih vrsta podataka ili ih pretvoriti iz različitih formata. Kada učitavamo podatke iz CSV datoteka, `readr` koristi heuristiku koja pokušava automatski prepoznati tip podataka u svakom stupcu. Ako stupac sadrži samo brojeve i možda posebne vrijednosti kao što su `NA`, `readr` će ga automatski definirati kao numerički vektor. Na primjer, u `pokemon_dataset` podatkovnom okviru varijable poput "HP", "attack", "defense", "special_attack", "special_defense" i "speed" automatski se prepoznaju kao numeričke vrijednosti jer sadrže isključivo brojčane podatke koje predstavljaju različite statističke karakteristike Pokemona.
+
+Ponekad se dogodi da podaci koji bi trebali biti brojevi budu definirani kao znakovi. To se najčešće događa kada su brojevi u izvornoj datoteci formatirani na poseban način, primjerice kada sadrže zareze kao separatore tisućica, valutne simbole, postotke ili druge ne-numeričke znakove. U takvim situacijama R ne može automatski prepoznati brojčanu prirodu podataka i tretira ih kao tekst. Za pretvaranje takvih znakova u brojeve koristi se funkcija `parse_number()` koja je dizajnirana da izvuče brojčane vrijednosti ignorirajući sve ne-numeričke znakove koji okružuju broj.
+
+::: {.callout-tip icon="false" collapse="true" title="Funkcija parse_number()"}
+`parse_number()` je funkcija iz paketa `readr` koja iz tekstualnih vrijednosti izvlači broj i pretvara ga u numerički tip. Funkcija je fleksibilna jer ignorira znakove koji nisu dio broja odbacujući nenumeričke znakove prije i poslije prvog pronađenog broja, pa je korisna za varijable poput cijena, iznosa s valutom, postotaka i sličnih zapisa.
+
+| Argument | Objašnjenje |
+|---|---|
+| x | Znakovni vektor vrijednosti koje se parsiraju. |
+| na | Znakovni vektor nizova koje treba tretirati kao nedostajuće vrijednosti. Zadano je `c("", "NA")`. Ako želimo isključiti ovu logiku, možemo postaviti `na = character()`. |
+| locale | Objekt lokalizacije koji određuje regionalne postavke (npr. decimalni znak i znak grupiranja, encoding itd.). Zadano je `default_locale()`, a prilagođava se funkcijom `locale()`. |
+| trim_ws | Logička vrijednost koja određuje hoće li se prije parsiranja ukloniti vodeći i završni razmaci. Zadano je `TRUE`. |
+
+Važno je napomenuti da `parse_number()` radi tako što ignorira sve nenumeričke znakove prije i poslije broja, ali zadržava decimalnu točku i negativni predznak ako postoje. Ova funkcija je posebno korisna pri čišćenju podataka koji dolaze iz različitih izvora gdje numerički podaci nisu standardizirano formatirani, što omogućava brzu i jednostavnu pretvorbu u format pogodan za daljnju analizu i vizualizaciju.
+:::
 
 ::: {.callout-note icon="false" collapse="true" title="Primjer"}
-Primjer primjene `parse_number()` funkcije može se ilustrirati na hipotetskoj situaciji u kojoj bi podaci o težini Pokemona bili formatirani s dodatnim tekstom. Pretpostavimo da umjesto čistih brojčanih vrijednosti u varijabli "weight_kg" imamo zapise poput "12.5 kg" ili "weight: 89.3". U takvom slučaju bi `parse_number()` funkcija izvukla samo brojčane vrijednosti.
+Primjer primjene `parse_number()` funkcije može se ilustrirati na hipotetskoj situaciji u kojoj bi podaci o težini Pokemona bili formatirani s dodatnim tekstom. Pretpostavimo da umjesto čistih brojčanih vrijednosti u varijabli `weight_kg` imamo zapise poput "12.5 kg" ili "weight: 89.3". U takvom slučaju bi `parse_number()` funkcija izvukla samo brojčane vrijednosti.
 
 ```{r}
 # Primjer s formatiranim podacima o težini
@@ -80,8 +91,6 @@ formatted_weight <- c("12.5 kg", "weight: 89.3", "45.7kg", "150.2 kilograms")
 parse_number(formatted_weight)
 ```
 :::
-
-Važno je napomenuti da `parse_number()` radi tako što ignorira sve ne-numeričke znakove prije i poslije broja, ali zadržava decimalnu točku i negativni predznak ako postoje. Ova funkcija je posebno korisna pri čišćenju podataka koji dolaze iz različitih izvora gdje numerički podaci nisu standardizirano formatirani, što omogućava brzu i jednostavnu pretvorbu u format pogodan za daljnju analizu i vizualizaciju.
 
 Iznenađujuće je koliko se analize podataka može provesti samo pomoću brojanja i osnovnih aritmetičkih operacija, stoga paket `dplyr` nastoji učiniti brojanje što jednostavnijim putem funkcije `count()`. Ova funkcija predstavlja moćan alat za brzu eksploraciju podataka i provjeru tijekom analize, omogućujući istraživačima da brzo dobiju uvid u distribuciju vrijednosti unutar podatkovnog okvira.
 

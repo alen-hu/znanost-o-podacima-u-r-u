@@ -2,7 +2,7 @@
 title: "Manipulacija podacima"
 description: "Ovo poglavlje uvodi temeljne postupke manipulacije podacima u programskom jeziku R, s naglaskom na rad s podatkovnim okvirima pomoću `tidyverse` ekosustava, osobito paketa `dplyr`. Prikazuje se kako se sirovi podaci sustavno pripremaju za analizu kroz filtriranje opažanja i varijabli, sortiranje podataka, promjenu i kreiranje novih varijabli te agregiranje i grupiranje podataka. Posebna se pažnja posvećuje logici rada s glagolima koji omogućuju čitljiv, dosljedan i reproducibilan analitički tok. Cilj poglavlja je razviti razumijevanje manipulacije podacima kao ključne faze između prikupljanja podataka i njihove statističke analize."
 number-sections: true
-title-block-banner: "#8B3A62"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:

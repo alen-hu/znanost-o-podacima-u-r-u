@@ -1,0 +1,76 @@
+# dplyr {.unnumbered}
+
+```{r}
+#| include: false
+
+# Aktiviranje paketa
+library(tidyverse)
+library(RKaggle)
+```
+
+```{r}
+#| include: false
+
+# Učitavanje podataka
+poke_raw <- get_dataset("abcsds/pokemon")
+
+# Prilagodba podatkovnog okvira
+pokemon_dataset <- poke_raw |>
+  as_tibble() |>
+  rename(
+    id = `#`,
+    name = `Name`,
+    type_1 = `Type 1`,
+    type_2 = `Type 2`,
+    total = `Total`,
+    attack = `Attack`,
+    defense = `Defense`,
+    special_attack = `Sp. Atk`,
+    special_defense = `Sp. Def`,
+    speed = `Speed`,
+    generation = `Generation`,
+    legendary = `Legendary`
+  ) |>
+  mutate(
+    across(c(`type_1`, `type_2`, generation), as.character),
+    across(legendary, as.logical),
+  ) |>
+  mutate(across(where(is.character), ~ str_to_lower(.x))) |>
+  mutate(
+    `type_1` = fct_infreq(`type_1`),
+    `type_2` = fct_infreq(`type_2`),
+    `generation` = fct_infreq(`generation`)
+  )
+```
+
+Transformacija podataka predstavlja proces manipulacije i preoblikovanja podataka kako bi se oni doveli u oblik prikladan za daljnju analizu. U tom je kontekstu često potrebno kreirati nove varijable ili sažetke kako bi se odgovorilo na pitanja s podacima ili jednostavno preimenovati varijable, promijeniti redoslijed opažanja kako bi se podaci učinili lakšima za rad i slično.
+
+Na isti način kao što paket `ggplot2` predstavlja gramatiku vizualizacije podataka, **`dplyr`** paket predstavlja gramatiku transformacije podataka. Ovaj pristup inspiriran je Wickham-ovom željom da zamuti granice između R-a i sveprisutne sintakse za upitovanje relacijskih baza podataka SQL. `dplyr` predstavlja jedan od najvažnijih alata za transformaciju podataka u R-u i ključan je dio `tidyverse` kolekcije paketa. `dplyr` je gramatika manipulacije podataka koja pruža dosljedan skup glagola koji pomažu u rješavanju najčešćih izazova transformacije podataka.
+
+Paket `dplyr` razvio je Hadley Wickham i predstavlja optimiziranu i pročišćenu verziju `plyr` paketa. Cilj razvoja paketa je pružiti pregled svih ključnih alata za transformaciju podatkovnih okvira. `dplyr` olakšava transformaciju urednih tabličnih podataka koristeći skup funkcija koje se mogu kombinirati za izdvajanje i sažimanje uvida iz podataka. `dplyr` pritom ne pruža nikakve nove funkcionalnosti u smislu da se sve što `dplyr` radi već moglo napraviti s osnovnim R-om, ali uvelike pojednostavljuje postojeće funkcionalnosti u R-u.
+
+`dplyr` omogućava rad s funkcijama koje djeluju na retke i stupce podatkovnog okvira, a također pruža mogućnost rada s grupama podataka. Osim glagola za rad s jednom tablicom, također pruža različite glagole za rad s dvije tablice što omogućava povezivanje i uspoređivanje podataka iz više izvora.
+
+Gramatika manipulacija podataka u `dplyr`-u temelji se na konceptu "*glagola*" koji opisuju različite operacije koje možemo provoditi nad podacima. `dplyr` pruža gramatiku manipulacije podataka gdje se svaka funkcija može smatrati zasebnim glagolom koji djeluje na skup podataka (u tibble obliku). Temeljne funkcije kojima se izvode radnje manipulacije podacima u `dplyr`-u nazivaju se **glagoli** (*verbs*). Svaki glagol `dplyr` paketa obavlja specifičnu operaciju podacima, a njihova je uloga gotovo istovjetna funkcijama u elementarnom R-u. Ti glagoli dijele određene zajedničke karakteristike:
+
+1. prvi argument uvijek je podatkovni okvir koji se transformira,
+
+2. naknadni argumenti obično opisuju na kojim varijablama treba operirati koristeći imena varijabli,
+
+3. različiti se glagoli mogu povezati u jedan niz glagola koji transformiraju podatkovni okvir koristeći poveznik,
+
+4. rezultat je uvijek novi podatkovni okvir.
+
+Rješavanje složenih problema obično zahtijeva kombiniranje više glagola. Kao što je napomenuto, pri transformaciji podacima koristi se operator **poveznik** (*pipe*) koji se koristi za spajanje više funkcija u lanac operacija i time omogućuje pisanje jasnog, čitljivog i elegantnog koda. Ova sintaksa zadržava logiku korak-po-korak originalnog koda, dok je lako čitljiva i efikasna s obzirom na memoriju i stvaranje privremenih podatkovnih okvira. U R-u postoje dvije vrste poveznika, `%>%` i `|>`, koji uglavnom funkcioniraju na isti način.
+
+Važno je napomenuti da `dplyr` funkcije nikada ne mijenjaju svoje ulaze, pa je, ako želimo spremiti rezultat, potrebno koristiti operator dodjeljivanja `<-`. Ovo osigurava da se originalni podaci nikada nenamjerno ne mijenjaju tijekom analize.
+
+Najjednostavniji način pisanja kodova `dplyr` paketom je na način da u svakom retku bude napisana jedan glagol, a da se na kraju svakog retka, nakon glagola, piše poveznik kojim se jedan glagol, odnosno rezultat operacije jednog glagola povezuje s idućim glagolom. U praksi se, dakle, poveznik piše na kraju svakog retka kako bi naznačio da kodiranje nije završeno, nego se nastavlja u idućem redu. Kod `dplyr` paketa mora započinjali podatkovnim okvirom, odnosno tibble-om, na koji će se primjenjivati glagoli `dplyr` paketa, a nakon toga slijede glagoli koji odvojeni poveznicima.
+
+::: {.callout-tip icon=false collapse="true" title="Glagol glimpse()"}
+Prije svega, jedan od korisnih glagola koji nudi `dplyr` paket je `glimpse()`, a koji služi za brz i pregledan prikaz strukture podataka što je korisno za dobivanje sažetka bez ispisivanja cijelog skupa podataka. Glagol ima samo jedan argument, a to je `x` kojim se definira podatkovni okvir čiju strukturu želimo istražiti.
+
+```{r}
+glimpse(pokemon_dataset)
+```
+:::

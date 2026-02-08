@@ -17,6 +17,7 @@ book:
         - 02_02_uredivanje_podataka.qmd
     - part: 03_00_transformacija_podataka.qmd
       chapters:
+        - dplyr.qmd
         - 03_01_manipulacija_podacima.qmd
         - 03_02_nedostajajuce_vrijednosti.qmd
         - 03_03_pridruzivanje_podataka.qmd

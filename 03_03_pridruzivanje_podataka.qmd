@@ -2,7 +2,7 @@
 title: "Pridruživanje podataka"
 description: ""
 number-sections: true
-title-block-banner: "#8B3A62"
+title-block-banner: "#483D8B"
 title-block-banner-color: "white"
 lang: hr
 crossref:
@@ -59,6 +59,7 @@ pokemon_dataset <- poke_raw |>
 
 ```{r}
 #| include: false
+
 # Stvaranje prvog podatkovnog okvira s id-om, imenima i tipovima
 pokemon_names <- pokemon_dataset |>
   filter(name %in% c("bulbasaur", "ivysaur", "pidgey", "rattata", "pikachu", "zubat", "venonat", "golem", "rhyhorn", "magmar", "mewtwo", "teddiursa", "blaziken", "gardevoir", "skitty")) |>
@@ -122,13 +123,13 @@ Glagoli iz `dplyr` paketa za pridruživanje podatkovnih okvira koriste slične a
 Prilikom strukturiranja kodova, pravila su slična uobičajenima. U prvi se red navodi prvi, odnosno **lijevi podatkovni okvir** kojem se pridružuje drugi. U novi se red piše glagol povezivanja, a podatkovni okvir i glagol povezivanja, kao i eventualni budući glagoli, povezuju se poveznicima.
 :::
 
-### Pridruživanje podataka `dplyr` paketom
+## Pridruživanje podataka `dplyr` paketom
 
-#### Mutacijsko pridruživanje
+### Mutacijsko pridruživanje
 
 **Mutacijsko pridruživanje** prvi je oblik pridruživanje koje omogućuje kombiniranje varijabli iz dva podatkovna okvira tako da prvo pronalazi parove zapisa pomoću funkcijom određenih ključeva, a zatim kopira varijable iz jednog podatkovnog okvira u drugi. Slično kao glagol `mutate()`, koristi se za spajanje dodaju nove varijable s desne strane podatkovnog okvira.
 
-##### Unutarnje pridruživanje
+#### Unutarnje pridruživanje
 
 Prvi oblik pridruživanja podatkovnih okvira je je **Unutarnje pridruživanje** kojim se spajaju dvija podatkovna okvira, ali samo unutar zajedničkih opažanja u oba podatkovna okvira. Drugim riječima, u novi se podatkovni okvir uvrštavaju samo ona opažanja zajednička za oba podatkovna okvira. Ono se izvodi glagolom `inner_join()`.
 
@@ -145,7 +146,7 @@ inner_join(
 ```
 :::
 
-##### Vanjska pridruživanja
+#### Vanjska pridruživanja
 
 Iste principe možemo primijeniti za **vanjska pridruživanja** koja zadržavaju opažanja koja se pojavljuju u barem jednom od podatkovnih okvira. Ova pridruživanja funkcioniraju dodavanjem dodatnog retka svakom podatkovnom okviru koji ima ključ koji odgovara svim slučajevima kada nijedan drugi ključ ne odgovara, a vrijednosti su popunjene s `NA`. Postoje tri vrste vanjskih spajanja, a razlikuju se po tome koji podatkovni okvir dobiva dodatni redak s `NA` vrijednostima: potpuno, lijevo i desno.
 
@@ -208,11 +209,11 @@ full_join(
 ```
 :::
 
-#### Filtrirano pridruživanje
+### Filtrirano pridruživanje
 
 Broj podudarnosti također određuje ponašanje filtrirnih pridruživanja. Pritom se razlikuju dvije funkcije koje imaju namjenu filtriranja, polu i anti pridruživanje. U oba slučaja važno je samo postojanje podudarnosti, a ne koliko ih puta ima. To znači da filtrirna spajanja nikada ne dupliciraju retke kao što to čine mutacijska spajanja.
 
-##### Polu-pridruživanje
+#### Polu-pridruživanje
 
 Glagol `semi_join()` zadržava sve retke iz podatkovnog okvira koji su označeni argumentom `x`, a koji imaju barem jednu podudarnost u podatkovnom okviru `y`.
 
@@ -229,7 +230,7 @@ semi_join(
 ```
 :::
 
-##### Anti-pridruživanje
+#### Anti-pridruživanje
 
 Glagol `anti_join()` predstavlja suprotnost glagolu `semi_join()` jer vraća sve retke iz podatkovnog okvira `x` koji nemaju podudarnost u podatkovnom okviru `y`. Glagol je korista za pronalaženje nedostajućih vrijednosti koje su implicitno prisutne u podacima. Takve implicitno nedostajuće vrijednosti ne pojavljuju se kao `NA`, nego postoje samo kao odsutnost određenih kombinacija vrijednosti.
 
@@ -248,9 +249,9 @@ anti_join(
 
 Primijetimo da zbroj redaka iz `semi_join()` (7 Pokemona) i `anti_join()` (8 Pokemona) daje točno ukupan broj redaka u `pokemon_names` (15 Pokemona). To je zato što filtrirana pridruživanja zajedno predstavljaju komplementarne operacije koje zajedno pokrivaju sve retke iz početnog podatkovnog okvira.
 
-### Dodatne funkcionalnosti `*_join()` glagola
+## Dodatne funkcionalnosti `*_join()` glagola
 
-#### Organizacija kodova
+### Organizacija kodova
 
 Prilikom spajanja podatkovnih okvira u R-u, postoje dva osnovna pristupa organizaciji koda koji vode istom rezultatu, ali se razlikuju u sintaksi i čitljivosti.
 
@@ -308,9 +309,9 @@ Ovaj kod jasno pokazuje slijed operacija: započinjemo s `pokemon_names`, kombin
 
 Iako su oba pristupa organizaciji kodova validna, u nastavku ćemo koristiti pristup s operatorom `|>` jer on bolje odgovara načinu na koji ljudi razmišljaju o obradi podataka kao o nizu logički povezanih koraka transformacije. Ovaj pristup također se usklađuje s filozofijom paketa `dplyr` i preporukama većeg dijela stručne literature.
 
-#### Korištenje dodatnih argumenata
+### Korištenje dodatnih argumenata
 
-##### Specificiranje argumenta za ključeve
+#### Specificiranje argumenta za ključeve
 
 Argument `by` u funkcijama za spajanje podatkovnih okvira služi za eksplicitno specificiranje ključeva - varijabli koje se koriste za povezivanje zapisa iz dva podatkovna okvira. Ovaj argument govori R-u koje stupce treba usporediti prilikom traženja odgovarajućih parova redaka između dva podatkovna okvira. `by` može specificirati jedan ili više ključeva, a može se koristiti i za spajanje stupaca koji imaju različita imena u dva podatkovna okvira.
 
@@ -340,7 +341,7 @@ Kada izvršimo ovu naredbu, R automatski prepoznaje da obje tablice imaju zajedn
 
 Konačno, ponekad je potrebno pridružiti podatke gdje ključevi imaju različita imena u dva podatkovna okvira. Na primjer, možda imamo podatkovni okvir u kojem se Pokemon ID nalazi pod nazivom "pokemon_id", a u drugom samo "id". U ovom primjeru koristimo sintaksu `join_by(pokemon_id == id)` koja jasno specificira da stupac "pokemon_id" iz prvog okvira odgovara stupcu "id" iz drugog okvira.
 
-##### Sufiksi
+#### Sufiksi
 
 Argument `suffix` u glagolima za pridruživanje podatkovnih okvira služi za razlikovanje stupaca koji imaju identična imena u oba podatkovna okvira, ali nisu korišteni kao ključevi za spajanje. Kada R spaja dva podatkovna okvira, svi stupci iz oba izvora zadržavaju se u konačnom rezultatu. Međutim, ako oba podatkovna okvira sadrže stupac s istim nazivom, R mora dodati oznake tim stupcima kako bi ih razlikovao. Argument `suffix` prima vektor od dva tekstualna elementa gdje prvi element označava sufiks koji će se dodati stupcima iz prvog podatkovnog okvira (`x`), a drugi element označava sufiks za stupce iz drugog podatkovnog okvira (`y`). Na ovaj način, korisnik može kontrolirati kako će se duplicirani nazivi stupaca razlikovati u konačnom rezultatu čineći kod čitljivijim i smislenijim.
 
@@ -360,7 +361,7 @@ pokemon_names |>
 Konačno, ako u argumentu `by` definiramo dva ključa za pridruživanje, u ovom slučaju i "id" i "name", neće biti potrebno definiranje sufiksa jer se neće stvarati dupli stupci za podatke o imenima Pokemona.
 :::
 
-##### Nejednako pridruživanje
+#### Nejednako pridruživanje
 
 Do su bila navedena samo jednaka pridruživanja, odnosno ona pridruživanja gdje se redci podudaraju ako je ključ iz `x` jednak ključu iz `y` argumenta. Ipak, postoje i drugi načini određivanja podudarnosti između parova redaka.
 
@@ -376,7 +377,7 @@ U jednakim pridruživanjima ključevi iz `x` i `y` uvijek su jednaki pa je dovol
 
 4.  preklopna pridruživanja koja se koriste za rad s rasponima vrijednosti.
 
-###### Nejednakosno pridruživanja
+##### Nejednakosno pridruživanja
 
 Nejednakosna spajanja (engl. *inequality joins*) koriste operatore `<`, `<=`, `>=` ili `>` za ograničavanje skupa mogućih podudarnosti.
 
@@ -428,7 +429,7 @@ pokemon_dataset |>
 ```
 :::
 
-###### Klizna spajanja
+##### Klizna spajanja
 
 **Klizna spajanja** (engl. *rolling joins*) predstavljaju poseban tip nejednakosnih spajanja gdje umjesto dobivanja svakog retka koji zadovoljava nejednakost, dobivamo samo najbliži redak. Bilo koje nejednakosno spajanje možemo pretvoriti u klizno spajanje dodavanjem funkcije `closest()`.
 
@@ -488,7 +489,7 @@ closest_attack |>
 ```
 :::
 
-###### Križna pridruživanja
+##### Križna pridruživanja
 
 **Križno pridruživanja** (engl. *cross join*) podudara sve kombinacije redaka generirajući Kartezijev produkt redaka. To znači da će rezultat imati `nrow(x) * nrow(y)` redaka. Križna pridruživanja korisna su prilikom generiranja svih mogućih kombinacija podudaranja.
 
@@ -538,9 +539,7 @@ unique_matches
 ```
 :::
 
------------------------------------NASTAVAK-----------------------------
-
-###### Preklopna spajanja
+##### Preklopna spajanja
 
 **Preklopna spajanja** (engl. *overlap joins*) pružaju tri pomoćne funkcije koje koriste nejednakosna spajanja kako bi olakšale rad s intervalima vrijednosti:
 
